@@ -33,27 +33,63 @@ A comprehensive full-stack application for managing personal and family finances
 
 ### Setup
 
-```bash
-# Clone repository
-git clone https://github.com/yourusername/family-budget-tracker.git
-cd family-budget-tracker
+#### 1. Clone the repository
 
-# Create virtual environment
+```bash
+# Clone the repository
+git clone https://github.com/eliseiprofir/budget.git
+cd family-budget-tracker
+```
+
+#### 2. Backend setup (Django)
+
+```bash
+# Navigate to the backend directory
+cd backend
+
+# Create virtual environment for backend
 python -m venv venv
 source venv/bin/activate  # Linux/Mac
 # or
 venv\Scripts\activate  # Windows
 
-# Install dependencies
+# Install backend dependencies
 pip install -r requirements.txt
 
-# Database setup
+# Database setup for backend
 python manage.py migrate
 
-# Run development server
-python manage.py runserver  # Backend
-streamlit run frontend/app.py  # Frontend
+# Run development server for backend
+python manage.py runserver
 ```
+
+#### 3. Frontend setup (Streamlit)
+
+```bash
+# ⚠️ Important: Open a new terminal window or tab for the frontend setup
+# to ensure the backend server continues running uninterrupted.
+
+# Navigate to the frontend directory
+cd ../frontend
+
+# Create virtual environment for frontend
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# or
+venv\Scripts\activate  # Windows
+
+# Install frontend dependencies
+pip install -r requirements.txt
+
+# Run development server for frontend
+streamlit run app.py
+```
+
+### Final steps
+
+- Ensure both the backend and frontend servers are running:
+  - Backend will run at `http://127.0.0.1:8000/`
+  - Frontend will run at `http://localhost:8501/`
 
 ## Testing
 
