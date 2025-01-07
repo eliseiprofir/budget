@@ -38,7 +38,7 @@ A comprehensive full-stack application for managing personal and family finances
 ```bash
 # Clone the repository
 git clone https://github.com/eliseiprofir/budget.git
-cd family-budget-tracker
+cd budget
 ```
 
 #### 2. Backend setup (Django)
