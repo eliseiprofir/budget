@@ -10,7 +10,7 @@ class UserAdminChangeForm(admin_forms.UserChangeForm):
     """
     Form for User modification in the Admin Area.
     """
-    class Meta(admin_forms.UserChangeForm.Meta):
+    class Meta:
         model = User
         fields = ("email", "full_name", "is_active", "is_staff")
         field_classes = {"email": EmailField}
@@ -21,7 +21,7 @@ class UserAdminCreationForm(admin_forms.UserCreationForm):
     Form for User Creation in the Admin Area.
     """
 
-    class Meta(admin_forms.UserCreationForm.Meta):
+    class Meta:
         model = User
         fields = ("email",)
         field_classes = {"email": EmailField}
