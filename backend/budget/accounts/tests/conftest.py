@@ -4,7 +4,7 @@ from accounts.models import User
 
 @pytest.fixture
 def user_recipe() -> str:
-    """Fixture for creating a user recipe"""
+    """Fixture for creating a User recipe"""
     return "accounts.tests.user_recipe"
 
 @pytest.fixture
