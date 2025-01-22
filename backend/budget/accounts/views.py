@@ -3,10 +3,10 @@ from rest_framework import mixins
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
-from .models import User
-from .serializers import UserListSerializer
-from .serializers import UserDetailSerializer
-from .serializers import UserWriteSerializer
+from accounts.models import User
+from accounts.serializers import UserListSerializer
+from accounts.serializers import UserDetailSerializer
+from accounts.serializers import UserWriteSerializer
 
 class UserViewSet(
     viewsets.GenericViewSet,
