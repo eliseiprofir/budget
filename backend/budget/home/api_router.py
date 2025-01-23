@@ -15,4 +15,5 @@ router.register(r"users", UserViewSet, basename="user")
 router.register(r"buckets", BucketViewSet, basename="buckets")
 router.register(r"locations", LocationViewSet, basename="locations")
 
+app_name = "api"
 urlpatterns = router.urls
