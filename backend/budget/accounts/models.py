@@ -51,7 +51,7 @@ class User(UUIDModel, AbstractUser, TimeStampedModel, SoftDeletableModel):
     class Meta:
         verbose_name = "User"
         verbose_name_plural = "Users"
-        ordering = "-created"
+        ordering = ("-created",)
 
     def clean_email(self) -> None:
         """Ensure that the email is lowercase"""
