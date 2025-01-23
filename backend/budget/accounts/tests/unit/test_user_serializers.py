@@ -7,7 +7,7 @@ from accounts.serializers import UserWriteSerializer
 
 @pytest.mark.django_db
 def test_detail_serializer_create(user_recipe: str):
-    """Test that the UserDetailSerializer reads the data corectly."""
+    """Test that the UserDetailSerializer reads the data correctly."""
     user = baker.make_recipe(user_recipe)
     serializer = UserDetailSerializer(user)
     assert serializer.data["id"] == str(user.id)
