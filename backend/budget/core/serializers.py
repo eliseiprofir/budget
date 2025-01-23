@@ -7,27 +7,14 @@ from accounts.models import User
 from accounts.serializers import UserDetailSerializer
 
 
-class BucketListSerializer(serializers.ModelSerializer):
-    """List Serializer for the Bucket model"""
-
-    user = serializers.HyperlinkedRelatedField(
-        view_name="api:user-detail",
-        read_only=True,
-    )
-
-    class Meta:
-        model = Bucket
-        fields = ("id", "name", "user", "allocation_percentage")
-        read_only_fields = fields
-
-
-class BucketDetailSerializer(serializers.ModelSerializer):
-    """Detail Serializer for the Bucket model"""
+class BucketSerializer(serializers.ModelSerializer):
+    """Serializer for the Bucket model"""
 
     user = UserDetailSerializer(read_only=True)
 
-    class Meta(BucketListSerializer.Meta):
-        fields = (*BucketListSerializer.Meta.fields, "is_removed")
+    class Meta:
+        model = Bucket
+        fields = ("id", "name", "user", "allocation_percentage", "is_removed")
         read_only_fields = fields
 
 
@@ -41,31 +28,18 @@ class BucketWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Bucket
-        fields = ("name", "user", "allocation_percentage")
+        fields = ("name", "user", "allocation_percentage", "is_removed")
         read_only_fields = ("id",)
 
 
-class LocationListSerializer(serializers.ModelSerializer):
-    """List Serializer for the Location model"""
-
-    user = serializers.HyperlinkedRelatedField(
-        view_name="api:user-detail",
-        read_only=True,
-    )
-
-    class Meta:
-        model = Location
-        fields = ("id", "name", "user")
-        read_only_fields = fields
-
-
-class LocationDetailSerializer(serializers.ModelSerializer):
+class LocationSerializer(serializers.ModelSerializer):
     """Detail Serializer for the Location model"""
 
     user = UserDetailSerializer(read_only=True)
 
-    class Meta(LocationListSerializer.Meta):
-        fields = (*LocationListSerializer.Meta.fields, "is_removed")
+    class Meta:
+        model = Location
+        fields = ("id", "name", "user", "is_removed")
         read_only_fields = fields
 
 
@@ -79,5 +53,5 @@ class LocationWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Location
-        fields = ("name", "user")
+        fields = ("name", "user", "is_removed")
         read_only_fields = ("id",)

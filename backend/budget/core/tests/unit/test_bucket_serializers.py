@@ -1,15 +1,15 @@
 import pytest
 from model_bakery import baker
 
-from core.serializers import BucketDetailSerializer
+from core.serializers import BucketSerializer
 from core.serializers import BucketWriteSerializer
 
 
 @pytest.mark.django_db
-def test_detail_serializer_create(bucket_recipe: str):
-    """Test that the BucketDetailSerializer reads the data correctly."""
+def test_serializer_create(bucket_recipe: str):
+    """Test that the BucketSerializer reads the data correctly."""
     bucket = baker.make_recipe(bucket_recipe)
-    serializer = BucketDetailSerializer(bucket)
+    serializer = BucketSerializer(bucket)
     assert serializer.data["id"] == str(bucket.id)
     assert serializer.data["name"] == bucket.name
     assert serializer.data["allocation_percentage"] is not None

@@ -5,11 +5,9 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from core.models import Bucket
 from core.models import Location
-from core.serializers import BucketListSerializer
-from core.serializers import BucketDetailSerializer
+from core.serializers import BucketSerializer
 from core.serializers import BucketWriteSerializer
-from core.serializers import LocationListSerializer
-from core.serializers import LocationDetailSerializer
+from core.serializers import LocationSerializer
 from core.serializers import LocationWriteSerializer
 
 
@@ -22,15 +20,15 @@ class BucketViewSet(
     """Bucket model view."""
 
     queryset = Bucket.available_objects.all()
-    serializer_class = BucketListSerializer
+    serializer_class = BucketSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("name",)
 
     def get_serializer_map(self):
         return {
-            "list": BucketListSerializer,
-            "retrieve": BucketDetailSerializer,
+            "list": BucketSerializer,
+            "retrieve": BucketSerializer,
             "create": BucketWriteSerializer,
         }
 
@@ -47,15 +45,15 @@ class LocationViewSet(
     """Location model view."""
 
     queryset = Location.available_objects.all()
-    serializer_class = LocationListSerializer
+    serializer_class = LocationSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("name",)
 
     def get_serializer_map(self):
         return {
-            "list": LocationListSerializer,
-            "retrieve": LocationDetailSerializer,
+            "list": LocationSerializer,
+            "retrieve": LocationSerializer,
             "create": LocationWriteSerializer,
         }
 

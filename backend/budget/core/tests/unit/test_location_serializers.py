@@ -1,15 +1,15 @@
 import pytest
 from model_bakery import baker
 
-from core.serializers import LocationDetailSerializer
+from core.serializers import LocationSerializer
 from core.serializers import LocationWriteSerializer
 
 
 @pytest.mark.django_db
-def test_detail_serializer_create(location_recipe: str):
-    """Test that the LocationDetailSerializer reads the data correctly."""
+def test_serializer_create(location_recipe: str):
+    """Test that the LocationSerializer reads the data correctly."""
     location = baker.make_recipe(location_recipe)
-    serializer = LocationDetailSerializer(location)
+    serializer = LocationSerializer(location)
     assert serializer.data["id"] == str(location.id)
     assert serializer.data["name"] == location.name
     assert serializer.data["user"] is not None
