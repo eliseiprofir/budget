@@ -20,7 +20,7 @@ class BucketViewSet(
 ):
     """Bucket model view."""
 
-    queryset = Bucket.objects.all()
+    queryset = Bucket.available_objects.all()
     serializer_class = BucketListSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
     filter_backends = (filters.OrderingFilter,)
@@ -45,7 +45,7 @@ class LocationViewSet(
 ):
     """Location model view."""
 
-    queryset = Location.objects.all()
+    queryset = Location.available_objects.all()
     serializer_class = LocationListSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
     filter_backends = (filters.OrderingFilter,)

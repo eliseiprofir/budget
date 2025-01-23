@@ -16,7 +16,7 @@ class UserViewSet(
 ):
     """User model view."""
 
-    queryset = User.objects.all()
+    queryset = User.available_objects.all()
     serializer_class = UserListSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
     filter_backends = (filters.OrderingFilter,)

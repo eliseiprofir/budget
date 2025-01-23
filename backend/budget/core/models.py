@@ -1,12 +1,15 @@
 from django.db import models
 from model_utils.models import UUIDModel
 from model_utils.models import SoftDeletableModel
+from model_utils.models import SoftDeletableManager
 
 from accounts.models import User
 
 
 class Bucket(UUIDModel, SoftDeletableModel):
     """Model to store bucket information."""
+
+    available_objects = SoftDeletableManager()
 
     # 'uuid' field is inherited from UUIDModel
     # 'is_removed' field is inherited from SoftDeletableModel
@@ -41,6 +44,8 @@ class Bucket(UUIDModel, SoftDeletableModel):
 
 class Location(UUIDModel, SoftDeletableModel):
     """Model to store location information."""
+
+    available_objects = SoftDeletableManager()
 
     # 'uuid' field is inherited from UUIDModel
     # 'is_removed' field is inherited from SoftDeletableModel

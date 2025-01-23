@@ -3,25 +3,11 @@ from typing import TYPE_CHECKING
 import pytest
 from model_bakery import baker
 from rest_framework import status
-from rest_framework.test import APIClient
 
 from accounts.models import User
 
 if TYPE_CHECKING:
     from rest_framework.test import APIClient
-
-@pytest.fixture
-def apiclient() -> APIClient:
-    """Fixture for creating an unauthenticated APIClient."""
-    return APIClient()
-
-@pytest.fixture
-def authenticated_apiclient(user):
-    """Fixture for creating an authenticated APIClient."""
-    client = APIClient()
-    client.force_authenticate(user=user)
-    yield client
-    client.force_authenticate(user=None)
 
 
 @pytest.mark.django_db

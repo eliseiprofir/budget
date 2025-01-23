@@ -1,8 +1,9 @@
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import UserManager as DjangoUserManager
+from model_utils.managers import SoftDeletableManager
 
 
-class UserManager(DjangoUserManager["User"]):
+class UserManager(DjangoUserManager["User"], SoftDeletableManager):
     """Custom manager for the User model."""
 
     def _create_user(self, email: str, password: str | None, **extra_fields):

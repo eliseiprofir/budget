@@ -5,6 +5,7 @@ from django.utils import timezone
 from model_utils.models import UUIDModel
 from model_utils.models import TimeStampedModel
 from model_utils.models import SoftDeletableModel
+from model_utils.models import SoftDeletableManager
 from .managers import UserManager
 
 class User(UUIDModel, AbstractUser, TimeStampedModel, SoftDeletableModel):
