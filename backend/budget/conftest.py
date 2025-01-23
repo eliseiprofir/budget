@@ -9,7 +9,7 @@ def apiclient() -> APIClient:
     return APIClient()
 
 @pytest.fixture
-def authenticated_apiclient(user):
+def authenticated_apiclient(user):  # noqa: F811
     """Fixture for creating an authenticated APIClient."""
     client = APIClient()
     client.force_authenticate(user=user)
