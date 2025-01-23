@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from .models import User
 
+
 class UserListSerializer(serializers.ModelSerializer):
     """List Serializer for the User Model"""
 

@@ -6,6 +6,7 @@ from core.models import Location
 from accounts.models import User
 from accounts.serializers import UserDetailSerializer
 
+
 class BucketListSerializer(serializers.ModelSerializer):
     """List Serializer for the Bucket model"""
 

@@ -12,6 +12,7 @@ from core.serializers import LocationListSerializer
 from core.serializers import LocationDetailSerializer
 from core.serializers import LocationWriteSerializer
 
+
 class BucketViewSet(
     viewsets.GenericViewSet,
     mixins.ListModelMixin,

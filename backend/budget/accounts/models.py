@@ -7,6 +7,7 @@ from model_utils.models import TimeStampedModel
 from model_utils.models import SoftDeletableModel
 from .managers import UserManager
 
+
 class User(UUIDModel, AbstractUser, TimeStampedModel, SoftDeletableModel):
     """Model to store user information"""
 

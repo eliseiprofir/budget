@@ -8,6 +8,7 @@ from accounts.serializers import UserListSerializer
 from accounts.serializers import UserDetailSerializer
 from accounts.serializers import UserWriteSerializer
 
+
 class UserViewSet(
     viewsets.GenericViewSet,
     mixins.ListModelMixin,
