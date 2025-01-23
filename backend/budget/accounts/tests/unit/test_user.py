@@ -61,4 +61,4 @@ def test_meta_class(user_recipe: str):
     user = baker.prepare_recipe(user_recipe)
     assert user._meta.verbose_name == "User"
     assert user._meta.verbose_name_plural == "Users"
-    assert user._meta.ordering == ["-created"]
+    assert user._meta.ordering == ("-created",)
