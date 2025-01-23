@@ -1,7 +1,7 @@
 import pytest
 
 from rest_framework.test import APIClient
-from accounts.tests.conftest import user
+from accounts.tests.conftest import user  # noqa: F401
 
 @pytest.fixture
 def apiclient() -> APIClient:
