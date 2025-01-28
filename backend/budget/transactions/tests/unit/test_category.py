@@ -41,10 +41,12 @@ def test_crud_operations(category_recipe: str):
     category.delete()
     assert Category.available_objects.count() == 0
 
+
 @pytest.mark.django_db
 def test_str_method(category: Category):
     """Test the string representation of the model"""
     assert str(category) == f"{category.name}"
+
 
 @pytest.mark.django_db
 def test_meta_class(category_recipe: str):

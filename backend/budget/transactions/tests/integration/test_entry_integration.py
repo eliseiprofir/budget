@@ -66,7 +66,6 @@ def test_get_entry(
         ("authenticated_apiclient", status.HTTP_201_CREATED),
     ],
 )
-
 def test_create_entry(
     client: str,
     status_code: str,

@@ -3,10 +3,12 @@ from model_bakery import baker
 from transactions.models import Entry
 from transactions.models import Category
 
+
 @pytest.fixture
 def entry(entry_recipe) -> Entry:
     """Fixture for creating an Entry instance."""
     return baker.make_recipe(entry_recipe)
+
 
 @pytest.fixture
 def category(category_recipe) -> Category:

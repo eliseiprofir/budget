@@ -40,10 +40,12 @@ def test_crud_operations(location_recipe: str):
     location.delete()
     assert Location.available_objects.count() == 0
 
+
 @pytest.mark.django_db
 def test_str_method(location: Location):
     """Test the string representation of the model"""
     assert str(location) == f"{location.name}"
+
 
 @pytest.mark.django_db
 def test_meta_class(location_recipe: str):

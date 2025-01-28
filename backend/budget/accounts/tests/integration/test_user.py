@@ -65,7 +65,6 @@ def test_get_user(
         ("authenticated_apiclient", status.HTTP_201_CREATED),
     ],
 )
-
 def test_create_user(
     client: str,
     status_code: str,

@@ -12,6 +12,7 @@ def test_entry_creation(entry_recipe: str):
     assert entry.pk is not None
     assert entry.name != ""
 
+
 @pytest.mark.django_db
 def test_entry_unique_validation(entry: Entry, entry_recipe: str):
     """Test validation for name field - should be unique"""
@@ -21,6 +22,7 @@ def test_entry_unique_validation(entry: Entry, entry_recipe: str):
     )
     with pytest.raises(ValidationError):
         entry2.full_clean()
+
 
 @pytest.mark.django_db
 def test_crud_operations(entry_recipe: str):
@@ -49,10 +51,12 @@ def test_crud_operations(entry_recipe: str):
     entry.delete()
     assert Entry.objects.count() == 0
 
+
 @pytest.mark.django_db
 def test_str_method(entry: Entry):
     """Test the string representation of the model"""
     assert str(entry) == f"{entry.name}"
+
 
 @pytest.mark.django_db
 def test_meta_class(entry_recipe: str):

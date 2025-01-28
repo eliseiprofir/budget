@@ -13,6 +13,7 @@ def test_user_creation(user_recipe: str):
     assert user.email != ""
     assert user.last_login != ""
 
+
 @pytest.mark.django_db
 def test_is_active_validation(user_recipe: str):
     """Test validation for is_active field"""
@@ -22,6 +23,7 @@ def test_is_active_validation(user_recipe: str):
     )
     with pytest.raises(ValidationError):
         user.full_clean()
+
 
 @pytest.mark.django_db
 def test_crud_operations(user_recipe: str):
@@ -50,10 +52,12 @@ def test_crud_operations(user_recipe: str):
     user.delete()
     assert User.available_objects.count() == 0
 
+
 @pytest.mark.django_db
 def test_str_method(user: User):
     """Test the string representation of the model"""
     assert str(user) == f"{user.full_name} ({user.email})"
+
 
 @pytest.mark.django_db
 def test_meta_class(user_recipe: str):

@@ -67,7 +67,6 @@ def test_get_location(
         ("authenticated_apiclient", status.HTTP_201_CREATED),
     ],
 )
-
 def test_create_location(
     client: str,
     status_code: str,

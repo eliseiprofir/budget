@@ -67,7 +67,6 @@ def test_get_bucket(
         ("authenticated_apiclient", status.HTTP_201_CREATED),
     ],
 )
-
 def test_create_bucket(
     client: str,
     status_code: str,

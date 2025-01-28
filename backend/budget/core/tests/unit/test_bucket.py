@@ -40,10 +40,12 @@ def test_crud_operations(bucket_recipe: str):
     bucket.delete()
     assert Bucket.available_objects.count() == 0
 
+
 @pytest.mark.django_db
 def test_str_method(bucket: Bucket):
     """Test the string representation of the model"""
     assert str(bucket) == f"{bucket.name}"
+
 
 @pytest.mark.django_db
 def test_meta_class(bucket_recipe: str):
