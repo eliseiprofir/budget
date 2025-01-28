@@ -1,5 +1,6 @@
 import pytest
 from model_bakery import baker
+from rest_framework.test import APIRequestFactory
 
 from transactions.serializers import CategorySerializer
 from transactions.serializers import CategoryWriteSerializer
@@ -8,13 +9,17 @@ from transactions.serializers import CategoryWriteSerializer
 @pytest.mark.django_db
 def test_serializer_create(category_recipe: str):
     """Test that the CategorySerializer reads the data correctly."""
+    factory = APIRequestFactory()
+    request = factory.get('/')
     category = baker.make_recipe(category_recipe)
-    serializer = CategorySerializer(category)
+    serializer = CategorySerializer(category, context={"request": request})
     assert serializer.data["id"] == str(category.id)
     assert serializer.data["name"] == category.name
     assert serializer.data["bucket"] is not None
     assert serializer.data["user"] is not None
     assert serializer.data["is_removed"] in [True, False]
+    assert isinstance(serializer.data["bucket"], str)
+    assert "/api/buckets/" in serializer.data["bucket"]
 
 
 @pytest.mark.django_db

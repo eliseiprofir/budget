@@ -1,5 +1,6 @@
 import pytest
 from model_bakery import baker
+from rest_framework.test import APIRequestFactory
 
 from core.serializers import LocationSerializer
 from core.serializers import LocationWriteSerializer
@@ -8,12 +9,16 @@ from core.serializers import LocationWriteSerializer
 @pytest.mark.django_db
 def test_serializer_create(location_recipe: str):
     """Test that the LocationSerializer reads the data correctly."""
+    factory = APIRequestFactory()
+    request = factory.get('/')
     location = baker.make_recipe(location_recipe)
-    serializer = LocationSerializer(location)
+    serializer = LocationSerializer(location, context={"request": request})
     assert serializer.data["id"] == str(location.id)
     assert serializer.data["name"] == location.name
     assert serializer.data["user"] is not None
     assert serializer.data["is_removed"] in [True, False]
+    assert isinstance(serializer.data["user"], str)
+    assert "/api/users/" in serializer.data["user"]
 
 
 @pytest.mark.django_db

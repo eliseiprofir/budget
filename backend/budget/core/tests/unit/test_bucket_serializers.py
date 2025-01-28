@@ -1,5 +1,6 @@
 import pytest
 from model_bakery import baker
+from rest_framework.test import APIRequestFactory
 
 from core.serializers import BucketSerializer
 from core.serializers import BucketWriteSerializer
@@ -8,13 +9,17 @@ from core.serializers import BucketWriteSerializer
 @pytest.mark.django_db
 def test_serializer_create(bucket_recipe: str):
     """Test that the BucketSerializer reads the data correctly."""
+    factory = APIRequestFactory()
+    request = factory.get('/')
     bucket = baker.make_recipe(bucket_recipe)
-    serializer = BucketSerializer(bucket)
+    serializer = BucketSerializer(bucket, context={"request": request})
     assert serializer.data["id"] == str(bucket.id)
     assert serializer.data["name"] == bucket.name
     assert serializer.data["allocation_percentage"] is not None
     assert serializer.data["user"] is not None
     assert serializer.data["is_removed"] in [True, False]
+    assert isinstance(serializer.data["user"], str)
+    assert "/api/users/" in serializer.data["user"]
 
 
 @pytest.mark.django_db
