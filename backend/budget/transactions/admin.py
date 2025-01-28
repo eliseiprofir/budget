@@ -31,9 +31,9 @@ class EntryAdmin(admin.ModelAdmin):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ("name", "bucket", "user",)
-    list_filter = ("name", "bucket", "user",)
-    search_fields = ("name", "bucket", "user",)
+    list_display = ("name", "bucket")
+    list_filter = ("name", "bucket")
+    search_fields = ("name", "bucket")
     ordering = ("name",)
     readonly_fields = ()
     fieldsets = (
@@ -43,7 +43,6 @@ class CategoryAdmin(admin.ModelAdmin):
                 "fields": (
                     "name",
                     "bucket",
-                    "user",
                     "is_removed",
                 ),
             },

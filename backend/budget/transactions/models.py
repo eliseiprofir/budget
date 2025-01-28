@@ -55,17 +55,10 @@ class Category(UUIDModel, SoftDeletableModel):
         help_text="Category name (e.g. (1) for Income: Salary, Bonuses, etc.; (2) for Expense: Utilities, Necessities/Utilities, Books, Education/Books, etc.",
         max_length=255,
         unique=True,
-        blank=True,
+        blank=False,
     )
     bucket = models.ForeignKey(
         Bucket,
-        on_delete=models.SET_NULL,
-        related_name="categories",
-        blank=False,
-        null=True,
-    )
-    user = models.ForeignKey(
-        User,
         on_delete=models.CASCADE,
         related_name="categories",
         blank=False,

@@ -31,14 +31,10 @@ class CategorySerializer(serializers.ModelSerializer):
         view_name="api:bucket-detail",
         read_only=True,
     )
-    user = serializers.HyperlinkedRelatedField(
-        view_name="api:user-detail",
-        read_only=True,
-    )
 
     class Meta:
         model = Category
-        fields = ("id", "name", "bucket", "user", "is_removed")
+        fields = ("id", "name", "bucket", "is_removed")
         read_only_fields = fields
 
 
@@ -49,12 +45,8 @@ class CategoryWriteSerializer(serializers.ModelSerializer):
         queryset=Bucket.available_objects.all(),
         required=True,
     )
-    user = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(),
-        required=True,
-    )
 
     class Meta:
         model = Category
-        fields = ("name", "bucket", "user", "is_removed")
+        fields = ("name", "bucket", "is_removed")
         read_only_fields = ("id",)

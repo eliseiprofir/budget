@@ -9,7 +9,8 @@ def test_bucket_creation(bucket_recipe: str):
     bucket = baker.make_recipe(bucket_recipe)
     assert bucket.pk is not None
     assert bucket.name != ""
-    assert bucket.user != ""
+    assert bucket.allocation_percentage != ""
+    assert bucket.user.pk != ""
     assert bucket.is_removed in [True, False]
 
 

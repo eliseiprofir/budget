@@ -72,20 +72,16 @@ def test_create_category(
     request: pytest.FixtureRequest,
     category_recipe: str,
     bucket_recipe: str,
-    user_recipe: str,
 ):
     client: APIClient = request.getfixturevalue(client)
 
     category = baker.prepare_recipe(category_recipe)
     bucket = baker.make_recipe(bucket_recipe)
-    user = baker.make_recipe(user_recipe)
-
     response = client.post(
         "/api/categories/",
         data={
             "name": category.name,
             "bucket": bucket.pk,
-            "user": user.pk
         },
     )
     json = response.json()
@@ -94,4 +90,3 @@ def test_create_category(
     if status_code == status.HTTP_201_CREATED:
         assert json["name"] == category.name
         assert json["bucket"] == str(bucket.pk)
-        assert json["user"] == str(user.pk)
