@@ -14,12 +14,12 @@ router = DefaultRouter() if settings.DEBUG else SimpleRouter()
 router.register(r"users", UserViewSet, basename="user")
 
 # Core
-router.register(r"buckets", BucketViewSet, basename="buckets")
-router.register(r"locations", LocationViewSet, basename="locations")
+router.register(r"buckets", BucketViewSet, basename="bucket")
+router.register(r"locations", LocationViewSet, basename="location")
 
 # Transactions
-router.register(r"entries", EntryViewSet, basename="entries")
-router.register(r"categories", CategoryViewSet, basename="categories")
+router.register(r"entries", EntryViewSet, basename="entry")
+router.register(r"categories", CategoryViewSet, basename="category")
 
 app_name = "api"
 urlpatterns = router.urls

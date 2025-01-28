@@ -10,7 +10,10 @@ from accounts.serializers import UserDetailSerializer
 class BucketSerializer(serializers.ModelSerializer):
     """Serializer for the Bucket model"""
 
-    user = UserDetailSerializer(read_only=True)
+    user = serializers.HyperlinkedRelatedField(
+        view_name="api:user-detail",
+        read_only=True,
+    )
 
     class Meta:
         model = Bucket
@@ -35,7 +38,10 @@ class BucketWriteSerializer(serializers.ModelSerializer):
 class LocationSerializer(serializers.ModelSerializer):
     """Detail Serializer for the Location model"""
 
-    user = UserDetailSerializer(read_only=True)
+    user = serializers.HyperlinkedRelatedField(
+        view_name="api:user-detail",
+        read_only=True,
+    )
 
     class Meta:
         model = Location

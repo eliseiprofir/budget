@@ -5,9 +5,6 @@ from accounts.models import User
 from transactions.models import Entry
 from transactions.models import Category
 
-from core.serializers import BucketSerializer
-from accounts.serializers import UserDetailSerializer
-
 
 class EntrySerializer(serializers.ModelSerializer):
     """Serializer for the Entry model"""
@@ -30,8 +27,14 @@ class EntryWriteSerializer(serializers.ModelSerializer):
 class CategorySerializer(serializers.ModelSerializer):
     """Serializer for the Category model"""
 
-    bucket = BucketSerializer(read_only=True)
-    user = UserDetailSerializer(read_only=True)
+    bucket = serializers.HyperlinkedRelatedField(
+        view_name="api:bucket-detail",
+        read_only=True,
+    )
+    user = serializers.HyperlinkedRelatedField(
+        view_name="api:user-detail",
+        read_only=True,
+    )
 
     class Meta:
         model = Category
