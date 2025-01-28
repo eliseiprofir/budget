@@ -23,7 +23,7 @@ class BucketWriteSerializer(serializers.ModelSerializer):
 
     user = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(),
-        required=False,
+        required=True,
     )
 
     class Meta:
