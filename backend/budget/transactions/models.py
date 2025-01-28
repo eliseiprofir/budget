@@ -29,6 +29,7 @@ class Entry(UUIDModel):
         default=Name.EXPENSE,
         blank=False,
         help_text="Transaction type",
+        unique=True,
     )
 
     def __str__(self):
