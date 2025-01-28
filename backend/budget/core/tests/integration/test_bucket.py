@@ -93,3 +93,4 @@ def test_create_bucket(
     if status_code == status.HTTP_201_CREATED:
         assert json["name"] == bucket.name
         assert json["allocation_percentage"] == str(bucket.allocation_percentage)
+        assert json["user"] == str(user.pk)
