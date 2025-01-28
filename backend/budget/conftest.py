@@ -23,10 +23,20 @@ def user_recipe() -> str:
 
 @pytest.fixture
 def bucket_recipe() -> str:
-    """Fixture for creating a Bucket recipe user"""
+    """Fixture for creating a Bucket recipe"""
     return "core.tests.bucket_recipe"
 
 @pytest.fixture
 def location_recipe() -> str:
-    """Fixture for creating a Location recipe user"""
+    """Fixture for creating a Location recipe"""
     return "core.tests.location_recipe"
+
+@pytest.fixture
+def entry_recipe() -> str:
+    """Fixture for creating an Entry recipe"""
+    return "transactions.tests.entry_recipe"
+
+@pytest.fixture
+def category_recipe() -> str:
+    """Fixture for creating a Category recipe"""
+    return "transactions.tests.category_recipe"
