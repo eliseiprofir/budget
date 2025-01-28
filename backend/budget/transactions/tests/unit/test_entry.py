@@ -10,6 +10,15 @@ def test_entry_creation(entry_recipe: str):
     assert entry.pk is not None
     assert entry.name != ""
 
+@pytest.mark.django_db
+def test_entry_unique_validation(entry: Entry, entry_recipe: str):
+    """Test validation for name field - should be unique"""
+    entry2 = baker.prepare_recipe(
+        entry_recipe,
+        name=entry.name,
+    )
+    with pytest.raises(ValidationError):
+        entry2.full_clean()
 
 @pytest.mark.django_db
 def test_crud_operations(entry_recipe: str):
