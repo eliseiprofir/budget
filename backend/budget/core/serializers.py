@@ -4,7 +4,6 @@ from core.models import Bucket
 from core.models import Location
 
 from accounts.models import User
-from accounts.serializers import UserDetailSerializer
 
 
 class BucketSerializer(serializers.ModelSerializer):
