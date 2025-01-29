@@ -38,12 +38,6 @@ def location_recipe() -> str:
 
 
 @pytest.fixture
-def entry_recipe() -> str:
-    """Fixture for creating an Entry recipe"""
-    return "transactions.tests.entry_recipe"
-
-
-@pytest.fixture
 def category_recipe() -> str:
     """Fixture for creating a Category recipe"""
     return "transactions.tests.category_recipe"

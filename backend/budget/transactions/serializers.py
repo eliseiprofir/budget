@@ -1,27 +1,7 @@
 from rest_framework import serializers
 
 from core.models import Bucket
-from accounts.models import User
-from transactions.models import Entry
 from transactions.models import Category
-
-
-class EntrySerializer(serializers.ModelSerializer):
-    """Serializer for the Entry model"""
-
-    class Meta:
-        model = Entry
-        fields = ("id", "name",)
-        read_only_fields = fields
-
-
-class EntryWriteSerializer(serializers.ModelSerializer):
-    """Serializer used for create operations"""
-
-    class Meta:
-        model = Entry
-        fields = ("name",)
-        read_only_fields = ("id",)
 
 
 class CategorySerializer(serializers.ModelSerializer):

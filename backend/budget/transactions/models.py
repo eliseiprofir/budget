@@ -3,44 +3,51 @@ from model_utils.models import UUIDModel
 from model_utils.models import SoftDeletableModel
 from model_utils.models import SoftDeletableManager
 
-from accounts.models import User
 from core.models import Bucket
 
 
-class Entry(UUIDModel):
-    """Model to store transaction entry/type information"""
-
-    class Name:
-        """Choices for the name field"""
-
-        EXPENSE = "Expense"
-        INCOME = "Income"
-        TRANSFER = "Transfer"
-
-        CHOICES = (
-            (EXPENSE, EXPENSE),
-            (INCOME, INCOME),
-            (TRANSFER, TRANSFER),
-        )
-
-    name = models.CharField(
-        max_length=100,
-        choices=Name.CHOICES,
-        default=Name.EXPENSE,
-        blank=False,
-        help_text="Transaction type",
-        unique=True,
-    )
-
-    def __str__(self):
-        """Return the string representation of the model"""
-
-        return f"{self.name}"
-
-    class Meta:
-        verbose_name = "Entry"
-        verbose_name_plural = "Entries"
-        ordering = ("name",)
+# class Entry(UUIDModel):
+#     """Model to store transaction entry/type information"""
+#
+#     class Name:
+#         """Choices for the name field"""
+#
+#         EXPENSE = "Expense"
+#         INCOME = "Income"
+#         TRANSFER = "Transfer"
+#
+#         CHOICES = (
+#             (EXPENSE, EXPENSE),
+#             (INCOME, INCOME),
+#             (TRANSFER, TRANSFER),
+#         )
+#
+#     name = models.CharField(
+#         max_length=100,
+#         choices=Name.CHOICES,
+#         default=Name.EXPENSE,
+#         blank=False,
+#         help_text="Transaction type",
+#         unique=True,
+#     )
+#
+#     def __str__(self):
+#         """Return the string representation of the model"""
+#
+#         return f"{self.name}"
+#
+#     @classmethod
+#     def create_default_entries(cls):
+#         """Create default entry types if they don't exist"""
+#
+#         for entry_name, _ in cls.Name.CHOICES:
+#             cls.objects.get_or_create(name=entry_name)
+#
+#
+#     class Meta:
+#         verbose_name = "Entry"
+#         verbose_name_plural = "Entries"
+#         ordering = ("name",)
 
 
 class Category(UUIDModel, SoftDeletableModel):
