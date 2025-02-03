@@ -6,6 +6,7 @@ from accounts.views import UserViewSet
 from core.views import BucketViewSet
 from core.views import LocationViewSet
 from transactions.views import CategoryViewSet
+from transactions.views import TransactionViewSet
 
 router = DefaultRouter() if settings.DEBUG else SimpleRouter()
 
@@ -18,6 +19,7 @@ router.register(r"locations", LocationViewSet, basename="location")
 
 # Transactions
 router.register(r"categories", CategoryViewSet, basename="category")
+router.register(r"transactions", TransactionViewSet, basename="transaction")
 
 app_name = "api"
 urlpatterns = router.urls
