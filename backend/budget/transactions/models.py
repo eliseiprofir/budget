@@ -4,7 +4,7 @@ from model_utils.models import UUIDModel
 from model_utils.models import SoftDeletableModel
 from model_utils.models import SoftDeletableManager
 
-from datetime import datetime
+from datetime import date
 
 from accounts.models import User
 from core.models import Location
@@ -29,16 +29,16 @@ class TransactionType(UUIDModel, SoftDeletableModel):
         NEUTRAL = "NEUTRAL"
 
         CHOICES = (
-            (POSITIVE, "(+) POSITIVE amounts only (e.g. Income)"),
-            (NEGATIVE, "(-) NEGATIVE amounts only (e.g. Expense)"),
-            (NEUTRAL, "(0) NEUTRAL amounts (e.g. Transfer)")
+            (POSITIVE, POSITIVE),
+            (NEGATIVE, NEGATIVE),
+            (NEUTRAL,NEUTRAL)
         )
 
     sign = models.CharField(
         max_length=20,
         choices=Sign.CHOICES,
         default=Sign.NEUTRAL,
-        help_text="Specifies the nature of the transactions (money coming in, going out, or moving between locations/buckets.",
+        help_text="Specifies the nature of the transactions (POSITIVE: money coming in, NEGATIVE: going out, or NEUTRAL: moving between locations/buckets.",
         blank=False,
     )
     name = models.CharField(
@@ -100,21 +100,6 @@ class Transaction(UUIDModel):
 
     # 'uuid' field is inherited from UUIDModel
 
-    class TransactionType:
-        """Choices for the transaction_type field"""
-
-        EXPENSE = "Expense"
-        INCOME = "Income"
-        TRANSFER = "Transfer"
-        TEMPORARY = "Temporary"
-
-        CHOICES = (
-            (EXPENSE, EXPENSE),
-            (INCOME, INCOME),
-            (TRANSFER, TRANSFER),
-            (TEMPORARY, TEMPORARY),
-        )
-
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -128,13 +113,6 @@ class Transaction(UUIDModel):
         null=False,
         help_text="Transaction description",
     )
-    transaction_type = models.CharField(
-        max_length=100,
-        choices=TransactionType.CHOICES,
-        default=TransactionType.EXPENSE,
-        blank=False,
-        help_text="Transaction type",
-    )
     category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
@@ -145,7 +123,7 @@ class Transaction(UUIDModel):
     date = models.DateField(
         blank=False,
         null=False,
-        default=datetime.today,
+        default=date.today,
         help_text="Transaction date",
     )
     amount = models.DecimalField(
@@ -169,6 +147,16 @@ class Transaction(UUIDModel):
         blank=False,
         null=True,
     )
+
+    @property
+    def transaction_type(self):
+        """Return the transaction_type from the related Category."""
+
+        return str(self.category.transaction_type) if self.category else None
+
+    @transaction_type.setter
+    def transaction_type(self, value):
+        pass
 
     def __str__(self):
         """Return the string representation of the model"""

@@ -62,8 +62,8 @@ class CategoryAdmin(admin.ModelAdmin):
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):
     list_display = ("user", "description", "transaction_type", "category", "date", "amount", "location", "bucket")
-    list_filter = ("user", "date", "transaction_type", "category", "location", "bucket")
-    search_fields = ("description", "transaction_type", "category", "date", "location", "bucket")
+    list_filter = ("user", "date", "category", "location", "bucket")
+    search_fields = ("description", "category", "date", "location", "bucket")
     ordering = ("-date",)
     readonly_fields = ()
     fieldsets = (
