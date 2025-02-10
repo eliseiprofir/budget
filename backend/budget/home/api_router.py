@@ -19,7 +19,7 @@ router.register(r"buckets", BucketViewSet, basename="bucket")
 router.register(r"locations", LocationViewSet, basename="location")
 
 # Transactions
-router.register(r"transaction_type", TransactionTypeViewSet, basename="transaction_type")
+router.register(r"transaction_types", TransactionTypeViewSet, basename="transaction_type")
 router.register(r"categories", CategoryViewSet, basename="category")
 router.register(r"transactions", TransactionViewSet, basename="transaction")
 

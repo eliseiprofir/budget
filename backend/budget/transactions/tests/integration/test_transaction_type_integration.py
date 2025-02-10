@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from model_bakery import baker
 from rest_framework import status
 
-from transactions.models import Category
+from transactions.models import TransactionType
 
 if TYPE_CHECKING:
     from rest_framework.test import APIClient
@@ -19,21 +19,21 @@ if TYPE_CHECKING:
         ("authenticated_apiclient", status.HTTP_200_OK, 1),
     ],
 )
-def test_list_category(
+def test_list_transaction_type(
     client: str,
     status_code: str,
-    category: Category,
+    transaction_type: TransactionType,
     request: pytest.FixtureRequest,
     count: int,
 ):
     client: APIClient = request.getfixturevalue(client)
-    response = client.get("/api/categories/")
+    response = client.get("/api/transaction_types/")
     json = response.json()
 
     assert response.status_code == status_code
     assert len(json) == count
-    ids = [category["id"] for category in json]
-    assert str(category.id) in ids
+    ids = [transaction_type["id"] for transaction_type in json]
+    assert str(transaction_type.id) in ids
 
 
 @pytest.mark.django_db
@@ -44,18 +44,18 @@ def test_list_category(
         ("authenticated_apiclient", status.HTTP_200_OK),
     ],
 )
-def test_get_category(
+def test_get_transaction_type(
     client: str,
     status_code: str,
-    category: Category,
+    transaction_type: TransactionType,
     request: pytest.FixtureRequest,
 ):
     client: APIClient = request.getfixturevalue(client)
 
-    response = client.get(f"/api/categories/{category.id}/")
+    response = client.get(f"/api/transaction_types/{transaction_type.id}/")
     json = response.json()
     assert response.status_code == status_code
-    assert json["id"] == str(category.id)
+    assert json["id"] == str(transaction_type.id)
 
 
 @pytest.mark.django_db
@@ -66,27 +66,25 @@ def test_get_category(
         ("authenticated_apiclient", status.HTTP_201_CREATED),
     ],
 )
-def test_create_category(
+def test_create_transaction_type(
     client: str,
     status_code: str,
     request: pytest.FixtureRequest,
-    category_recipe: str,
     transaction_type_recipe: str,
 ):
     client: APIClient = request.getfixturevalue(client)
 
-    category = baker.prepare_recipe(category_recipe)
-    transaction_type = baker.make_recipe(transaction_type_recipe)
+    transaction_type = baker.prepare_recipe(transaction_type_recipe)
     response = client.post(
-        "/api/categories/",
+        "/api/transaction_types/",
         data={
-            "name": category.name,
-            "transaction_type": transaction_type.pk,
+            "sign": transaction_type.sign,
+            "name": transaction_type.name,
         },
     )
     json = response.json()
     assert response.status_code == status_code
 
     if status_code == status.HTTP_201_CREATED:
-        assert json["name"] == category.name
-        assert json["transaction_type"] == str(transaction_type.pk)
+        assert json["sign"] == transaction_type.sign
+        assert json["name"] == transaction_type.name

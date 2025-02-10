@@ -16,7 +16,7 @@ class TransactionTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TransactionType
-        fields = ("id", "name", "is_removed")
+        fields = ("id", "name", "sign", "is_removed")
         read_only_fields = fields
 
 
@@ -25,35 +25,35 @@ class TransactionTypeWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TransactionType
-        fields = ("name", "is_removed")
+        fields = ("name", "sign", "is_removed")
         read_only_fields = ("id",)
 
 
 class CategorySerializer(serializers.ModelSerializer):
     """Serializer for the Category model"""
 
-    bucket = serializers.HyperlinkedRelatedField(
-        view_name="api:bucket-detail",
+    transaction_type = serializers.HyperlinkedRelatedField(
+        view_name="api:transaction_type-detail",
         read_only=True,
     )
 
     class Meta:
         model = Category
-        fields = ("id", "name", "bucket", "is_removed")
+        fields = ("id", "name", "transaction_type", "is_removed")
         read_only_fields = fields
 
 
 class CategoryWriteSerializer(serializers.ModelSerializer):
     """Serializer used for create operations"""
 
-    bucket = serializers.PrimaryKeyRelatedField(
-        queryset=Bucket.available_objects.all(),
+    transaction_type = serializers.PrimaryKeyRelatedField(
+        queryset=TransactionType.available_objects.all(),
         required=True,
     )
 
     class Meta:
         model = Category
-        fields = ("name", "bucket", "is_removed")
+        fields = ("name", "transaction_type", "is_removed")
         read_only_fields = ("id",)
 
 
@@ -81,6 +81,7 @@ class TransactionListSerializer(serializers.ModelSerializer):
         model = Transaction
         fields = ("id", "user", "description", "transaction_type", "category", "date", "amount", "location", "bucket")
         read_only_fields = fields
+
 
 class TransactionDetailSerializer(serializers.ModelSerializer):
     """Detail Serializer for the Transactions model"""

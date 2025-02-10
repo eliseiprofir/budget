@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 from model_utils.models import UUIDModel
 from model_utils.models import SoftDeletableModel
 from model_utils.models import SoftDeletableManager
@@ -20,12 +21,39 @@ class TransactionType(UUIDModel, SoftDeletableModel):
     # 'uuid' field is inherited from UUIDModel
     # 'is_removed' field is inherited from SoftDeletableModel
 
+    class Sign:
+        """Choices for the sign field"""
+
+        POSITIVE = "POSITIVE"
+        NEGATIVE = "NEGATIVE"
+        NEUTRAL = "NEUTRAL"
+
+        CHOICES = (
+            (POSITIVE, "(+) POSITIVE amounts only (e.g. Income)"),
+            (NEGATIVE, "(-) NEGATIVE amounts only (e.g. Expense)"),
+            (NEUTRAL, "(0) NEUTRAL amounts (e.g. Transfer)")
+        )
+
+    sign = models.CharField(
+        max_length=20,
+        choices=Sign.CHOICES,
+        default=Sign.NEUTRAL,
+        help_text="Specifies the nature of the transactions (money coming in, going out, or moving between locations/buckets.",
+        blank=False,
+    )
     name = models.CharField(
         help_text="Category name (e.g. Income, Expense, Transfer, etc.)",
         max_length=255,
         unique=True,
         blank=False,
     )
+
+    def save(self, *args, **kwargs):
+        if self.pk and TransactionType.all_objects.filter(pk=self.pk).exists():
+            old_instance = TransactionType.all_objects.get(pk=self.pk)
+            if old_instance.sign != self.sign:
+                raise ValidationError("The 'sign' field cannot be changed after creation.")
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -50,11 +78,12 @@ class Category(UUIDModel, SoftDeletableModel):
         unique=True,
         blank=False,
     )
-    bucket = models.ForeignKey(
-        Bucket,
+    transaction_type = models.ForeignKey(
+        TransactionType,
         on_delete=models.CASCADE,
         related_name="categories",
         blank=False,
+        null=False,
     )
 
     def __str__(self):

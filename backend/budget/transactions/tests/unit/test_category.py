@@ -9,7 +9,7 @@ def test_category_creation(category_recipe: str):
     category = baker.make_recipe(category_recipe)
     assert category.pk is not None
     assert category.name != ""
-    assert category.bucket != ""
+    assert category.transaction_type != ""
     assert category.is_removed in [True, False]
 
 

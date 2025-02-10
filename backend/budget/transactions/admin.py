@@ -7,17 +7,18 @@ from transactions.models import Transaction
 
 @admin.register(TransactionType)
 class TransactionTypeAdmin(admin.ModelAdmin):
-    list_display = ("name",)
-    list_filter = ("name",)
+    list_display = ("name", "sign",)
+    list_filter = ("name", "sign",)
     search_fields = ("name",)
     ordering = ("name",)
-    readonly_fields = ()
+    readonly_fields = ("sign",)
     fieldsets = (
         (
-            "TransactionType Information",
+            "Transaction Type Information",
             {
                 "fields": (
                     "name",
+                    "sign",
                     "is_removed",
                 ),
             },
@@ -33,9 +34,9 @@ class TransactionTypeAdmin(admin.ModelAdmin):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ("name", "bucket")
-    list_filter = ("name", "bucket")
-    search_fields = ("name", "bucket")
+    list_display = ("name", "transaction_type")
+    list_filter = ("name", "transaction_type")
+    search_fields = ("name", "transaction_type")
     ordering = ("name",)
     readonly_fields = ()
     fieldsets = (
@@ -44,7 +45,7 @@ class CategoryAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "name",
-                    "bucket",
+                    "transaction_type",
                     "is_removed",
                 ),
             },

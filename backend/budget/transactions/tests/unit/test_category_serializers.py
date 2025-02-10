@@ -15,45 +15,45 @@ def test_serializer_create(category_recipe: str):
     serializer = CategorySerializer(category, context={"request": request})
     assert serializer.data["id"] == str(category.id)
     assert serializer.data["name"] == category.name
-    assert serializer.data["bucket"] is not None
+    assert serializer.data["transaction_type"] is not None
     assert serializer.data["is_removed"] in [True, False]
-    assert isinstance(serializer.data["bucket"], str)
-    assert "/api/buckets/" in serializer.data["bucket"]
+    assert isinstance(serializer.data["transaction_type"], str)
+    assert "/api/transaction_types/" in serializer.data["transaction_type"]
 
 
 @pytest.mark.django_db
-def test_write_serializer_create(category_recipe: str, bucket_recipe: str):
+def test_write_serializer_create(category_recipe: str, transaction_type_recipe: str):
     """Test the CategoryWriteSerializer create method"""
-    bucket = baker.make_recipe(bucket_recipe)
+    transaction_type = baker.make_recipe(transaction_type_recipe)
     category = baker.prepare_recipe(
         category_recipe,
-        bucket=bucket,
+        transaction_type=transaction_type,
     )
     data = {
         "name": category.name,
-        "bucket": bucket.pk,
+        "transaction_type": transaction_type.pk,
     }
     serializer = CategoryWriteSerializer(data=data)
     assert serializer.is_valid(), serializer.errors
     serialized_data = serializer.save()
     assert serialized_data.name == category.name
-    assert serialized_data.bucket.pk == bucket.pk
+    assert serialized_data.transaction_type.pk == transaction_type.pk
 
 
 @pytest.mark.django_db
-def test_write_serializer_update(category_recipe: str, bucket_recipe: str):
+def test_write_serializer_update(category_recipe: str, transaction_type_recipe: str):
     """Test the CategoryWriteSerializer update method"""
-    bucket = baker.make_recipe(bucket_recipe)
+    transaction_type = baker.make_recipe(transaction_type_recipe)
     category=baker.prepare_recipe(
         category_recipe,
-        bucket=bucket,
+        transaction_type=transaction_type,
     )
     data = {
-        "bucket": category.bucket.pk,
+        "transaction_type": category.transaction_type.pk,
         "name": f"{category.name}",
     }
     serializer = CategoryWriteSerializer(category, data=data)
     assert serializer.is_valid(), serializer.errors
     updated_category = serializer.save()
     assert updated_category.name == data["name"]
-    assert updated_category.bucket.pk == category.bucket.pk
+    assert updated_category.transaction_type.pk == category.transaction_type.pk
