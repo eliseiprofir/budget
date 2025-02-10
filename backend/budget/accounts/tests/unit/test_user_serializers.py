@@ -1,8 +1,20 @@
 import pytest
 from model_bakery import baker
 
+from accounts.serializers import UserListSerializer
 from accounts.serializers import UserDetailSerializer
 from accounts.serializers import UserWriteSerializer
+
+
+@pytest.mark.django_db
+def test_list_serializer_create(user_recipe: str):
+    """Test that the UserListSerializer reads the data correctly."""
+    user = baker.make_recipe(user_recipe)
+    serializer = UserListSerializer(user)
+    assert serializer.data["id"] == str(user.id)
+    assert serializer.data["email"] == user.email
+    assert serializer.data["full_name"] == user.full_name
+    assert serializer.data["is_active"] == user.is_active
 
 
 @pytest.mark.django_db
