@@ -12,6 +12,30 @@ from core.models import Bucket
 from utils.strings import truncate
 
 
+class TransactionType(UUIDModel, SoftDeletableModel):
+    """Model to store category information."""
+
+    available_objects = SoftDeletableManager()
+
+    # 'uuid' field is inherited from UUIDModel
+    # 'is_removed' field is inherited from SoftDeletableModel
+
+    name = models.CharField(
+        help_text="Category name (e.g. Income, Expense, Transfer, etc.)",
+        max_length=255,
+        unique=True,
+        blank=False,
+    )
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Transaction Type"
+        verbose_name_plural = "Transaction Types"
+        ordering = ("name",)
+
+
 class Category(UUIDModel, SoftDeletableModel):
     """Model to store category information."""
 

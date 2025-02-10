@@ -6,8 +6,27 @@ from core.models import Location
 from core.models import Bucket
 from core.serializers import LocationSerializer
 from core.serializers import BucketSerializer
+from transactions.models import TransactionType
 from transactions.models import Category
 from .models import Transaction
+
+
+class TransactionTypeSerializer(serializers.ModelSerializer):
+    """Serializer for the TransactionType model"""
+
+    class Meta:
+        model = TransactionType
+        fields = ("id", "name", "is_removed")
+        read_only_fields = fields
+
+
+class TransactionTypeWriteSerializer(serializers.ModelSerializer):
+    """Serializer used for create operations"""
+
+    class Meta:
+        model = TransactionType
+        fields = ("name", "is_removed")
+        read_only_fields = ("id",)
 
 
 class CategorySerializer(serializers.ModelSerializer):

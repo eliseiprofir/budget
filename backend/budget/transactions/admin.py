@@ -1,7 +1,34 @@
 from django.contrib import admin
 
+from transactions.models import TransactionType
 from transactions.models import Category
 from transactions.models import Transaction
+
+
+@admin.register(TransactionType)
+class TransactionTypeAdmin(admin.ModelAdmin):
+    list_display = ("name",)
+    list_filter = ("name",)
+    search_fields = ("name",)
+    ordering = ("name",)
+    readonly_fields = ()
+    fieldsets = (
+        (
+            "TransactionType Information",
+            {
+                "fields": (
+                    "name",
+                    "is_removed",
+                ),
+            },
+        ),
+        (
+            "Metadata",
+            {
+                "fields": (),
+            },
+        ),
+    )
 
 
 @admin.register(Category)
