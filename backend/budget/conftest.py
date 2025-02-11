@@ -1,7 +1,8 @@
 import pytest
 
 from rest_framework.test import APIClient
-from accounts.tests.conftest import user  # noqa: F401
+from accounts.models import User
+from accounts.tests.conftest import user
 
 
 @pytest.fixture
@@ -15,6 +16,23 @@ def authenticated_apiclient(user):  # noqa: F811
     """Fixture for creating an authenticated APIClient."""
     client = APIClient()
     client.force_authenticate(user=user)
+    yield client
+    client.force_authenticate(user=None)
+
+
+@pytest.fixture
+def admin_user(user) -> User:
+    """Fixture for creating an admin user."""
+    user.is_superuser = True
+    user.is_staff = True
+    user.save()
+    return user
+
+@pytest.fixture
+def admin_apiclient(admin_user) -> APIClient:
+    """Fixture for creating an authenticated admin API client."""
+    client = APIClient()
+    client.force_authenticate(user=admin_user)
     yield client
     client.force_authenticate(user=None)
 

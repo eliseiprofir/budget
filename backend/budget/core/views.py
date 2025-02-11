@@ -19,11 +19,22 @@ class BucketViewSet(
 ):
     """Bucket model view."""
 
-    queryset = Bucket.available_objects.all()
     serializer_class = BucketSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("name",)
+
+    def get_queryset(self):
+        """
+        Return all buckets if user is superuser,
+        otherwise return only user's buckets.
+        For anonymous users return empty queryset.
+        """
+        if not self.request.user.is_authenticated:
+            return Bucket.available_objects.none()
+        if self.request.user.is_superuser:
+            return Bucket.available_objects.all()
+        return Bucket.available_objects.filter(user=self.request.user)
 
     def get_serializer_map(self):
         return {
@@ -44,11 +55,22 @@ class LocationViewSet(
 ):
     """Location model view."""
 
-    queryset = Location.available_objects.all()
     serializer_class = LocationSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("name",)
+
+    def get_queryset(self):
+        """
+        Return all locations if user is superuser,
+        otherwise return only user's locations.
+        For anonymous users return empty queryset.
+        """
+        if not self.request.user.is_authenticated:
+            return Location.available_objects.none()
+        if self.request.user.is_superuser:
+            return Location.available_objects.all()
+        return Location.available_objects.filter(user=self.request.user)
 
     def get_serializer_map(self):
         return {

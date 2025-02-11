@@ -73,11 +73,22 @@ class TransactionViewSet(
 ):
     """Transaction model view."""
 
-    queryset = Transaction.objects.all()
     serializer_class = TransactionListSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("name",)
+
+    def get_queryset(self):
+        """
+        Return all transactions if user is superuser,
+        otherwise return only user's transactions.
+        For anonymous users return empty queryset.
+        """
+        if not self.request.user.is_authenticated:
+            return Transaction.objects.none()
+        if self.request.user.is_superuser:
+            return Transaction.objects.all()
+        return Transaction.objects.filter(user=self.request.user)
 
     def get_serializer_map(self):
         return {

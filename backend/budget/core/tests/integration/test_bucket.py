@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 from model_bakery import baker
 from rest_framework import status
+from rest_framework.test import APIClient
 
 from accounts.models import User
 from core.models import Bucket
@@ -16,7 +17,7 @@ if TYPE_CHECKING:
 @pytest.mark.parametrize(
     ("client", "status_code", "count"),
     [
-        ("apiclient", status.HTTP_200_OK, 1),
+        ("apiclient", status.HTTP_200_OK, 0),
         ("authenticated_apiclient", status.HTTP_200_OK, 1),
     ],
 )
@@ -26,22 +27,28 @@ def test_list_bucket(
     bucket: Bucket,
     request: pytest.FixtureRequest,
     count: int,
+    user: User,
 ):
     client: APIClient = request.getfixturevalue(client)
+
+    bucket.user = user
+    bucket.save()
+
     response = client.get("/api/buckets/")
     json = response.json()
 
     assert response.status_code == status_code
     assert len(json) == count
-    ids = [bucket["id"] for bucket in json]
-    assert str(bucket.id) in ids
+    if count > 0:
+        ids = [bucket["id"] for bucket in json]
+        assert str(bucket.id) in ids
 
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     ("client", "status_code"),
     [
-        ("apiclient", status.HTTP_200_OK),
+        ("apiclient", status.HTTP_404_NOT_FOUND),
         ("authenticated_apiclient", status.HTTP_200_OK),
     ],
 )
@@ -50,13 +57,19 @@ def test_get_bucket(
     status_code: str,
     bucket: Bucket,
     request: pytest.FixtureRequest,
+    user: User,
 ):
     client: APIClient = request.getfixturevalue(client)
 
+    bucket.user = user
+    bucket.save()
+
     response = client.get(f"/api/buckets/{bucket.id}/")
-    json = response.json()
+
     assert response.status_code == status_code
-    assert json["id"] == str(bucket.id)
+    if status_code == status.HTTP_200_OK:
+        json = response.json()
+        assert json["id"] == str(bucket.id)
 
 
 @pytest.mark.django_db
@@ -93,3 +106,29 @@ def test_create_bucket(
         assert json["name"] == bucket.name
         assert json["allocation_percentage"] == str(bucket.allocation_percentage)
         assert json["user"] == str(user.pk)
+
+
+@pytest.mark.django_db
+def test_superuser_sees_all_buckets(
+    admin_apiclient: APIClient,
+    bucket_recipe: str,
+    admin_user: User,
+    user: User,
+):
+    """Test that superuser can see all buckets."""
+    user_bucket = baker.make_recipe(bucket_recipe)
+    user_bucket.user = user
+    user_bucket.save()
+
+    admin_bucket = baker.make_recipe(bucket_recipe)
+    admin_bucket.user = admin_user
+    admin_bucket.save()
+
+    response = admin_apiclient.get("/api/buckets/")
+    json = response.json()
+
+    assert response.status_code == status.HTTP_200_OK
+    assert len(json) == 2
+    ids = [b["id"] for b in json]
+    assert str(user_bucket.id) in ids
+    assert str(admin_bucket.id) in ids
