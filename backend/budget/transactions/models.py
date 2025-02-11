@@ -42,7 +42,7 @@ class TransactionType(UUIDModel, SoftDeletableModel):
         blank=False,
     )
     name = models.CharField(
-        help_text="Category name (e.g. Income, Expense, Transfer, etc.)",
+        help_text="Transaction type name (e.g. Income, Expense, Transfer, etc.)",
         max_length=255,
         unique=True,
         blank=False,
@@ -50,7 +50,7 @@ class TransactionType(UUIDModel, SoftDeletableModel):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="transaction_type",
+        related_name="transaction_types",
         blank=False,
     )
 
