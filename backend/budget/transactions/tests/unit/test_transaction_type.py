@@ -11,6 +11,7 @@ def test_transaction_type_creation(transaction_type_recipe: str):
     assert transaction_type.pk is not None
     assert transaction_type.sign != ""
     assert transaction_type.name != ""
+    assert transaction_type.user.pk is not None
     assert transaction_type.is_removed in [True, False]
 
 
@@ -45,16 +46,18 @@ def test_sign_editing_constraint(transaction_type_recipe: str):
 
 
 @pytest.mark.django_db
-def test_crud_operations(transaction_type_recipe: str):
+def test_crud_operations(transaction_type_recipe: str, user_recipe: str):
     """Test the CRUD operations for the model"""
 
     # Create
     name = "Income"
     sign = TransactionType.Sign.POSITIVE
+    user = baker.make_recipe(user_recipe)
     transaction_type = baker.make_recipe(
         transaction_type_recipe,
         name=name,
         sign=sign,
+        user=user
     )
     assert TransactionType.available_objects.count() == 1
     assert transaction_type.name == name

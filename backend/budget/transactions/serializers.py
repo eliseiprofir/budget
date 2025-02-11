@@ -14,18 +14,28 @@ from .models import Transaction
 class TransactionTypeSerializer(serializers.ModelSerializer):
     """Serializer for the TransactionType model"""
 
+    user = serializers.HyperlinkedRelatedField(
+        view_name="api:user-detail",
+        read_only=True,
+    )
+
     class Meta:
         model = TransactionType
-        fields = ("id", "name", "sign", "is_removed")
+        fields = ("id", "name", "sign", "user", "is_removed")
         read_only_fields = fields
 
 
 class TransactionTypeWriteSerializer(serializers.ModelSerializer):
     """Serializer used for create operations"""
 
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(),
+        required=True,
+    )
+
     class Meta:
         model = TransactionType
-        fields = ("name", "sign", "is_removed")
+        fields = ("name", "sign", "user", "is_removed")
         read_only_fields = ("id",)
 
 

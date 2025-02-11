@@ -7,8 +7,8 @@ from transactions.models import Transaction
 
 @admin.register(TransactionType)
 class TransactionTypeAdmin(admin.ModelAdmin):
-    list_display = ("name", "sign",)
-    list_filter = ("name", "sign",)
+    list_display = ("name", "sign", "user",)
+    list_filter = ("name", "sign", "user",)
     search_fields = ("name",)
     ordering = ("name",)
     readonly_fields = ("sign",)
@@ -19,6 +19,7 @@ class TransactionTypeAdmin(admin.ModelAdmin):
                 "fields": (
                     "name",
                     "sign",
+                    "user",
                     "is_removed",
                 ),
             },

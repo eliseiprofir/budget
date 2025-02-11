@@ -47,6 +47,12 @@ class TransactionType(UUIDModel, SoftDeletableModel):
         unique=True,
         blank=False,
     )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="transaction_type",
+        blank=False,
+    )
 
     def save(self, *args, **kwargs):
         if self.pk and TransactionType.all_objects.filter(pk=self.pk).exists():
