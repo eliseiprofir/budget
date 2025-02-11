@@ -1,7 +1,7 @@
 from rest_framework import filters
 from rest_framework import mixins
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated
 
 from accounts.models import User
 from accounts.serializers import UserListSerializer
@@ -17,11 +17,34 @@ class UserViewSet(
 ):
     """User model view."""
 
-    queryset = User.available_objects.all()
     serializer_class = UserListSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsAuthenticated,)
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("created",)
+
+    def get_queryset(self):
+        """
+        Filter queryset to return only the current user.
+        Superusers can see all users.
+        """
+        if not self.request.user.is_authenticated:
+            return User.objects.none()
+        if self.request.user.is_superuser:
+            return User.objects.all()
+        return User.objects.filter(id=self.request.user.id)
+
+    def get_object(self):
+        """
+        Override to ensure users can only retrieve their own profile.
+        Superusers can retrieve any profile.
+        """
+        obj = super().get_object()
+        if not self.request.user.is_superuser and obj.id != self.request.user.id:
+            self.permission_denied(
+                self.request,
+                message="You do not have permission to access this user's profile."
+            )
+        return obj
 
     def get_serializer_map(self):
         return {
