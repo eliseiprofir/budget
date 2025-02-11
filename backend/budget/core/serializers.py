@@ -26,6 +26,15 @@ class LocationWriteSerializer(serializers.ModelSerializer):
         fields = ("name", "is_removed")
         read_only_fields = ("id", "user")
 
+    def validate_name(self, value):
+        user = self.context["request"].user
+        if Location.available_objects.filter(user=user, name=value).exists():
+            raise serializers.ValidationError(
+                "You already have a location with that name."
+            )
+        return value
+
+
 
 class BucketSerializer(serializers.ModelSerializer):
     """Serializer for the Bucket model"""
@@ -48,3 +57,11 @@ class BucketWriteSerializer(serializers.ModelSerializer):
         model = Bucket
         fields = ("name", "allocation_percentage", "is_removed")
         read_only_fields = ("id", "user")
+
+    def validate_name(self, value):
+        user = self.context["request"].user
+        if Bucket.available_objects.filter(user=user, name=value).exists():
+            raise serializers.ValidationError(
+                "You already have a bucket with that name."
+            )
+        return value

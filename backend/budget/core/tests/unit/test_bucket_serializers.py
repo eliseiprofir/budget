@@ -34,7 +34,8 @@ def test_write_serializer_create(bucket_recipe: str, user_recipe: str):
         "name": bucket.name,
         "allocation_percentage": bucket.allocation_percentage,
     }
-    serializer = BucketWriteSerializer(data=data)
+    mock_request = type("Request", (), {"user": user})()
+    serializer = BucketWriteSerializer(data=data, context={"request": mock_request})
     assert serializer.is_valid(), serializer.errors
     serialized_data = serializer.save(user=user)
     assert serialized_data.name == bucket.name
@@ -55,7 +56,8 @@ def test_write_serializer_update(bucket_recipe: str, user_recipe: str):
         "name": f"{bucket.name}",
         "allocation_percentage": "55.55",
     }
-    serializer = BucketWriteSerializer(bucket, data=data)
+    mock_request = type("Request", (), {"user": user})()
+    serializer = BucketWriteSerializer(bucket, data=data, context={"request": mock_request})
     assert serializer.is_valid(), serializer.errors
     updated_bucket = serializer.save()
     assert updated_bucket.name == data["name"]

@@ -32,7 +32,8 @@ def test_write_serializer_create(location_recipe: str, user_recipe: str):
     data = {
         "name": location.name,
     }
-    serializer = LocationWriteSerializer(data=data)
+    mock_request = type("Request", (), {"user": user})()
+    serializer = LocationWriteSerializer(data=data, context={"request": mock_request})
     assert serializer.is_valid(), serializer.errors
     serialized_data = serializer.save(user=user)
     assert serialized_data.name == location.name
@@ -51,7 +52,8 @@ def test_write_serializer_update(location_recipe: str, user_recipe: str):
         "user": location.user.pk,
         "name": f"{location.name}",
     }
-    serializer = LocationWriteSerializer(location, data=data)
+    mock_request = type("Request", (), {"user": user})()
+    serializer = LocationWriteSerializer(location, data=data, context={"request": mock_request})
     assert serializer.is_valid(), serializer.errors
     updated_location = serializer.save()
     assert updated_location.name == data["name"]

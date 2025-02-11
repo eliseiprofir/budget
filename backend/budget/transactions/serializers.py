@@ -28,11 +28,18 @@ class TransactionTypeSerializer(serializers.ModelSerializer):
 class TransactionTypeWriteSerializer(serializers.ModelSerializer):
     """Serializer used for create operations"""
 
-
     class Meta:
         model = TransactionType
         fields = ("name", "sign", "is_removed")
         read_only_fields = ("id", "user")
+
+    def validate_name(self, value):
+        user = self.context["request"].user
+        if TransactionType.available_objects.filter(user=user, name=value).exists():
+            raise serializers.ValidationError(
+                "You already have a bucket with that name."
+            )
+        return value
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -61,6 +68,16 @@ class CategoryWriteSerializer(serializers.ModelSerializer):
         model = Category
         fields = ("name", "transaction_type", "is_removed")
         read_only_fields = ("id",)
+
+    def validate_name(self, value):
+        transaction_type = self.initial_data.get("transaction_type")
+        if Category.available_objects.filter(
+                transaction_type=transaction_type, name=value
+        ).exists():
+            raise serializers.ValidationError(
+                "You already have a category with that name."
+            )
+        return value
 
 
 class TransactionListSerializer(serializers.ModelSerializer):

@@ -44,7 +44,6 @@ class TransactionType(UUIDModel, SoftDeletableModel):
     name = models.CharField(
         help_text="Transaction type name (e.g. Income, Expense, Transfer, etc.)",
         max_length=255,
-        unique=True,
         blank=False,
     )
     user = models.ForeignKey(
@@ -81,7 +80,6 @@ class Category(UUIDModel, SoftDeletableModel):
     name = models.CharField(
         help_text="Category name (e.g. (1) for Income: Salary, Bonuses, etc.; (2) for Expense: Utilities, Necessities/Utilities, Books, Education/Books, etc.",
         max_length=255,
-        unique=True,
         blank=False,
     )
     transaction_type = models.ForeignKey(

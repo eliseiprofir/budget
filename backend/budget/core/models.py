@@ -17,7 +17,6 @@ class Bucket(UUIDModel, SoftDeletableModel):
     name = models.CharField(
         help_text="Bucket name (e.g. Economy, Necessities, Education, Donation, etc.)",
         max_length=255,
-        unique=True,
         blank=False,
     )
     user = models.ForeignKey(
@@ -53,7 +52,6 @@ class Location(UUIDModel, SoftDeletableModel):
     name = models.CharField(
         help_text="Location name (e.g. Cash, Card, Revolut, ING, etc.)",
         max_length=255,
-        unique=True,
         blank=False,
     )
     user = models.ForeignKey(

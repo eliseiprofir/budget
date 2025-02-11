@@ -34,7 +34,8 @@ def test_write_serializer_create(transaction_type_recipe: str, user_recipe: str)
         "sign": transaction_type.sign,
         "name": transaction_type.name,
     }
-    serializer = TransactionTypeWriteSerializer(data=data)
+    mock_request = type("Request", (), {"user": user})()
+    serializer = TransactionTypeWriteSerializer(data=data, context={"request": mock_request})
     assert serializer.is_valid(), serializer.errors
     serialized_data = serializer.save(user=user)
     assert serialized_data.sign == transaction_type.sign
@@ -55,7 +56,8 @@ def test_write_serializer_update(transaction_type_recipe: str, user_recipe: str)
         "name": f"{transaction_type.name}",
         "user": transaction_type.user.pk,
     }
-    serializer = TransactionTypeWriteSerializer(transaction_type, data=data)
+    mock_request = type("Request", (), {"user": user})()
+    serializer = TransactionTypeWriteSerializer(transaction_type, data=data, context={"request": mock_request})
     assert serializer.is_valid(), serializer.errors
     updated_transaction_type = serializer.save()
     assert updated_transaction_type.sign == data["sign"]
