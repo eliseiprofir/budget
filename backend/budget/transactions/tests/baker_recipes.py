@@ -24,6 +24,7 @@ transaction_type_recipe = Recipe(
         ]
     ),
     name=lambda: fake.word(),
+    user=foreign_key(user_recipe),
 )
 
 category_recipe = Recipe(
