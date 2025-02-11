@@ -33,11 +33,10 @@ def test_write_serializer_create(transaction_type_recipe: str, user_recipe: str)
     data = {
         "sign": transaction_type.sign,
         "name": transaction_type.name,
-        "user": user.pk,
     }
     serializer = TransactionTypeWriteSerializer(data=data)
     assert serializer.is_valid(), serializer.errors
-    serialized_data = serializer.save()
+    serialized_data = serializer.save(user=user)
     assert serialized_data.sign == transaction_type.sign
     assert serialized_data.name == transaction_type.name
     assert serialized_data.user.pk == user.pk

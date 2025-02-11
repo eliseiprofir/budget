@@ -31,11 +31,10 @@ def test_write_serializer_create(location_recipe: str, user_recipe: str):
     )
     data = {
         "name": location.name,
-        "user": user.pk,
     }
     serializer = LocationWriteSerializer(data=data)
     assert serializer.is_valid(), serializer.errors
-    serialized_data = serializer.save()
+    serialized_data = serializer.save(user=user)
     assert serialized_data.name == location.name
     assert serialized_data.user.pk == user.pk
 

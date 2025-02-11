@@ -33,11 +33,10 @@ def test_write_serializer_create(bucket_recipe: str, user_recipe: str):
     data = {
         "name": bucket.name,
         "allocation_percentage": bucket.allocation_percentage,
-        "user": user.pk,
     }
     serializer = BucketWriteSerializer(data=data)
     assert serializer.is_valid(), serializer.errors
-    serialized_data = serializer.save()
+    serialized_data = serializer.save(user=user)
     assert serialized_data.name == bucket.name
     assert serialized_data.allocation_percentage == bucket.allocation_percentage
     assert serialized_data.user.pk == user.pk

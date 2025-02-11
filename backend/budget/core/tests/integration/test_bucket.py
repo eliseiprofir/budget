@@ -91,7 +91,6 @@ def test_create_bucket(
         data={
             "name": bucket.name,
             "allocation_percentage": bucket.allocation_percentage,
-            "user": user.pk
         },
     )
     json = response.json()
@@ -100,7 +99,6 @@ def test_create_bucket(
     if status_code == status.HTTP_201_CREATED:
         assert json["name"] == bucket.name
         assert json["allocation_percentage"] == str(bucket.allocation_percentage)
-        assert json["user"] == str(user.pk)
 
 
 @pytest.mark.django_db
@@ -124,6 +122,6 @@ def test_superuser_sees_all_buckets(
 
     assert response.status_code == status.HTTP_200_OK
     assert len(json) == 2
-    ids = [b["id"] for b in json]
+    ids = [bucket["id"] for bucket in json]
     assert str(user_bucket.id) in ids
     assert str(admin_bucket.id) in ids

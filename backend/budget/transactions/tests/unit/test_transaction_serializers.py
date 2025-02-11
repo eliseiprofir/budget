@@ -88,7 +88,6 @@ def test_write_serializer_create(
         bucket=bucket,
     )
     data = {
-        "user": user.id,
         "description": transaction.description,
         "category": category.pk,
         "amount": transaction.amount,
@@ -98,8 +97,7 @@ def test_write_serializer_create(
     }
     serializer = TransactionWriteSerializer(data=data)
     assert serializer.is_valid(), serializer.errors
-    serialized_data = serializer.save()
-    assert serialized_data.user.pk == user.pk
+    serialized_data = serializer.save(user=user)
     assert serialized_data.description == transaction.description
     assert serialized_data.category.pk == category.pk
     assert str(serialized_data.date) == transaction.date
@@ -111,19 +109,18 @@ def test_write_serializer_create(
 
 @pytest.mark.django_db
 def test_write_serializer_update(
-        transaction: Transaction,
-        user_recipe: str,
-        category_recipe: str,
-        location_recipe: str,
-        bucket_recipe: str,
+    transaction: Transaction,
+    user_recipe: str,
+    category_recipe: str,
+    location_recipe: str,
+    bucket_recipe: str,
 ):
     """Test the TransactionWriteSerializer update method"""
-    user = baker.make_recipe(user_recipe, email="test@gmail.com")
+    original_user = transaction.user
     category = baker.make_recipe(category_recipe, name="New Category")
     location = baker.make_recipe(location_recipe, name="New Location")
     bucket = baker.make_recipe(bucket_recipe, name="New Bucket")
     data = {
-        "user": str(user.id),
         "description": transaction.description,
         "category": str(category.id),
         "date": transaction.date,
@@ -135,7 +132,7 @@ def test_write_serializer_update(
     serializer = TransactionWriteSerializer(transaction, data=data)
     assert serializer.is_valid(), serializer.errors
     updated_transaction = serializer.save()
-    assert str(updated_transaction.user.pk) == data["user"]
+    assert updated_transaction.user == original_user
     assert updated_transaction.description == data["description"]
     assert str(updated_transaction.category.pk) == data["category"]
     assert str(updated_transaction.date) == data["date"]

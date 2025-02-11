@@ -46,6 +46,9 @@ class BucketViewSet(
     def get_serializer_class(self):
         return self.get_serializer_map().get(self.action, self.serializer_class)
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
 
 class LocationViewSet(
     viewsets.GenericViewSet,
@@ -81,3 +84,6 @@ class LocationViewSet(
 
     def get_serializer_class(self):
         return self.get_serializer_map().get(self.action, self.serializer_class)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)

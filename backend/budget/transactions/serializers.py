@@ -28,15 +28,11 @@ class TransactionTypeSerializer(serializers.ModelSerializer):
 class TransactionTypeWriteSerializer(serializers.ModelSerializer):
     """Serializer used for create operations"""
 
-    user = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(),
-        required=True,
-    )
 
     class Meta:
         model = TransactionType
-        fields = ("name", "sign", "user", "is_removed")
-        read_only_fields = ("id",)
+        fields = ("name", "sign", "is_removed")
+        read_only_fields = ("id", "user")
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -110,10 +106,6 @@ class TransactionDetailSerializer(serializers.ModelSerializer):
 class TransactionWriteSerializer(serializers.ModelSerializer):
     """Serializer used for create operations"""
 
-    user = serializers.PrimaryKeyRelatedField(
-        queryset=User.available_objects.all(),
-        required=True,
-    )
     category = serializers.PrimaryKeyRelatedField(
         queryset=Category.available_objects.all(),
         required=True,
@@ -129,5 +121,5 @@ class TransactionWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ("user", "description", "transaction_type", "category", "date", "amount", "location", "bucket")
-        read_only_fields = ("id",)
+        fields = ("description", "transaction_type", "category", "date", "amount", "location", "bucket")
+        read_only_fields = ("id", "user")

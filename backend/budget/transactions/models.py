@@ -38,7 +38,7 @@ class TransactionType(UUIDModel, SoftDeletableModel):
         max_length=20,
         choices=Sign.CHOICES,
         default=Sign.NEUTRAL,
-        help_text="Specifies the nature of the transactions (POSITIVE: money coming in, NEGATIVE: going out, or NEUTRAL: moving between locations/buckets.",
+        help_text="Specifies the nature of the transactions. POSITIVE: money coming in, NEGATIVE: money going out, or NEUTRAL: moving between locations/buckets.",
         blank=False,
     )
     name = models.CharField(
