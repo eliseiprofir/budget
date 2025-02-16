@@ -105,17 +105,13 @@ def test_create_bucket(
 def test_superuser_sees_all_buckets(
     admin_apiclient: APIClient,
     bucket_recipe: str,
-    admin_user: User,
-    user: User,
+    user_recipe: str,
 ):
     """Test that superuser can see all buckets."""
-    user_bucket = baker.make_recipe(bucket_recipe)
-    user_bucket.user = user
-    user_bucket.save()
-
-    admin_bucket = baker.make_recipe(bucket_recipe)
-    admin_bucket.user = admin_user
-    admin_bucket.save()
+    user = baker.make_recipe(user_recipe)
+    admin_user = baker.make_recipe(user_recipe, is_staff=True, is_superuser=True)
+    user_bucket = baker.make_recipe(bucket_recipe, user=user, allocation_percentage=99)
+    admin_bucket = baker.make_recipe(bucket_recipe, user=admin_user, allocation_percentage=99)
 
     response = admin_apiclient.get("/api/buckets/")
     json = response.json()

@@ -79,7 +79,7 @@ def test_write_serializer_create(
     user = baker.make_recipe(user_recipe)
     category = baker.make_recipe(category_recipe)
     location = baker.make_recipe(location_recipe)
-    bucket = baker.make_recipe(bucket_recipe)
+    bucket = baker.make_recipe(bucket_recipe, user=user, allocation_percentage=100)
     transaction = baker.prepare_recipe(
         transaction_recipe,
         user=user,
@@ -95,7 +95,8 @@ def test_write_serializer_create(
         "location": location.pk,
         "bucket": bucket.pk,
     }
-    serializer = TransactionWriteSerializer(data=data)
+    mock_request = type("Request", (), {"user": user})()
+    serializer = TransactionWriteSerializer(data=data, context={"request": mock_request})
     assert serializer.is_valid(), serializer.errors
     serialized_data = serializer.save(user=user)
     assert serialized_data.description == transaction.description
@@ -119,7 +120,7 @@ def test_write_serializer_update(
     original_user = transaction.user
     category = baker.make_recipe(category_recipe, name="New Category")
     location = baker.make_recipe(location_recipe, name="New Location")
-    bucket = baker.make_recipe(bucket_recipe, name="New Bucket")
+    bucket = baker.make_recipe(bucket_recipe, name="New Bucket", user=original_user, allocation_percentage=100)
     data = {
         "description": transaction.description,
         "category": str(category.id),
@@ -129,7 +130,8 @@ def test_write_serializer_update(
         "location": str(location.id),
         "transaction_type": str(category.transaction_type),
     }
-    serializer = TransactionWriteSerializer(transaction, data=data)
+    mock_request = type("Request", (), {"user": original_user})()
+    serializer = TransactionWriteSerializer(transaction, data=data, context={"request": mock_request})
     assert serializer.is_valid(), serializer.errors
     updated_transaction = serializer.save()
     assert updated_transaction.user == original_user

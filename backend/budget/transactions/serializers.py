@@ -140,3 +140,13 @@ class TransactionWriteSerializer(serializers.ModelSerializer):
         model = Transaction
         fields = ("description", "transaction_type", "category", "date", "amount", "location", "bucket")
         read_only_fields = ("id", "user")
+
+    def validate(self, data):
+        """Validate that bucket allocations are complete before allowing transaction creation."""
+
+        user = self.context["request"].user
+        if not Bucket.is_allocation_complete(user):
+            raise serializers.ValidationError(
+                "Cannot create transactions until bucket allocations total 100%. Please complete your bucket allocations first."
+            )
+        return data

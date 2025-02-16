@@ -16,6 +16,7 @@ def test_serializer_create(bucket_recipe: str):
     assert serializer.data["id"] == str(bucket.id)
     assert serializer.data["name"] == bucket.name
     assert serializer.data["allocation_percentage"] is not None
+    assert serializer.data["allocation_status"] != ""
     assert serializer.data["user"] is not None
     assert serializer.data["is_removed"] in [True, False]
     assert isinstance(serializer.data["user"], str)

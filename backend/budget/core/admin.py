@@ -6,11 +6,11 @@ from core.models import Location
 
 @admin.register(Bucket)
 class BucketAdmin(admin.ModelAdmin):
-    list_display = ("name", "user", "allocation_percentage")
+    list_display = ("name", "user", "allocation_percentage", "allocation_status")
     list_filter = ("is_removed",)
     search_fields = ("name",)
     ordering = ("name",)
-    readonly_fields = ()
+    readonly_fields = ("allocation_status",)
     fieldsets = (
         (
             "Bucket Information",
@@ -19,6 +19,7 @@ class BucketAdmin(admin.ModelAdmin):
                     "name",
                     "user",
                     "allocation_percentage",
+                    "allocation_status",
                     "is_removed",
                 ),
             },
