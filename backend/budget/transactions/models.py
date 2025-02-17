@@ -31,7 +31,7 @@ class TransactionType(UUIDModel, SoftDeletableModel):
         CHOICES = (
             (POSITIVE, POSITIVE),
             (NEGATIVE, NEGATIVE),
-            (NEUTRAL,NEUTRAL)
+            (NEUTRAL, NEUTRAL)
         )
 
     sign = models.CharField(
@@ -131,7 +131,7 @@ class Transaction(UUIDModel):
         help_text="Transaction date",
     )
     amount = models.DecimalField(
-        max_digits=1000,
+        max_digits=10,
         decimal_places=2,
         blank=False,
         null=False,
@@ -156,7 +156,7 @@ class Transaction(UUIDModel):
     def transaction_type(self):
         """Return the transaction_type from the related Category."""
 
-        return str(self.category.transaction_type) if self.category else None
+        return self.category.transaction_type.name if self.category else None
 
     @transaction_type.setter
     def transaction_type(self, value):
@@ -172,6 +172,13 @@ class Transaction(UUIDModel):
 
         return f"{self.date}, {self.transaction_type}, {self.category.name}, {truncate(str(self.description), 10)}, {self.location}, {self.bucket}"
 
+    def save(self, *args, **kwargs):
+        """Adjust the amount if the transaction_type is negative"""
+
+        if self.category.transaction_type.sign == TransactionType.Sign.NEGATIVE:
+            self.amount *= -1
+
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = "Transaction"

@@ -1,6 +1,8 @@
 import pytest
+from django.core.exceptions import ValidationError
 from model_bakery import baker
 from transactions.models import Transaction
+from transactions.models import TransactionType
 from utils.strings import truncate
 
 
@@ -19,44 +21,123 @@ def test_transaction_creation(transaction_recipe: str):
 
 
 @pytest.mark.django_db
-def test_crud_operations(transaction_recipe: str, category_recipe: str):
-    """Test the CRUD operations for the model"""
+def test_crud_positive_transaction(
+    transaction_recipe: str,
+    category_recipe: str,
+    transaction_type_recipe: str
+):
+    """Test the CRUD operations for positive transactions"""
 
     # Create
-    description = "Food"
+    transaction_type = baker.make_recipe(transaction_type_recipe, sign=TransactionType.Sign.POSITIVE)
+    category = baker.make_recipe(category_recipe, transaction_type=transaction_type)
     transaction = baker.make_recipe(
         transaction_recipe,
-        description=description,
+        description="Salary",
+        amount=100,
+        category=category
     )
     assert Transaction.objects.count() == 1
-    assert transaction.description == description
+    assert transaction.description == "Salary"
+    assert transaction.amount == 100
 
     # Read
     fetched_transaction = Transaction.objects.get(pk=transaction.pk)
-    assert fetched_transaction.description == description
+    assert fetched_transaction.description == "Salary"
+    assert fetched_transaction.amount == 100
 
     # Update description
-    transaction.description = "Economy"
+    transaction.description = "Bonuses"
     transaction.save()
     updated_transaction = Transaction.objects.get(pk=transaction.pk)
-    assert updated_transaction.description == "Economy"
+    assert updated_transaction.description == "Bonuses"
 
     # Update amount
-    transaction.amount = 100
+    transaction.amount = 200
     transaction.save()
     updated_transaction = Transaction.objects.get(pk=transaction.pk)
-    assert updated_transaction.amount == 100
+    assert updated_transaction.amount == 200
 
-    # Update transaction_type
-    new_category = baker.make_recipe(category_recipe)
+    # Update amount with negative value (simulating return of income)
+    transaction.amount = -50
+    transaction.save()
+    updated_transaction = Transaction.objects.get(pk=transaction.pk)
+    assert updated_transaction.amount == -50
+
+    # Update category
+    new_transaction_type = baker.make_recipe(transaction_type_recipe, sign=TransactionType.Sign.POSITIVE)
+    new_category = baker.make_recipe(
+        category_recipe,
+        name="New Income Category",
+        transaction_type=new_transaction_type
+    )
     transaction.category = new_category
     transaction.save()
     updated_transaction = Transaction.objects.get(pk=transaction.pk)
-    assert updated_transaction.transaction_type == str(new_category.transaction_type)
+    assert str(updated_transaction.category) == str(new_category)
+    assert updated_transaction.category.transaction_type.sign == TransactionType.Sign.POSITIVE
 
     # Delete
     transaction.delete()
     assert Transaction.objects.count() == 0
+
+
+@pytest.mark.django_db
+def test_crud_negative_transaction(
+        transaction_recipe: str,
+        category_recipe: str,
+        transaction_type_recipe: str
+):
+    """Test the CRUD operations for negative transactions"""
+
+    # Create
+    transaction_type = baker.make_recipe(transaction_type_recipe, sign=TransactionType.Sign.NEGATIVE)
+    category = baker.make_recipe(category_recipe, transaction_type=transaction_type)
+    transaction = baker.make_recipe(
+        transaction_recipe,
+        description="Utilities",
+        amount=50,  # Will be converted to -50 due to NEGATIVE type
+        category=category
+    )
+    assert Transaction.objects.count() == 1
+    assert transaction.description == "Utilities"
+    assert transaction.amount == -50  # Verify automatic conversion to negative
+
+    # Read
+    fetched_transaction = Transaction.objects.get(pk=transaction.pk)
+    assert fetched_transaction.description == "Utilities"
+    assert fetched_transaction.amount == -50
+
+    # Update description
+    transaction.description = "Rent"
+    transaction.save()
+    updated_transaction = Transaction.objects.get(pk=transaction.pk)
+    assert updated_transaction.description == "Rent"
+
+    # Update amount
+    transaction.amount = 100  # Will be converted to -100
+    transaction.save()
+    updated_transaction = Transaction.objects.get(pk=transaction.pk)
+    assert updated_transaction.amount == -100
+
+    # Update amount with negative value (simulating refund)
+    transaction.amount = -75  # Will be converted to +75 (refund)
+    transaction.save()
+    updated_transaction = Transaction.objects.get(pk=transaction.pk)
+    assert updated_transaction.amount == 75
+
+    # Update category
+    new_transaction_type = baker.make_recipe(transaction_type_recipe, sign=TransactionType.Sign.NEGATIVE)
+    new_category = baker.make_recipe(
+        category_recipe,
+        name="New Expense Category",
+        transaction_type=new_transaction_type
+    )
+    transaction.category = new_category
+    transaction.save()
+    updated_transaction = Transaction.objects.get(pk=transaction.pk)
+    assert str(updated_transaction.category) == str(new_category)
+    assert updated_transaction.category.transaction_type.sign == TransactionType.Sign.NEGATIVE
 
 
 @pytest.mark.django_db

@@ -1,8 +1,10 @@
 import pytest
 from model_bakery import baker
+from decimal import Decimal
 from rest_framework.test import APIRequestFactory
 
 from transactions.models import Transaction
+from transactions.models import TransactionType
 from transactions.serializers import TransactionListSerializer
 from transactions.serializers import TransactionDetailSerializer
 from transactions.serializers import TransactionWriteSerializer
@@ -102,7 +104,10 @@ def test_write_serializer_create(
     assert serialized_data.description == transaction.description
     assert serialized_data.category.pk == category.pk
     assert str(serialized_data.date) == transaction.date
-    assert serialized_data.amount == transaction.amount
+    if serialized_data.transaction_type == TransactionType.Sign.POSITIVE or serialized_data.transaction_type == TransactionType.Sign.NEUTRAL:
+        assert serialized_data.amount == transaction.amount
+    if transaction.transaction_type == TransactionType.Sign.NEGATIVE:
+        assert serialized_data.amount == transaction.amount * (-1)
     assert serialized_data.location.pk == location.pk
     assert serialized_data.bucket.pk == bucket.pk
     assert serialized_data.transaction_type == transaction.transaction_type
@@ -138,8 +143,10 @@ def test_write_serializer_update(
     assert updated_transaction.description == data["description"]
     assert str(updated_transaction.category.pk) == data["category"]
     assert str(updated_transaction.date) == data["date"]
-    assert updated_transaction.amount == data["amount"]
+    if updated_transaction.transaction_type == TransactionType.Sign.POSITIVE or updated_transaction.transaction_type == TransactionType.Sign.NEUTRAL:
+        assert updated_transaction.amount == data["amount"]
+    if updated_transaction.transaction_type == TransactionType.Sign.NEGATIVE:
+        assert updated_transaction.amount == Decimal(f"{float(data["amount"]) * (-1):.2f}")
     assert str(updated_transaction.bucket.pk) == data["bucket"]
     assert str(updated_transaction.location.pk) == data["location"]
-    assert updated_transaction.transaction_type == data["transaction_type"]
-
+    assert str(updated_transaction.transaction_type) == data["transaction_type"]

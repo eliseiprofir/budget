@@ -43,6 +43,7 @@ def test_sign_editing_constraint(transaction_type_recipe: str):
     transaction_type.sign = TransactionType.Sign.POSITIVE
     with pytest.raises(ValidationError):
         transaction_type.save()
+        transaction_type.full_clean()
 
 
 @pytest.mark.django_db
