@@ -101,7 +101,7 @@ def test_validate_allocation_percentage(user_recipe: str, bucket_recipe: str):
         baker.make_recipe(bucket_recipe, allocation_percentage=105)
 
     user = baker.make_recipe(user_recipe)
-    bucket = baker.make_recipe(bucket_recipe, user=user, allocation_percentage=50)
+    baker.make_recipe(bucket_recipe, user=user, allocation_percentage=50)
     with pytest.raises(ValidationError):
         baker.make_recipe(bucket_recipe, allocation_percentage=60, user=user)
 

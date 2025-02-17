@@ -126,6 +126,6 @@ def test_superuser_sees_all_locations(
 
     assert response.status_code == status.HTTP_200_OK
     assert len(json) == 2
-    ids = [l["id"] for l in json]
+    ids = [location["id"] for location in json]
     assert str(user_location.id) in ids
     assert str(admin_location.id) in ids

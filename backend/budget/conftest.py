@@ -21,7 +21,7 @@ def authenticated_apiclient(user):  # noqa: F811
 
 
 @pytest.fixture
-def admin_user(user) -> User:
+def admin_user(user) -> User:  # noqa: F811
     """Fixture for creating an admin user."""
     user.is_superuser = True
     user.is_staff = True

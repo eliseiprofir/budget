@@ -1,5 +1,4 @@
 import pytest
-from django.core.exceptions import ValidationError
 from model_bakery import baker
 from transactions.models import Transaction
 from transactions.models import TransactionType

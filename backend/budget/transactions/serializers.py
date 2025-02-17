@@ -1,6 +1,5 @@
 from rest_framework import serializers
 
-from accounts.models import User
 from accounts.serializers import UserListSerializer
 from core.models import Location
 from core.models import Bucket

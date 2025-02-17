@@ -1,7 +1,5 @@
 import pytest
 from model_bakery import baker
-from rest_framework.test import APIClient
-from accounts.models import User
 from transactions.models import TransactionType
 from transactions.models import Category
 from transactions.models import Transaction
