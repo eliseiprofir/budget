@@ -34,3 +34,11 @@ class UserAdmin(UserAdmin):
     def get_queryset(self, request):
         """Show all users, including soft-deleted ones."""
         return self.model.all_objects.all()
+
+    def changelist_view(self, request, extra_context=None):
+        if not request.GET and hasattr(self, 'list_filter_default'):
+            q = request.GET.copy()
+            for key, value in self.list_filter_default.items():
+                q[key] = value
+            request.GET = q
+        return super().changelist_view(request, extra_context=extra_context)

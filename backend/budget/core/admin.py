@@ -6,8 +6,9 @@ from core.models import Location
 
 @admin.register(Bucket)
 class BucketAdmin(admin.ModelAdmin):
-    list_display = ("name", "user", "allocation_percentage", "allocation_status")
+    list_display = ("name", "user", "allocation_percentage", "allocation_status", "is_removed")
     list_filter = ("is_removed",)
+    list_filter_default = {"is_removed": False}
     search_fields = ("name",)
     ordering = ("name",)
     readonly_fields = ("allocation_status",)
@@ -32,11 +33,23 @@ class BucketAdmin(admin.ModelAdmin):
         ),
     )
 
+    def get_queryset(self, request):
+        return Bucket.all_objects.all()
+
+    def changelist_view(self, request, extra_context=None):
+        if not request.GET and hasattr(self, 'list_filter_default'):
+            q = request.GET.copy()
+            for key, value in self.list_filter_default.items():
+                q[key] = value
+            request.GET = q
+        return super().changelist_view(request, extra_context=extra_context)
+
 
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
-    list_display = ("name", "user")
+    list_display = ("name", "user", "is_removed")
     list_filter = ("is_removed",)
+    list_filter_default = {"is_removed": False}
     search_fields = ("name",)
     ordering = ("name",)
     readonly_fields = ()
@@ -58,3 +71,14 @@ class LocationAdmin(admin.ModelAdmin):
             },
         ),
     )
+
+    def get_queryset(self, request):
+        return Location.all_objects.filter()
+
+    def changelist_view(self, request, extra_context=None):
+        if not request.GET and hasattr(self, 'list_filter_default'):
+            q = request.GET.copy()
+            for key, value in self.list_filter_default.items():
+                q[key] = value
+            request.GET = q
+        return super().changelist_view(request, extra_context=extra_context)
