@@ -1,10 +1,11 @@
+from decimal import Decimal
+
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.utils.timezone import now
 from model_utils.models import UUIDModel
 from model_utils.models import SoftDeletableModel
 from model_utils.models import SoftDeletableManager
-
-from datetime import date
 
 from accounts.models import User
 from core.models import Location
@@ -124,10 +125,10 @@ class Transaction(UUIDModel):
         blank=False,
         null=True,
     )
-    date = models.DateField(
+    date = models.DateTimeField(
         blank=False,
         null=False,
-        default=date.today,
+        default=now,
         help_text="Transaction date",
     )
     amount = models.DecimalField(
@@ -148,8 +149,23 @@ class Transaction(UUIDModel):
         Bucket,
         on_delete=models.SET_NULL,
         related_name="transactions",
-        blank=False,
         null=True,
+        blank=True,
+    )
+    split_income = models.BooleanField(
+        default=False,
+        blank=False,
+        null=False,
+        help_text="Whether to split income into multiple buckets or not (only for positive transactions)."
+    )
+    parent_transaction = models.ForeignKey(
+        "self",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="split_transactions",
+        help_text="Parent transaction for a split positive transaction.",
+        db_index=True,
     )
 
     @property
@@ -172,13 +188,86 @@ class Transaction(UUIDModel):
 
         return f"{self.date}, {self.transaction_type}, {self.category.name}, {truncate(str(self.description), 10)}, {self.location}, {self.bucket}"
 
+    def _split_income(self):
+        """Split income into multiple transactions based on bucket allocations."""
+
+        Transaction.objects.filter(parent_transaction=self).delete()
+
+        buckets = Bucket.available_objects.filter(user=self.user)
+
+        for bucket in buckets:
+            if bucket.allocation_percentage > 0:
+                split_amount = (
+                    self.amount *
+                    bucket.allocation_percentage /
+                    Decimal("100")
+                ).quantize(Decimal(".01"))
+
+                Transaction.objects.create(
+                    user=self.user,
+                    description=f"{self.description} ({bucket.allocation_percentage}%)",
+                    category=self.category,
+                    date=self.date,
+                    amount=split_amount,
+                    location=self.location,
+                    bucket=bucket,
+                    parent_transaction=self,
+                    split_income=False,
+                )
+
+        Transaction.objects.filter(
+            pk=self.pk
+        ).update(
+            amount=0,
+            description=f"{self.description} ({self.amount})",
+            bucket=None,
+        )
+
+    def validate_user(self):
+        """Validate that the user is selected."""
+
+        if not hasattr(self, "user") or not self.user:
+            raise ValidationError({
+                'user': "User must be specified"
+            })
+
+    def validate_bucket(self):
+        """Validate bucket field should be selected if not splitting income."""
+
+        if not self.category.transaction_type.sign == TransactionType.Sign.POSITIVE and not self.bucket:
+            raise ValidationError({"bucket": "Bucket is required on negative transactions."})
+
+    def validate_split_income(self):
+        """Validate split_income field for positive transactions."""
+
+        if self.category.transaction_type.sign == TransactionType.Sign.POSITIVE:
+            if self.split_income:
+                if not Bucket.is_allocation_complete(self.user):
+                    raise ValidationError({"split_income":"Cannot create a positive transaction and split it, until bucket allocations sum to 100%. Please complete your bucket allocations first."})
+            else:
+                if not self.bucket:
+                    raise ValidationError({"bucket": "Bucket is required when not splitting income."})
+        else:
+            if self.split_income:
+                raise ValidationError({"split_income": "Cannot split negative or neutral transactions. Split is only allowed for positive transactions. Uncheck the 'Split income' box, or choose another category with positive transaction type."})
+
+    def clean(self):
+        """Validate model data before saving."""
+
+        super().clean()
+        self.validate_user()
+        self.validate_bucket()
+        self.validate_split_income()
+
     def save(self, *args, **kwargs):
         """Adjust the amount if the transaction_type is negative"""
 
-        if self.category.transaction_type.sign == TransactionType.Sign.NEGATIVE:
-            self.amount *= -1
+        self.full_clean()
 
         super().save(*args, **kwargs)
+
+        if self.category.transaction_type.sign == TransactionType.Sign.POSITIVE and self.split_income:
+            self._split_income()
 
     class Meta:
         verbose_name = "Transaction"

@@ -62,7 +62,7 @@ def test_detail_serializer_create(
     assert serializer.data["user"]["id"] == str(user.id)
     assert serializer.data["description"] == transaction.description
     assert serializer.data["category"]["id"] == str(category.id)
-    assert serializer.data["date"] == transaction.date
+    assert serializer.data["date"].split("T")[0] == str(transaction.date).split(" ")[0]
     assert str(serializer.data["amount"]) == str(transaction.amount)
     assert serializer.data["location"]["id"] == str(location.id)
     assert serializer.data["bucket"]["id"] == str(bucket.id)
@@ -103,11 +103,8 @@ def test_write_serializer_create(
     serialized_data = serializer.save(user=user)
     assert serialized_data.description == transaction.description
     assert serialized_data.category.pk == category.pk
-    assert str(serialized_data.date) == transaction.date
-    if serialized_data.transaction_type == TransactionType.Sign.POSITIVE or serialized_data.transaction_type == TransactionType.Sign.NEUTRAL:
-        assert serialized_data.amount == transaction.amount
-    if transaction.transaction_type == TransactionType.Sign.NEGATIVE:
-        assert serialized_data.amount == transaction.amount * (-1)
+    assert serialized_data.date == transaction.date
+    assert serialized_data.amount == transaction.amount
     assert serialized_data.location.pk == location.pk
     assert serialized_data.bucket.pk == bucket.pk
     assert serialized_data.transaction_type == transaction.transaction_type
@@ -142,11 +139,8 @@ def test_write_serializer_update(
     assert updated_transaction.user == original_user
     assert updated_transaction.description == data["description"]
     assert str(updated_transaction.category.pk) == data["category"]
-    assert str(updated_transaction.date) == data["date"]
-    if updated_transaction.transaction_type == TransactionType.Sign.POSITIVE or updated_transaction.transaction_type == TransactionType.Sign.NEUTRAL:
-        assert updated_transaction.amount == data["amount"]
-    if updated_transaction.transaction_type == TransactionType.Sign.NEGATIVE:
-        assert updated_transaction.amount == Decimal(f"{float(data["amount"]) * (-1):.2f}")
+    assert updated_transaction.date == data["date"]
+    assert updated_transaction.amount == data["amount"]
     assert str(updated_transaction.bucket.pk) == data["bucket"]
     assert str(updated_transaction.location.pk) == data["location"]
     assert str(updated_transaction.transaction_type) == data["transaction_type"]

@@ -1,4 +1,7 @@
 from faker import Faker
+
+from django.utils.timezone import make_aware
+
 from model_bakery.recipe import Recipe
 from model_bakery.recipe import foreign_key
 
@@ -38,7 +41,7 @@ transaction_recipe = Recipe(
     user=foreign_key(user_recipe),
     description=lambda: fake.word(),
     category=foreign_key(category_recipe),
-    date=lambda: fake.date(),
+    date=lambda: make_aware(fake.date_time()),
     amount=lambda: fake.pydecimal(
         left_digits=2,
         right_digits=2,

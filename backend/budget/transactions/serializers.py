@@ -35,9 +35,7 @@ class TransactionTypeWriteSerializer(serializers.ModelSerializer):
     def validate_name(self, value):
         user = self.context["request"].user
         if TransactionType.available_objects.filter(user=user, name=value).exists():
-            raise serializers.ValidationError(
-                "You already have a bucket with that name."
-            )
+            raise serializers.ValidationError({"name": "You already have a bucket with that name."})
         return value
 
 
@@ -73,9 +71,7 @@ class CategoryWriteSerializer(serializers.ModelSerializer):
         if Category.available_objects.filter(
                 transaction_type=transaction_type, name=value
         ).exists():
-            raise serializers.ValidationError(
-                "You already have a category with that name."
-            )
+            raise serializers.ValidationError({"name": "You already have a category with that name."})
         return value
 
 
@@ -137,15 +133,36 @@ class TransactionWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ("description", "transaction_type", "category", "date", "amount", "location", "bucket")
+        fields = ("description", "transaction_type", "category", "date", "amount", "location", "bucket", "split_income")
         read_only_fields = ("id", "user")
 
     def validate(self, data):
         """Validate that bucket allocations are complete before allowing transaction creation."""
 
+        # Validate that bucket allocations are complete before creating positive splitted transactions.
         user = self.context["request"].user
-        if not Bucket.is_allocation_complete(user):
-            raise serializers.ValidationError(
-                "Cannot create transactions until bucket allocations total 100%. Please complete your bucket allocations first."
-            )
+        category = data["category"]
+        split_income = data.get("split_income")
+        bucket = data["bucket"]
+
+        errors = {}
+
+        if category.transaction_type.sign == TransactionType.Sign.POSITIVE:
+            if split_income:
+                if not Bucket.is_allocation_complete(user):
+                    errors['split_income'] = "Cannot create a positive transaction and split it, until bucket allocations sum to 100%. Please complete your bucket allocations first."
+            else:
+                if not bucket:
+                    errors['bucket'] = "Bucket is required when not splitting income."
+        else:
+            if split_income:
+                errors['split_income'] = "Cannot split negative or neutral transactions. Split is only allowed for positive transactions. Uncheck the 'Split income' box, or choose another category with positive transaction type."
+
+        # Validate that bucket is provided when creating negative transactions.
+        if category.transaction_type.sign == TransactionType.Sign.NEGATIVE and not bucket:
+            errors['bucket'] = "Bucket is required on negative transactions."
+
+        if errors:
+            raise serializers.ValidationError(errors)
+
         return data

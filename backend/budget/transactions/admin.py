@@ -62,9 +62,9 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):
-    list_display = ("user", "description", "transaction_type", "category", "date", "amount", "location", "bucket")
+    list_display = ("description", "transaction_type", "category", "date", "amount", "location", "bucket", "split_income", "parent_transaction", "user")
     list_filter = ("user", "date", "category", "location", "bucket")
-    search_fields = ("description", "category", "date", "location", "bucket")
+    search_fields = ("description", "category__name", "date", "location__name", "bucket__name", "user__email")
     ordering = ("-date",)
     readonly_fields = ()
     fieldsets = (
@@ -74,12 +74,12 @@ class TransactionAdmin(admin.ModelAdmin):
                 "fields": (
                     "user",
                     "description",
-                    "transaction_type",
                     "category",
                     "date",
                     "amount",
                     "location",
                     "bucket",
+                    "split_income",
                 ),
             },
         ),
