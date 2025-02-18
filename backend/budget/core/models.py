@@ -141,10 +141,6 @@ class Location(UUIDModel, SoftDeletableModel):
     # 'uuid' field is inherited from UUIDModel
     # 'is_removed' field is inherited from SoftDeletableModel
 
-    class AllocationStatus(models.TextChoices):
-        INCOMPLETE = 'incomplete', 'Incomplete'
-        COMPLETE = 'complete', 'Complete'
-
     name = models.CharField(
         help_text="Location name (e.g. Cash, Card, Revolut, ING, etc.)",
         max_length=255,
@@ -159,6 +155,31 @@ class Location(UUIDModel, SoftDeletableModel):
 
     def __str__(self):
         return self.name
+
+    def validate_name(self):
+        """Validate location name is unique to current user."""
+
+        existing_query = Location.available_objects.filter(
+            user=self.user,
+            name=self.name
+        )
+        if self.pk:
+            existing_query = existing_query.exclude(pk=self.pk)
+        if existing_query.exists():
+            raise ValidationError("You already have a location with that name.")
+
+    def clean(self):
+        """Validate model as a whole."""
+
+        super().clean()
+        self.validate_name()
+
+    def save(self, *args, **kwargs):
+        """Save method plus validate methods."""
+
+        self.full_clean()
+        super().save(*args, **kwargs)
+
 
     class Meta:
         verbose_name = "Location"

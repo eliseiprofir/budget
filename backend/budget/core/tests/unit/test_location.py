@@ -1,5 +1,6 @@
 import pytest
 from model_bakery import baker
+from django.core.exceptions import ValidationError
 from core.models import Location
 
 
@@ -39,6 +40,15 @@ def test_crud_operations(location_recipe: str):
     # Delete
     location.delete()
     assert Location.available_objects.count() == 0
+
+
+@pytest.mark.django_db
+def test_validate_name(user_recipe: str, location_recipe: str):
+    """Test validating the name field"""
+    user = baker.make_recipe(user_recipe)
+    location = baker.make_recipe(location_recipe, user=user)
+    with pytest.raises(ValidationError):
+        baker.make_recipe(location_recipe, name=location.name, user=user)
 
 
 @pytest.mark.django_db

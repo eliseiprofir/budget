@@ -28,12 +28,16 @@ class LocationWriteSerializer(serializers.ModelSerializer):
         fields = ("name", "is_removed")
         read_only_fields = ("id", "user")
 
-    def validate_name(self, value):
-        user = self.context["request"].user
-        if Location.available_objects.filter(user=user, name=value).exists():
-            raise serializers.ValidationError({"name": "You already have a location with that name."})
-        return value
+    def validate_name(self, name):
+        """Validate location name is unique to current user."""
 
+        user = self.context["request"].user
+        current_query = Location.available_objects.filter(user=user, name=name)
+        if self.instance:
+            current_query = current_query.exclude(pk=self.instance.pk)
+        if current_query.exists():
+            raise serializers.ValidationError({"name": "You already have a location with this name."})
+        return name
 
 
 class BucketSerializer(serializers.ModelSerializer):
