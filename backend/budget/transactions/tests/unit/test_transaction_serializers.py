@@ -1,10 +1,8 @@
 import pytest
 from model_bakery import baker
-from decimal import Decimal
 from rest_framework.test import APIRequestFactory
 
 from transactions.models import Transaction
-from transactions.models import TransactionType
 from transactions.serializers import TransactionListSerializer
 from transactions.serializers import TransactionDetailSerializer
 from transactions.serializers import TransactionWriteSerializer
