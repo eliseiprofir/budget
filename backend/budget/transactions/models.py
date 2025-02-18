@@ -54,15 +54,38 @@ class TransactionType(UUIDModel, SoftDeletableModel):
         blank=False,
     )
 
+    def __str__(self):
+        return self.name
+
+    def validate_name(self):
+        """Validate transaction type name is unique to current user."""
+
+        existing_query = TransactionType.available_objects.filter(
+            user=self.user,
+            name=self.name
+        )
+        if self.pk:
+            existing_query = existing_query.exclude(pk=self.pk)
+        if existing_query.exists():
+            raise ValidationError("You already have a transaction type with that name.")
+
+    def clean(self):
+        """Validate model as a whole."""
+
+        super().clean()
+        self.validate_name()
+
     def save(self, *args, **kwargs):
+        """Save method plus validate methods."""
+
+        # The sign cannot be changed once created.
         if self.pk and TransactionType.all_objects.filter(pk=self.pk).exists():
             old_instance = TransactionType.all_objects.get(pk=self.pk)
             if old_instance.sign != self.sign:
                 raise ValidationError("The 'sign' field cannot be changed after creation.")
-        super().save(*args, **kwargs)
 
-    def __str__(self):
-        return self.name
+        self.full_clean()
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = "Transaction Type"
@@ -93,6 +116,30 @@ class Category(UUIDModel, SoftDeletableModel):
 
     def __str__(self):
         return self.name
+
+    def validate_name(self):
+        """Validate category name is unique to current transaction type."""
+
+        existing_query = Category.available_objects.filter(
+            name=self.name,
+            transaction_type=self.transaction_type
+        )
+        if self.pk:
+            existing_query = existing_query.exclude(pk=self.pk)
+        if existing_query.exists():
+            raise ValidationError("You already have a category with that transaction type.")
+
+    def clean(self):
+        """Validate model as a whole."""
+
+        super().clean()
+        self.validate_name()
+
+    def save(self, *args, **kwargs):
+        """Save method plus validate methods."""
+
+        self.full_clean()
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = "Category"
@@ -234,19 +281,17 @@ class Transaction(UUIDModel):
     def validate_bucket(self):
         """Validate bucket field should be selected if not splitting income."""
 
-        if not self.category.transaction_type.sign == TransactionType.Sign.POSITIVE and not self.bucket:
+        if self.category.transaction_type.sign == TransactionType.Sign.POSITIVE and not self.split_income and not self.bucket:
+            raise ValidationError({"bucket": "Bucket is required on positive non-split transactions."})
+        if self.category.transaction_type.sign == TransactionType.Sign.NEGATIVE and not self.bucket:
             raise ValidationError({"bucket": "Bucket is required on negative transactions."})
 
     def validate_split_income(self):
         """Validate split_income field for positive transactions."""
 
         if self.category.transaction_type.sign == TransactionType.Sign.POSITIVE:
-            if self.split_income:
-                if not Bucket.is_allocation_complete(self.user):
-                    raise ValidationError({"split_income":"Cannot create a positive transaction and split it, until bucket allocations sum to 100%. Please complete your bucket allocations first."})
-            else:
-                if not self.bucket:
-                    raise ValidationError({"bucket": "Bucket is required when not splitting income."})
+            if self.split_income and not Bucket.is_allocation_complete(self.user):
+                raise ValidationError({"split_income":"Cannot create a positive transaction and split it, until bucket allocations sum to 100%. Please complete your bucket allocations first."})
         else:
             if self.split_income:
                 raise ValidationError({"split_income": "Cannot split negative or neutral transactions. Split is only allowed for positive transactions. Uncheck the 'Split income' box, or choose another category with positive transaction type."})

@@ -70,14 +70,14 @@ class BucketWriteSerializer(serializers.ModelSerializer):
         if self.instance:
             current_query = current_query.exclude(pk=self.instance.pk)
         if current_query.exists():
-            raise serializers.ValidationError({"name":"You already have a bucket with this name."})
+            raise serializers.ValidationError({"name": "You already have a bucket with this name."})
         return name
 
     def validate_allocation_percentage(self, new_percentage):
         """Validate total allocation percentage does not exceed 100%."""
 
         if new_percentage < 0 or new_percentage > 100:
-            raise serializers.ValidationError({"allocation_percentage":"Allocation percentage must be between 0 and 100."})
+            raise serializers.ValidationError({"allocation_percentage": "Allocation percentage must be between 0 and 100."})
         user = self.context["request"].user
         current_total = Bucket.available_objects.filter(
             user=user

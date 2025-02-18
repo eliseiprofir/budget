@@ -85,6 +85,15 @@ def test_str_method(transaction_type: TransactionType):
 
 
 @pytest.mark.django_db
+def test_validate_name(user_recipe: str, transaction_type_recipe: str):
+    """Test validating the name field"""
+    user = baker.make_recipe(user_recipe)
+    transaction_type = baker.make_recipe(transaction_type_recipe, user=user)
+    with pytest.raises(ValidationError):
+        baker.make_recipe(transaction_type_recipe, name=transaction_type.name, user=user)
+
+
+@pytest.mark.django_db
 def test_meta_class(transaction_type_recipe: str):
     """Test the meta options"""
     transaction_type = baker.prepare_recipe(transaction_type_recipe)

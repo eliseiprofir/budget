@@ -1,5 +1,6 @@
 import pytest
 from model_bakery import baker
+from django.core.exceptions import ValidationError
 from transactions.models import Category
 
 
@@ -45,6 +46,15 @@ def test_crud_operations(category_recipe: str):
 def test_str_method(category: Category):
     """Test the string representation of the model"""
     assert str(category) == f"{category.name}"
+
+
+@pytest.mark.django_db
+def test_validate_name(transaction_type_recipe: str, category_recipe: str):
+    """Test validating the name field"""
+    transaction_type = baker.make_recipe(transaction_type_recipe)
+    category = baker.make_recipe(category_recipe, transaction_type=transaction_type)
+    with pytest.raises(ValidationError):
+        baker.make_recipe(category_recipe, name=category.name, transaction_type=transaction_type)
 
 
 @pytest.mark.django_db
