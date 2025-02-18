@@ -60,6 +60,17 @@ class BucketWriteSerializer(serializers.ModelSerializer):
         fields = ("name", "allocation_percentage", "is_removed")
         read_only_fields = ("id", "user", "allocation_status")
 
+    def validate_name(self, name):
+        """Validate bucket name is unique to current user."""
+
+        user = self.context["request"].user
+        current_query = Bucket.available_objects.filter(user=user, name=name)
+        if self.instance:
+            current_query = current_query.exclude(pk=self.instance.pk)
+        if current_query.exists():
+            raise serializers.ValidationError("You already have a bucket with this name.")
+        return name
+
     def validate_allocation_percentage(self, new_percentage):
         """Validate total allocation percentage does not exceed 100%."""
 
@@ -75,14 +86,3 @@ class BucketWriteSerializer(serializers.ModelSerializer):
         if new_total > 100:
             raise serializers.ValidationError(f"Total allocation cannot exceed 100%. Allocation left: {100-current_total}%.")
         return new_percentage
-
-    def validate_name(self, name):
-        """Validate bucket name is unique to current user."""
-
-        user = self.context["request"].user
-        current_query = Bucket.available_objects.filter(user=user, name=name)
-        if self.instance:
-            current_query = current_query.exclude(pk=self.instance.pk)
-        if current_query.exists():
-            raise serializers.ValidationError("You already have a bucket with this name.")
-        return name
