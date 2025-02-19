@@ -94,7 +94,7 @@ MIDDLEWARE = [
     'allauth.account.middleware.AccountMiddleware',
 ]
 
-ROOT_URLCONF = 'home.urls'
+ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
     {
@@ -112,7 +112,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'home.wsgi.application'
+WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # Database

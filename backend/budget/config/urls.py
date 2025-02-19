@@ -25,6 +25,6 @@ urlpatterns = [
     path("accounts/", include("allauth.urls")),
     path("_allauth/", include("allauth.headless.urls")),
     # API base url
-    path("api/", include("home.api_router")),
+    path("api/", include("config.api_router")),
     path("api/", include("rest_framework.urls")),
 ]
