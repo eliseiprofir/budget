@@ -2,14 +2,15 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import UserManager as DjangoUserManager
 from model_utils.managers import SoftDeletableManager
 
+from .queryset import UserQuerySet
 
-class UserManager(DjangoUserManager["User"], SoftDeletableManager):
+
+class UserManager(DjangoUserManager["User"], SoftDeletableManager.from_queryset(UserQuerySet)):
     """Custom manager for the User model."""
 
     def _create_user(self, email: str, password: str | None, **extra_fields):
-        """
-        Create and save a user with the given email and password.
-        """
+        """Create and save a user with the given email and password."""
+
         if not email:
             msg = "The given email must be set"
             raise ValueError(msg)
