@@ -68,6 +68,18 @@ class CategoryViewSet(
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("name",)
 
+    def get_queryset(self):
+        """
+        Return all categories if user is superuser,
+        otherwise return only user's category.
+        For anonymous users return empty queryset.
+        """
+        if not self.request.user.is_authenticated:
+            return TransactionType.available_objects.none()
+        if self.request.user.is_superuser:
+            return TransactionType.available_objects.all()
+        return TransactionType.available_objects.filter(user=self.request.user)
+
     def get_serializer_map(self):
         return {
             "list": CategorySerializer,

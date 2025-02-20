@@ -8,7 +8,7 @@ from core.views import LocationViewSet
 from transactions.views import TransactionTypeViewSet
 from transactions.views import CategoryViewSet
 from transactions.views import TransactionViewSet
-from analytics.views import AnalyticsViewSet
+# from analytics.views import AnalyticsViewSet
 
 router = DefaultRouter() if settings.DEBUG else SimpleRouter()
 
@@ -25,7 +25,7 @@ router.register(r"categories", CategoryViewSet, basename="category")
 router.register(r"transactions", TransactionViewSet, basename="transaction")
 
 # Analytics
-router.register(r"analytics", AnalyticsViewSet, basename="analytics")
+# router.register(r"analytics", AnalyticsViewSet, basename="analytics")
 
 app_name = "api"
 urlpatterns = router.urls
