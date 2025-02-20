@@ -58,6 +58,8 @@ class Bucket(UUIDModel, SoftDeletableModel):
     )
 
     def __str__(self):
+        """Return the string representation of the model"""
+
         return self.name
 
     def get_total_allocation_percentage(self):
@@ -154,6 +156,8 @@ class Location(UUIDModel, SoftDeletableModel):
     )
 
     def __str__(self):
+        """Return the string representation of the model"""
+
         return self.name
 
     def validate_name(self):

@@ -2,9 +2,11 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import EmailValidator
 from django.utils import timezone
+
 from model_utils.models import UUIDModel
 from model_utils.models import TimeStampedModel
 from model_utils.models import SoftDeletableModel
+
 from .managers import UserManager
 
 
@@ -16,6 +18,7 @@ class User(UUIDModel, AbstractUser, TimeStampedModel, SoftDeletableModel):
     # 'modified' field is inherited from TimeStampModel
     # 'is_removed' field is inherited from SoftDeletableModel
     # 'is_active' field is inherited from AbstractUser
+
     # Disable unnecessary AbstractUser fields
     username = None
     first_name = None
@@ -45,6 +48,7 @@ class User(UUIDModel, AbstractUser, TimeStampedModel, SoftDeletableModel):
 
     def __str__(self) -> str:
         """Return the string representation of the model"""
+
         if not self.full_name:
             return f"No name ({self.email})"
         return f"{self.full_name} ({self.email})"
@@ -56,10 +60,18 @@ class User(UUIDModel, AbstractUser, TimeStampedModel, SoftDeletableModel):
 
     def clean_email(self) -> None:
         """Ensure that the email is lowercase"""
+
         if self.email:
             self.email = f"{self.email}".lower()
 
     def update_last_login(self) -> None:
         """Update the last_login field to the current timestamp"""
+
         self.last_login = timezone.now()
         self.save()
+
+    def save(self, *args, **kwargs):
+        """Override save method to ensure that the email is lowercase"""
+
+        self.clean_email()
+        super().save(*args, **kwargs)

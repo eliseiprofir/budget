@@ -55,6 +55,8 @@ class TransactionType(UUIDModel, SoftDeletableModel):
     )
 
     def __str__(self):
+        """Return the string representation of the model"""
+
         return self.name
 
     def validate_name(self):
@@ -115,6 +117,8 @@ class Category(UUIDModel, SoftDeletableModel):
     )
 
     def __str__(self):
+        """Return the string representation of the model"""
+
         return self.name
 
     def validate_name(self):
