@@ -105,7 +105,7 @@ class TransactionListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ("id", "description", "transaction_type", "category", "date", "amount", "location", "bucket", "user")
+        fields = ("id", "description", "transaction_type", "category", "date", "amount", "location", "bucket", "split_income", "user")
         read_only_fields = fields
 
 
@@ -119,7 +119,7 @@ class TransactionDetailSerializer(serializers.ModelSerializer):
 
     class Meta(TransactionListSerializer.Meta):
         model = Transaction
-        fields = (*TransactionListSerializer.Meta.fields, "location", "bucket", "user")
+        fields = (*TransactionListSerializer.Meta.fields, "parent_transaction")
         read_only_fields = fields
 
 
@@ -141,8 +141,8 @@ class TransactionWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ("description", "transaction_type", "category", "date", "amount", "location", "bucket", "split_income")
-        read_only_fields = ("id", "user")
+        fields = ("description", "transaction_type", "category", "date", "amount", "location", "bucket", "split_income",)
+        read_only_fields = ("id", "parent_transaction", "user")
 
     def validate(self, data):
         """Validate transaction data."""

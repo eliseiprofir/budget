@@ -16,12 +16,15 @@ def test_transaction_creation(transaction_recipe: str):
     transaction = baker.make_recipe(transaction_recipe)
     assert transaction.pk is not None
     assert transaction.description != ""
+    assert transaction.transaction_type != ""
     assert transaction.category.pk is not None
     assert transaction.date != ""
     assert transaction.amount != ""
     assert transaction.location.pk is not None
     assert transaction.bucket.pk is not None
-    assert transaction.transaction_type != ""
+    assert transaction.split_income in [True, False]
+    assert transaction.user.pk is not None
+
 
 
 @pytest.mark.django_db
@@ -109,13 +112,13 @@ def test_split_income(
     amount = Decimal("100.00")
     parent_transaction = baker.make_recipe(
         transaction_recipe,
-        user=user,
         category=category,
         location=location,
         amount=amount,
         description="Test Income",
         split_income=True,
         date=now,
+        user=user,
     )
 
     parent_transaction._split_income()
@@ -184,26 +187,26 @@ def test_validate_bucket(
 
     positive_split_transaction = baker.make_recipe(
         transaction_recipe,
-        user=user,
         category=positive_category,
         split_income=True,
-        bucket=None
+        bucket=None,
+        user=user,
     )
     positive_split_transaction.validate_bucket()
 
     negative_transaction = baker.make_recipe(
         transaction_recipe,
-        user=user,
         category=negative_category,
-        bucket=bucket
+        bucket=bucket,
+        user=user,
     )
     negative_transaction.validate_bucket()
 
     negative_transaction_no_bucket = baker.prepare_recipe(
         transaction_recipe,
-        user=user,
         category=negative_category,
-        bucket=None
+        bucket=None,
+        user=user,
     )
     with pytest.raises(ValidationError):
         negative_transaction_no_bucket.validate_bucket()
@@ -233,9 +236,9 @@ def test_validate_split_income(
     baker.make_recipe(bucket_recipe, user=user, allocation_percentage=60)
     positive_transaction = baker.prepare_recipe(
         transaction_recipe,
-        user=user,
         category=positive_category,
-        split_income=True
+        split_income=True,
+        user=user,
     )
     with pytest.raises(ValidationError):
         positive_transaction.validate_split_income()
@@ -246,18 +249,18 @@ def test_validate_split_income(
     baker.make_recipe(bucket_recipe, user=user, allocation_percentage=40)
     positive_transaction_complete = baker.prepare_recipe(
         transaction_recipe,
-        user=user,
         category=positive_category,
-        split_income=True
+        split_income=True,
+        user=user,
     )
     positive_transaction_complete.validate_split_income()
 
     # Test 3: Negative transaction with split
     negative_transaction = baker.prepare_recipe(
         transaction_recipe,
-        user=user,
         category=negative_category,
-        split_income=True
+        split_income=True,
+        user=user,
     )
     with pytest.raises(ValidationError):
         negative_transaction.validate_split_income()
@@ -265,9 +268,9 @@ def test_validate_split_income(
     # Test 4: Neutral transaction with split
     neutral_transaction = baker.prepare_recipe(
         transaction_recipe,
-        user=user,
         category=neutral_category,
-        split_income=True
+        split_income=True,
+        user=user,
     )
     with pytest.raises(ValidationError):
         neutral_transaction.validate_split_income()
@@ -276,9 +279,9 @@ def test_validate_split_income(
     Bucket.available_objects.all().delete()
     positive_no_split = baker.prepare_recipe(
         transaction_recipe,
-        user=user,
         category=positive_category,
-        split_income=False
+        split_income=False,
+        user=user,
     )
     positive_no_split.validate_split_income()
 

@@ -11,9 +11,8 @@ def test_category_creation(category_recipe: str):
     assert category.pk is not None
     assert category.name != ""
     assert category.transaction_type != ""
-    assert category.user.pk is not None
     assert category.is_removed in [True, False]
-
+    assert category.user.pk is not None
 
 @pytest.mark.django_db
 def test_crud_operations(category_recipe: str):

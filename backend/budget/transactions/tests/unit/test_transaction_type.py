@@ -11,8 +11,8 @@ def test_transaction_type_creation(transaction_type_recipe: str):
     assert transaction_type.pk is not None
     assert transaction_type.sign != ""
     assert transaction_type.name != ""
-    assert transaction_type.user.pk is not None
     assert transaction_type.is_removed in [True, False]
+    assert transaction_type.user.pk is not None
 
 
 @pytest.mark.django_db

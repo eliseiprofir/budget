@@ -16,8 +16,8 @@ def test_serializer_create(transaction_type_recipe: str):
     assert serializer.data["id"] == str(transaction_type.id)
     assert serializer.data["sign"] == transaction_type.sign
     assert serializer.data["name"] == transaction_type.name
-    assert serializer.data["user"] is not None
     assert serializer.data["is_removed"] in [True, False]
+    assert serializer.data["user"] is not None
     assert isinstance(serializer.data["user"], str)
     assert "/api/users/" in serializer.data["user"]
 
