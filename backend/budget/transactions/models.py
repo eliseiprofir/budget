@@ -35,6 +35,11 @@ class TransactionType(UUIDModel, SoftDeletableModel):
             (NEUTRAL, NEUTRAL)
         )
 
+    name = models.CharField(
+        help_text="Transaction type name (e.g. Income, Expense, Transfer, etc.)",
+        max_length=255,
+        blank=False,
+    )
     sign = models.CharField(
         max_length=20,
         choices=Sign.CHOICES,
@@ -42,16 +47,12 @@ class TransactionType(UUIDModel, SoftDeletableModel):
         help_text="Specifies the nature of the transactions. POSITIVE: money coming in, NEGATIVE: money going out, or NEUTRAL: moving between locations/buckets.",
         blank=False,
     )
-    name = models.CharField(
-        help_text="Transaction type name (e.g. Income, Expense, Transfer, etc.)",
-        max_length=255,
-        blank=False,
-    )
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name="transaction_types",
         blank=False,
+        null=False,
     )
 
     def __str__(self):
@@ -115,6 +116,13 @@ class Category(UUIDModel, SoftDeletableModel):
         blank=False,
         null=False,
     )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="categories",
+        blank=False,
+        null=False,
+    )
 
     def __str__(self):
         """Return the string representation of the model"""
@@ -122,16 +130,16 @@ class Category(UUIDModel, SoftDeletableModel):
         return self.name
 
     def validate_name(self):
-        """Validate category name is unique to current transaction type."""
+        """Validate category name is unique to current user."""
 
         existing_query = Category.available_objects.filter(
             name=self.name,
-            transaction_type=self.transaction_type
+            user=self.user
         )
         if self.pk:
             existing_query = existing_query.exclude(pk=self.pk)
         if existing_query.exists():
-            raise ValidationError("You already have a category with that transaction type.")
+            raise ValidationError("You already have a category with that name.")
 
     def clean(self):
         """Validate model as a whole."""
@@ -156,13 +164,6 @@ class Transaction(UUIDModel):
 
     # 'uuid' field is inherited from UUIDModel
 
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="transactions",
-        blank=False,
-        null=False,
-    )
     description = models.CharField(
         max_length=255,
         blank=False,
@@ -217,6 +218,13 @@ class Transaction(UUIDModel):
         related_name="split_transactions",
         help_text="Parent transaction for a split positive transaction.",
         db_index=True,
+    )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="transactions",
+        blank=False,
+        null=False,
     )
 
     @property

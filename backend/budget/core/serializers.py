@@ -16,7 +16,7 @@ class LocationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Location
-        fields = ("id", "name", "user", "is_removed")
+        fields = ("id", "name", "is_removed", "user")
         read_only_fields = fields
 
 
@@ -50,7 +50,7 @@ class BucketSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Bucket
-        fields = ("id", "name", "allocation_percentage", "allocation_status", "user", "is_removed")
+        fields = ("id", "name", "allocation_percentage", "allocation_status", "is_removed", "user")
         read_only_fields = fields
 
 
@@ -60,7 +60,7 @@ class BucketWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bucket
         fields = ("name", "allocation_percentage", "is_removed")
-        read_only_fields = ("id", "user", "allocation_status")
+        read_only_fields = ("id", "allocation_status", "user")
 
     def validate_name(self, name):
         """Validate bucket name is unique to current user."""

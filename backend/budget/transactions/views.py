@@ -75,10 +75,10 @@ class CategoryViewSet(
         For anonymous users return empty queryset.
         """
         if not self.request.user.is_authenticated:
-            return TransactionType.available_objects.none()
+            return Category.available_objects.none()
         if self.request.user.is_superuser:
-            return TransactionType.available_objects.all()
-        return TransactionType.available_objects.filter(user=self.request.user)
+            return Category.available_objects.all()
+        return Category.available_objects.filter(user=self.request.user)
 
     def get_serializer_map(self):
         return {
@@ -90,6 +90,8 @@ class CategoryViewSet(
     def get_serializer_class(self):
         return self.get_serializer_map().get(self.action, self.serializer_class)
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 class TransactionViewSet(
     viewsets.GenericViewSet,

@@ -7,8 +7,8 @@ from transactions.models import Transaction
 
 @admin.register(TransactionType)
 class TransactionTypeAdmin(admin.ModelAdmin):
-    list_display = ("name", "sign", "user",)
-    list_filter = ("name", "sign", "user",)
+    list_display = ("name", "sign", "user")
+    list_filter = ("name", "sign", "user")
     search_fields = ("name",)
     ordering = ("name",)
     readonly_fields = ("sign",)
@@ -19,8 +19,8 @@ class TransactionTypeAdmin(admin.ModelAdmin):
                 "fields": (
                     "name",
                     "sign",
-                    "user",
                     "is_removed",
+                    "user",
                 ),
             },
         ),
@@ -35,9 +35,9 @@ class TransactionTypeAdmin(admin.ModelAdmin):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ("name", "transaction_type")
-    list_filter = ("name", "transaction_type")
-    search_fields = ("name", "transaction_type")
+    list_display = ("name", "transaction_type", "user")
+    list_filter = ("name", "transaction_type", "user")
+    search_fields = ("name", "transaction_type", "user")
     ordering = ("name",)
     readonly_fields = ()
     fieldsets = (
@@ -48,6 +48,7 @@ class CategoryAdmin(admin.ModelAdmin):
                     "name",
                     "transaction_type",
                     "is_removed",
+                    "user",
                 ),
             },
         ),
@@ -72,7 +73,6 @@ class TransactionAdmin(admin.ModelAdmin):
             "Transaction Information",
             {
                 "fields": (
-                    "user",
                     "description",
                     "category",
                     "date",
@@ -80,6 +80,7 @@ class TransactionAdmin(admin.ModelAdmin):
                     "location",
                     "bucket",
                     "split_income",
+                    "user",
                 ),
             },
         ),

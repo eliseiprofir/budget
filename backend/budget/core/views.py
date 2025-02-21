@@ -25,16 +25,9 @@ class BucketViewSet(
     ordering_fields = ("name",)
 
     def get_queryset(self):
-        """
-        Return all buckets if user is superuser,
-        otherwise return only user's buckets.
-        For anonymous users return empty queryset.
-        """
-        if not self.request.user.is_authenticated:
-            return Bucket.available_objects.none()
-        if self.request.user.is_superuser:
-            return Bucket.available_objects.all()
-        return Bucket.available_objects.filter(user=self.request.user)
+        """Retrieve a custom queryset for buckets based on the current user."""
+
+        return Bucket.available_objects.filter_by_user(user=self.request.user)
 
     def get_serializer_map(self):
         return {
