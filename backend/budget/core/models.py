@@ -34,13 +34,6 @@ class Bucket(UUIDModel, SoftDeletableModel):
         blank=False,
         null=False,
     )
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="buckets",
-        blank=False,
-        null=False,
-    )
     allocation_percentage = models.DecimalField(
         help_text="Percentage of income to allocate to this bucket",
         max_digits=5,
