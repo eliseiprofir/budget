@@ -44,15 +44,15 @@ def user_recipe() -> str:
 
 
 @pytest.fixture
-def bucket_recipe() -> str:
-    """Fixture for creating a Bucket recipe"""
-    return "core.tests.bucket_recipe"
-
-
-@pytest.fixture
 def location_recipe() -> str:
     """Fixture for creating a Location recipe"""
     return "core.tests.location_recipe"
+
+
+@pytest.fixture
+def bucket_recipe() -> str:
+    """Fixture for creating a Bucket recipe"""
+    return "core.tests.bucket_recipe"
 
 
 @pytest.fixture
