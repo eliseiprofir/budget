@@ -56,6 +56,13 @@ class Bucket(UUIDModel, SoftDeletableModel):
         blank=False,
         null=False,
     )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="buckets",
+        blank=False,
+        null=False,
+    )
 
     def __str__(self):
         """Return the string representation of the model"""
