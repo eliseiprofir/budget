@@ -27,8 +27,8 @@ def test_serializer_create(category_recipe: str):
 @pytest.mark.django_db
 def test_write_serializer_create(category_recipe: str, transaction_type_recipe: str, user_recipe: str):
     """Test the CategoryWriteSerializer create method"""
-    transaction_type = baker.make_recipe(transaction_type_recipe)
     user = baker.make_recipe(user_recipe)
+    transaction_type = baker.make_recipe(transaction_type_recipe, user=user)
     category = baker.prepare_recipe(
         category_recipe,
         transaction_type=transaction_type,
@@ -51,8 +51,8 @@ def test_write_serializer_create(category_recipe: str, transaction_type_recipe: 
 @pytest.mark.django_db
 def test_write_serializer_update(category_recipe: str, transaction_type_recipe: str, user_recipe: str):
     """Test the CategoryWriteSerializer update method"""
-    transaction_type = baker.make_recipe(transaction_type_recipe)
     user = baker.make_recipe(user_recipe)
+    transaction_type = baker.make_recipe(transaction_type_recipe, user=user)
     category=baker.prepare_recipe(
         category_recipe,
         transaction_type=transaction_type,

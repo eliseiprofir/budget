@@ -79,16 +79,19 @@ def test_create_category(
     client: str,
     status_code: str,
     request: pytest.FixtureRequest,
+    transaction_type_recipe: str,
     category_recipe: str,
+    user: User,
 ):
     client: APIClient = request.getfixturevalue(client)
 
+    transaction_type = baker.make_recipe(transaction_type_recipe, user=user)
     category = baker.make_recipe(category_recipe)
     response = client.post(
         "/api/categories/",
         data={
             "name": category.name,
-            "transaction_type": str(category.transaction_type.pk),
+            "transaction_type": str(transaction_type.pk),
         },
     )
     json = response.json()
@@ -97,7 +100,7 @@ def test_create_category(
 
     if status_code == status.HTTP_201_CREATED:
         assert json["name"] == category.name
-        assert json["transaction_type"] == str(category.transaction_type.pk)
+        assert json["transaction_type"] == str(transaction_type.pk)
 
 
 @pytest.mark.django_db

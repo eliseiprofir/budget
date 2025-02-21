@@ -71,16 +71,18 @@ def test_detail_serializer_create(
 
 @pytest.mark.django_db
 def test_write_serializer_create(
-    transaction_recipe: str,
     user_recipe: str,
+    transaction_type_recipe: str,
     category_recipe: str,
     location_recipe: str,
     bucket_recipe: str,
+    transaction_recipe: str,
 ):
     """Test the TransactionWriteSerializer create method"""
     user = baker.make_recipe(user_recipe)
-    category = baker.make_recipe(category_recipe)
-    location = baker.make_recipe(location_recipe)
+    transaction_type = baker.make_recipe(transaction_type_recipe, user=user)
+    category = baker.make_recipe(category_recipe, transaction_type=transaction_type, user=user)
+    location = baker.make_recipe(location_recipe, user=user)
     bucket = baker.make_recipe(bucket_recipe, user=user, allocation_percentage=100)
     transaction = baker.prepare_recipe(
         transaction_recipe,
@@ -115,14 +117,16 @@ def test_write_serializer_create(
 def test_write_serializer_update(
     transaction: Transaction,
     user_recipe: str,
+    transaction_type_recipe: str,
     category_recipe: str,
     location_recipe: str,
     bucket_recipe: str,
 ):
     """Test the TransactionWriteSerializer update method"""
     original_user = transaction.user
-    category = baker.make_recipe(category_recipe, name="New Category")
-    location = baker.make_recipe(location_recipe, name="New Location")
+    transaction_type = baker.make_recipe(transaction_type_recipe, user=original_user)
+    category = baker.make_recipe(category_recipe, name="New Category", transaction_type=transaction_type, user=original_user)
+    location = baker.make_recipe(location_recipe, name="New Location", user=original_user)
     bucket = baker.make_recipe(bucket_recipe, name="New Bucket", user=original_user, allocation_percentage=100)
     data = {
         "description": transaction.description,
