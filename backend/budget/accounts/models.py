@@ -44,7 +44,7 @@ class User(UUIDModel, AbstractUser, TimeStampedModel, SoftDeletableModel):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ("full_name",)
 
-    objects: UserManager = UserManager()
+    objects = UserManager()
 
     def __str__(self) -> str:
         """Return the string representation of the model"""
