@@ -39,7 +39,6 @@ category_recipe = Recipe(
 
 transaction_recipe = Recipe(
     Transaction,
-    user=foreign_key(user_recipe),
     description=lambda: fake.word(),
     category=foreign_key(category_recipe),
     date=lambda: make_aware(fake.date_time()),
@@ -52,4 +51,5 @@ transaction_recipe = Recipe(
     ),
     location=foreign_key(location_recipe),
     bucket=foreign_key(bucket_recipe),
+    user=foreign_key(user_recipe),
 )
