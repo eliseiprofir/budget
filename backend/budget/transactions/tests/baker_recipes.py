@@ -34,6 +34,7 @@ category_recipe = Recipe(
     Category,
     name=lambda: fake.word(),
     transaction_type=foreign_key(transaction_type_recipe),
+    user=foreign_key(user_recipe),
 )
 
 transaction_recipe = Recipe(

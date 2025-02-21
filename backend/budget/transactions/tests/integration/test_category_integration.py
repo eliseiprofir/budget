@@ -1,21 +1,18 @@
 import pytest
 
-from typing import TYPE_CHECKING
-
 from model_bakery import baker
 from rest_framework import status
+from rest_framework.test import APIClient
 
 from transactions.models import Category
-
-if TYPE_CHECKING:
-    from rest_framework.test import APIClient
+from accounts.models import User
 
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     ("client", "status_code", "count"),
     [
-        ("apiclient", status.HTTP_200_OK, 1),
+        ("apiclient", status.HTTP_200_OK, 0),
         ("authenticated_apiclient", status.HTTP_200_OK, 1),
     ],
 )
@@ -25,22 +22,28 @@ def test_list_category(
     category: Category,
     request: pytest.FixtureRequest,
     count: int,
+    user: User,
 ):
     client: APIClient = request.getfixturevalue(client)
+
+    category.user = user
+    category.save()
+
     response = client.get("/api/categories/")
     json = response.json()
 
     assert response.status_code == status_code
     assert len(json) == count
-    ids = [category["id"] for category in json]
-    assert str(category.id) in ids
+    if count > 0:
+        ids = [category["id"] for category in json]
+        assert str(category.id) in ids
 
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     ("client", "status_code"),
     [
-        ("apiclient", status.HTTP_200_OK),
+        ("apiclient", status.HTTP_404_NOT_FOUND),
         ("authenticated_apiclient", status.HTTP_200_OK),
     ],
 )
@@ -49,13 +52,19 @@ def test_get_category(
     status_code: str,
     category: Category,
     request: pytest.FixtureRequest,
+    user: User,
 ):
     client: APIClient = request.getfixturevalue(client)
 
+    category.user = user
+    category.save()
+
     response = client.get(f"/api/categories/{category.id}/")
-    json = response.json()
+
     assert response.status_code == status_code
-    assert json["id"] == str(category.id)
+    if status_code == status.HTTP_200_OK:
+        json = response.json()
+        assert json["id"] == str(category.id)
 
 
 @pytest.mark.django_db
@@ -71,22 +80,47 @@ def test_create_category(
     status_code: str,
     request: pytest.FixtureRequest,
     category_recipe: str,
-    transaction_type_recipe: str,
 ):
     client: APIClient = request.getfixturevalue(client)
 
-    category = baker.prepare_recipe(category_recipe)
-    transaction_type = baker.make_recipe(transaction_type_recipe)
+    category = baker.make_recipe(category_recipe)
     response = client.post(
         "/api/categories/",
         data={
             "name": category.name,
-            "transaction_type": transaction_type.pk,
+            "transaction_type": str(category.transaction_type.pk),
         },
     )
     json = response.json()
+    print(response.content)
     assert response.status_code == status_code
 
     if status_code == status.HTTP_201_CREATED:
         assert json["name"] == category.name
-        assert json["transaction_type"] == str(transaction_type.pk)
+        assert json["transaction_type"] == str(category.transaction_type.pk)
+
+
+@pytest.mark.django_db
+def test_superuser_sees_all_categories(
+    admin_apiclient: APIClient,
+    category_recipe: str,
+    admin_user: User,
+    user: User,
+):
+    """Test that superuser can see all transaction types."""
+    user_category = baker.make_recipe(category_recipe)
+    user_category.user = user
+    user_category.save()
+
+    admin_category = baker.make_recipe(category_recipe)
+    admin_category.user = admin_user
+    admin_category.save()
+
+    response = admin_apiclient.get("/api/categories/")
+    json = response.json()
+
+    assert response.status_code == status.HTTP_200_OK
+    assert len(json) == 2
+    ids = [category["id"] for category in json]
+    assert str(user_category.id) in ids
+    assert str(admin_category.id) in ids

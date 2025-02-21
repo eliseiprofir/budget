@@ -20,7 +20,7 @@ class TransactionTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TransactionType
-        fields = ("id", "name", "sign", "user", "is_removed")
+        fields = ("id", "name", "sign", "is_removed", "user")
         read_only_fields = fields
 
     def validate_name(self, name):
@@ -57,29 +57,28 @@ class CategorySerializer(serializers.ModelSerializer):
         view_name="api:transaction_type-detail",
         read_only=True,
     )
+    user = serializers.HyperlinkedRelatedField(
+        view_name="api:user-detail",
+        read_only=True,
+    )
 
     class Meta:
         model = Category
-        fields = ("id", "name", "transaction_type", "is_removed")
+        fields = ("id", "name", "transaction_type", "is_removed", "user")
         read_only_fields = fields
 
 
 class CategoryWriteSerializer(serializers.ModelSerializer):
     """Serializer used for create operations"""
 
-    transaction_type = serializers.PrimaryKeyRelatedField(
-        queryset=TransactionType.available_objects.all(),
-        required=True,
-    )
-
     class Meta:
         model = Category
         fields = ("name", "transaction_type", "is_removed")
-        read_only_fields = ("id",)
+        read_only_fields = ("id", "user")
 
     def validate_name(self, value):
-        transaction_type = self.initial_data.get("transaction_type")
-        if Category.available_objects.filter(name=value, transaction_type=transaction_type).exists():
+        user = self.context["request"].user
+        if Category.available_objects.filter(user=user, name=value).exists():
             raise serializers.ValidationError({"name": "You already have a category with that name."})
         return value
 
@@ -87,10 +86,6 @@ class CategoryWriteSerializer(serializers.ModelSerializer):
 class TransactionListSerializer(serializers.ModelSerializer):
     """List Serializer for the Transaction model"""
 
-    user = serializers.HyperlinkedRelatedField(
-        view_name="api:user-detail",
-        read_only=True,
-    )
     category = serializers.HyperlinkedRelatedField(
         view_name="api:category-detail",
         read_only=True,
@@ -103,10 +98,14 @@ class TransactionListSerializer(serializers.ModelSerializer):
         view_name="api:bucket-detail",
         read_only=True,
     )
+    user = serializers.HyperlinkedRelatedField(
+        view_name="api:user-detail",
+        read_only=True,
+    )
 
     class Meta:
         model = Transaction
-        fields = ("id", "user", "description", "transaction_type", "category", "date", "amount", "location", "bucket")
+        fields = ("id", "description", "transaction_type", "category", "date", "amount", "location", "bucket", "user")
         read_only_fields = fields
 
 
@@ -120,7 +119,7 @@ class TransactionDetailSerializer(serializers.ModelSerializer):
 
     class Meta(TransactionListSerializer.Meta):
         model = Transaction
-        fields = (*TransactionListSerializer.Meta.fields, "user", "location", "bucket")
+        fields = (*TransactionListSerializer.Meta.fields, "location", "bucket", "user")
         read_only_fields = fields
 
 

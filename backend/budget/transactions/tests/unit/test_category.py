@@ -11,6 +11,7 @@ def test_category_creation(category_recipe: str):
     assert category.pk is not None
     assert category.name != ""
     assert category.transaction_type != ""
+    assert category.user.pk is not None
     assert category.is_removed in [True, False]
 
 
@@ -49,12 +50,12 @@ def test_str_method(category: Category):
 
 
 @pytest.mark.django_db
-def test_validate_name(transaction_type_recipe: str, category_recipe: str):
+def test_validate_name(user_recipe: str, category_recipe: str):
     """Test validating the name field"""
-    transaction_type = baker.make_recipe(transaction_type_recipe)
-    category = baker.make_recipe(category_recipe, transaction_type=transaction_type)
+    user = baker.make_recipe(user_recipe)
+    category = baker.make_recipe(category_recipe, user=user)
     with pytest.raises(ValidationError):
-        baker.make_recipe(category_recipe, name=category.name, transaction_type=transaction_type)
+        baker.make_recipe(category_recipe, name=category.name, user=user)
 
 
 @pytest.mark.django_db

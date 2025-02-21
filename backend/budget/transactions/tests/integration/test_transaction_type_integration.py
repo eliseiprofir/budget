@@ -80,11 +80,10 @@ def test_create_transaction_type(
     status_code: str,
     request: pytest.FixtureRequest,
     transaction_type_recipe: str,
-    user: User,
 ):
     client: APIClient = request.getfixturevalue(client)
 
-    transaction_type = baker.prepare_recipe(transaction_type_recipe)
+    transaction_type = baker.make_recipe(transaction_type_recipe)
 
     response = client.post(
         "/api/transaction_types/",

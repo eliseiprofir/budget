@@ -31,8 +31,9 @@ def test_write_serializer_create(transaction_type_recipe: str, user_recipe: str)
         user=user,
     )
     data = {
-        "sign": transaction_type.sign,
         "name": transaction_type.name,
+        "sign": transaction_type.sign,
+        "user": transaction_type.user.pk
     }
     mock_request = type("Request", (), {"user": user})()
     serializer = TransactionTypeWriteSerializer(data=data, context={"request": mock_request})

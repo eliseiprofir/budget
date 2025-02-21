@@ -35,11 +35,11 @@ def test_list_serializer_create(transaction_recipe: str):
 
 @pytest.mark.django_db
 def test_detail_serializer_create(
-        transaction_recipe: str,
-        user_recipe: str,
-        category_recipe: str,
-        location_recipe: str,
-        bucket_recipe: str,
+    transaction_recipe: str,
+    user_recipe: str,
+    category_recipe: str,
+    location_recipe: str,
+    bucket_recipe: str,
 ):
     """Test that the TransactionDetailSerializer reads the data correctly."""
     factory = APIRequestFactory()
