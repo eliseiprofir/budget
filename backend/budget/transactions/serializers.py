@@ -67,11 +67,24 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class CategoryWriteSerializer(serializers.ModelSerializer):
     """Serializer used for create operations"""
+    transaction_type = serializers.PrimaryKeyRelatedField(
+        queryset=TransactionType.available_objects.all(),
+        required=True,
+    )
 
     class Meta:
         model = Category
         fields = ("name", "transaction_type", "is_removed")
         read_only_fields = ("id", "user")
+
+    def __init__(self, *args, **kwargs):
+        """Override get_queryset to filter transaction types by user."""
+        super().__init__(*args, **kwargs)
+
+        if "request" in self.context:
+            user = self.context["request"].user
+            filtered_queryset = self.fields["transaction_type"].queryset.filter_by_user(user)
+            self.fields["transaction_type"].queryset = filtered_queryset
 
     def validate_name(self, value):
         user = self.context["request"].user
@@ -137,6 +150,22 @@ class TransactionWriteSerializer(serializers.ModelSerializer):
         model = Transaction
         fields = ("description", "transaction_type", "category", "date", "amount", "location", "bucket", "split_income",)
         read_only_fields = ("id", "parent_transaction", "user")
+
+    def __init__(self, *args, **kwargs):
+        """Override get_queryset to filter transaction categories, locations and buckets by user."""
+        super().__init__(*args, **kwargs)
+
+        if "request" in self.context:
+            user = self.context["request"].user
+
+            category_filtered_queryset = self.fields["category"].queryset.filter_by_user(user)
+            self.fields["category"].queryset = category_filtered_queryset
+
+            location_filtered_queryset = self.fields["location"].queryset.filter_by_user(user)
+            self.fields["location"].queryset = location_filtered_queryset
+
+            bucket_filtered_queryset = self.fields["bucket"].queryset.filter_by_user(user)
+            self.fields["bucket"].queryset = bucket_filtered_queryset
 
     def validate(self, data):
         """Validate transaction data."""
