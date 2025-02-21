@@ -1,7 +1,5 @@
 import pytest
 
-from typing import TYPE_CHECKING
-
 from model_bakery import baker
 from rest_framework import status
 from rest_framework.test import APIClient
