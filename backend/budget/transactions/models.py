@@ -5,7 +5,6 @@ from django.core.exceptions import ValidationError
 from django.utils.timezone import now
 from model_utils.models import UUIDModel
 from model_utils.models import SoftDeletableModel
-from model_utils.models import SoftDeletableManager
 
 from accounts.models import User
 from core.models import Location
@@ -13,10 +12,14 @@ from core.models import Bucket
 
 from utils.strings import truncate
 
+from .managers import TransactionTypeManager
+from .managers import CategoryManager
+from .managers import TransactionManager
+
 
 class TransactionType(UUIDModel, SoftDeletableModel):
     """Model to store category information."""
-    available_objects = SoftDeletableManager()
+    available_objects = TransactionTypeManager()
 
     # 'uuid' field is inherited from UUIDModel
     # 'is_removed' field is inherited from SoftDeletableModel
@@ -94,7 +97,7 @@ class TransactionType(UUIDModel, SoftDeletableModel):
 
 class Category(UUIDModel, SoftDeletableModel):
     """Model to store category information."""
-    available_objects = SoftDeletableManager()
+    available_objects = CategoryManager()
 
     # 'uuid' field is inherited from UUIDModel
     # 'is_removed' field is inherited from SoftDeletableModel
@@ -152,6 +155,7 @@ class Category(UUIDModel, SoftDeletableModel):
 
 class Transaction(UUIDModel):
     """Model to store transaction entry/type information"""
+    objects = TransactionManager()
 
     # 'uuid' field is inherited from UUIDModel
 

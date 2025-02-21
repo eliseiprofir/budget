@@ -29,16 +29,8 @@ class TransactionTypeViewSet(
     ordering_fields = ("name",)
 
     def get_queryset(self):
-        """
-        Return all transaction types if user is superuser,
-        otherwise return only user's transaction types.
-        For anonymous users return empty queryset.
-        """
-        if not self.request.user.is_authenticated:
-            return TransactionType.available_objects.none()
-        if self.request.user.is_superuser:
-            return TransactionType.available_objects.all()
-        return TransactionType.available_objects.filter(user=self.request.user)
+        """Retrieve a custom queryset for transaction types based on the current user."""
+        return TransactionType.available_objects.filter_by_user(self.request.user)
 
     def get_serializer_map(self):
         return {
@@ -69,16 +61,8 @@ class CategoryViewSet(
     ordering_fields = ("name",)
 
     def get_queryset(self):
-        """
-        Return all categories if user is superuser,
-        otherwise return only user's category.
-        For anonymous users return empty queryset.
-        """
-        if not self.request.user.is_authenticated:
-            return Category.available_objects.none()
-        if self.request.user.is_superuser:
-            return Category.available_objects.all()
-        return Category.available_objects.filter(user=self.request.user)
+        """Retrieve a custom queryset for categories based on the current user."""
+        return Category.available_objects.filter_by_user(self.request.user)
 
     def get_serializer_map(self):
         return {
@@ -106,16 +90,8 @@ class TransactionViewSet(
     ordering_fields = ("name",)
 
     def get_queryset(self):
-        """
-        Return all transactions if user is superuser,
-        otherwise return only user's transactions.
-        For anonymous users return empty queryset.
-        """
-        if not self.request.user.is_authenticated:
-            return Transaction.objects.none()
-        if self.request.user.is_superuser:
-            return Transaction.objects.all()
-        return Transaction.objects.filter(user=self.request.user)
+        """Retrieve a custom queryset for transactions based on the current user."""
+        return Transaction.objects.filter_by_user(self.request.user)
 
     def get_serializer_map(self):
         return {
