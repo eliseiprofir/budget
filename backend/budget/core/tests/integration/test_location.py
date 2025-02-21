@@ -7,9 +7,6 @@ from rest_framework.test import APIClient
 from accounts.models import User
 from core.models import Location
 
-if TYPE_CHECKING:
-    from rest_framework.test import APIClient
-
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
