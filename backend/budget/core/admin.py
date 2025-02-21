@@ -6,7 +6,7 @@ from core.models import Location
 
 @admin.register(Bucket)
 class BucketAdmin(admin.ModelAdmin):
-    list_display = ("name", "user", "allocation_percentage", "allocation_status", "is_removed")
+    list_display = ("name", "allocation_percentage", "allocation_status", "is_removed", "user")
     list_filter = ("is_removed",)
     list_filter_default = {"is_removed": False}
     search_fields = ("name",)
@@ -18,10 +18,10 @@ class BucketAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "name",
-                    "user",
                     "allocation_percentage",
                     "allocation_status",
                     "is_removed",
+                    "user",
                 ),
             },
         ),
@@ -47,7 +47,7 @@ class BucketAdmin(admin.ModelAdmin):
 
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
-    list_display = ("name", "user", "is_removed")
+    list_display = ("name", "is_removed", "user")
     list_filter = ("is_removed",)
     list_filter_default = {"is_removed": False}
     search_fields = ("name",)
@@ -59,8 +59,8 @@ class LocationAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "name",
-                    "user",
                     "is_removed",
+                    "user",
                 ),
             },
         ),

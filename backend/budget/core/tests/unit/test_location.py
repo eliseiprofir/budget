@@ -10,8 +10,8 @@ def test_location_creation(location_recipe: str):
     location = baker.make_recipe(location_recipe)
     assert location.pk is not None
     assert location.name != ""
-    assert location.user != ""
     assert location.is_removed in [True, False]
+    assert location.user != ""
 
 
 @pytest.mark.django_db

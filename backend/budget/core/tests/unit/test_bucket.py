@@ -12,8 +12,8 @@ def test_bucket_creation(bucket_recipe: str):
     assert bucket.name != ""
     assert bucket.allocation_percentage != ""
     assert bucket.allocation_status != ""
-    assert bucket.user.pk != ""
     assert bucket.is_removed in [True, False]
+    assert bucket.user.pk != ""
 
 
 @pytest.mark.django_db

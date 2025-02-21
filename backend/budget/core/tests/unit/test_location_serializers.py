@@ -15,8 +15,8 @@ def test_serializer_create(location_recipe: str):
     serializer = LocationSerializer(location, context={"request": request})
     assert serializer.data["id"] == str(location.id)
     assert serializer.data["name"] == location.name
-    assert serializer.data["user"] is not None
     assert serializer.data["is_removed"] in [True, False]
+    assert serializer.data["user"] is not None
     assert isinstance(serializer.data["user"], str)
     assert "/api/users/" in serializer.data["user"]
 
@@ -49,8 +49,8 @@ def test_write_serializer_update(location_recipe: str, user_recipe: str):
         user=user,
     )
     data = {
-        "user": location.user.pk,
         "name": f"{location.name}",
+        "user": location.user.pk,
     }
     mock_request = type("Request", (), {"user": user})()
     serializer = LocationWriteSerializer(location, data=data, context={"request": mock_request})
