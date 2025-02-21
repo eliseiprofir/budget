@@ -8,7 +8,6 @@ from core.models import Location
 
 class LocationSerializer(serializers.ModelSerializer):
     """Detail Serializer for the Location model"""
-
     user = serializers.HyperlinkedRelatedField(
         view_name="api:user-detail",
         read_only=True,
@@ -30,7 +29,6 @@ class LocationWriteSerializer(serializers.ModelSerializer):
 
     def validate_name(self, name):
         """Validate location name is unique to current user."""
-
         user = self.context["request"].user
         current_query = Location.available_objects.filter(user=user, name=name)
         if self.instance:
@@ -64,7 +62,6 @@ class BucketWriteSerializer(serializers.ModelSerializer):
 
     def validate_name(self, name):
         """Validate bucket name is unique to current user."""
-
         user = self.context["request"].user
         current_query = Bucket.available_objects.filter(user=user, name=name)
         if self.instance:
@@ -75,7 +72,6 @@ class BucketWriteSerializer(serializers.ModelSerializer):
 
     def validate_allocation_percentage(self, new_percentage):
         """Validate total allocation percentage does not exceed 100%."""
-
         if new_percentage < 0 or new_percentage > 100:
             raise serializers.ValidationError({"allocation_percentage": "Allocation percentage must be between 0 and 100."})
         user = self.context["request"].user

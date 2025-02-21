@@ -16,7 +16,6 @@ from utils.strings import truncate
 
 class TransactionType(UUIDModel, SoftDeletableModel):
     """Model to store category information."""
-
     available_objects = SoftDeletableManager()
 
     # 'uuid' field is inherited from UUIDModel
@@ -57,12 +56,10 @@ class TransactionType(UUIDModel, SoftDeletableModel):
 
     def __str__(self):
         """Return the string representation of the model"""
-
         return self.name
 
     def validate_name(self):
         """Validate transaction type name is unique to current user."""
-
         existing_query = TransactionType.available_objects.filter(
             user=self.user,
             name=self.name
@@ -74,7 +71,6 @@ class TransactionType(UUIDModel, SoftDeletableModel):
 
     def clean(self):
         """Validate model as a whole."""
-
         super().clean()
         self.validate_name()
 
@@ -98,7 +94,6 @@ class TransactionType(UUIDModel, SoftDeletableModel):
 
 class Category(UUIDModel, SoftDeletableModel):
     """Model to store category information."""
-
     available_objects = SoftDeletableManager()
 
     # 'uuid' field is inherited from UUIDModel
@@ -126,12 +121,10 @@ class Category(UUIDModel, SoftDeletableModel):
 
     def __str__(self):
         """Return the string representation of the model"""
-
         return self.name
 
     def validate_name(self):
         """Validate category name is unique to current user."""
-
         existing_query = Category.available_objects.filter(
             name=self.name,
             user=self.user
@@ -143,13 +136,11 @@ class Category(UUIDModel, SoftDeletableModel):
 
     def clean(self):
         """Validate model as a whole."""
-
         super().clean()
         self.validate_name()
 
     def save(self, *args, **kwargs):
         """Save method plus validate methods."""
-
         self.full_clean()
         super().save(*args, **kwargs)
 
@@ -230,7 +221,6 @@ class Transaction(UUIDModel):
     @property
     def transaction_type(self):
         """Return the transaction_type from the related Category."""
-
         return self.category.transaction_type.name if self.category else None
 
     @transaction_type.setter
@@ -239,17 +229,14 @@ class Transaction(UUIDModel):
 
     def __str__(self):
         """Return the string representation of the model"""
-
         return f"{truncate(str(self.description), 15)}: {self.amount}"
 
     def get_full_info(self):
         """Return all information about the transaction"""
-
         return f"{self.date}, {self.transaction_type}, {self.category.name}, {truncate(str(self.description), 10)}, {self.location}, {self.bucket}"
 
     def _split_income(self):
         """Split income into multiple transactions based on bucket allocations."""
-
         Transaction.objects.filter(parent_transaction=self).delete()
 
         buckets = Bucket.available_objects.filter(user=self.user)
@@ -284,7 +271,6 @@ class Transaction(UUIDModel):
 
     def validate_user(self):
         """Validate that the user is selected."""
-
         if not hasattr(self, "user") or not self.user:
             raise ValidationError({
                 'user': "User must be specified"
@@ -292,7 +278,6 @@ class Transaction(UUIDModel):
 
     def validate_bucket(self):
         """Validate bucket field should be selected if not splitting income."""
-
         if self.category.transaction_type.sign == TransactionType.Sign.POSITIVE and not self.split_income and not self.bucket:
             raise ValidationError({"bucket": "Bucket is required on positive non-split transactions."})
         if self.category.transaction_type.sign == TransactionType.Sign.NEGATIVE and not self.bucket:
@@ -300,7 +285,6 @@ class Transaction(UUIDModel):
 
     def validate_split_income(self):
         """Validate split_income field for positive transactions."""
-
         if self.category.transaction_type.sign == TransactionType.Sign.POSITIVE:
             if self.split_income and not Bucket.is_allocation_complete(self.user):
                 raise ValidationError({"split_income":"Cannot create a positive transaction and split it, until bucket allocations sum to 100%. Please complete your bucket allocations first."})
@@ -310,7 +294,6 @@ class Transaction(UUIDModel):
 
     def clean(self):
         """Validate model data before saving."""
-
         super().clean()
         self.validate_user()
         self.validate_bucket()
@@ -318,9 +301,7 @@ class Transaction(UUIDModel):
 
     def save(self, *args, **kwargs):
         """Adjust the amount if the transaction_type is negative"""
-
         self.full_clean()
-
         super().save(*args, **kwargs)
 
         if self.category.transaction_type.sign == TransactionType.Sign.POSITIVE and self.split_income:

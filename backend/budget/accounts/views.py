@@ -16,7 +16,6 @@ class UserViewSet(
     mixins.CreateModelMixin,
 ):
     """User model view."""
-
     serializer_class = UserListSerializer
     permission_classes = (IsAuthenticated,)
     filter_backends = (filters.OrderingFilter,)
@@ -24,7 +23,6 @@ class UserViewSet(
 
     def get_queryset(self):
         """Retrieve a custom queryset for users based on the current user."""
-
         return User.objects.filter_by_user(self.request.user)
 
     def get_object(self):

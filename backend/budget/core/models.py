@@ -13,7 +13,6 @@ from .managers import LocationManager
 
 class Location(UUIDModel, SoftDeletableModel):
     """Model to store location information."""
-
     available_objects = LocationManager()
 
     # 'uuid' field is inherited from UUIDModel
@@ -34,12 +33,10 @@ class Location(UUIDModel, SoftDeletableModel):
 
     def __str__(self):
         """Return the string representation of the model"""
-
         return self.name
 
     def validate_name(self):
         """Validate location name is unique to current user."""
-
         existing_query = Location.available_objects.filter(
             user=self.user,
             name=self.name
@@ -51,13 +48,11 @@ class Location(UUIDModel, SoftDeletableModel):
 
     def clean(self):
         """Validate model as a whole."""
-
         super().clean()
         self.validate_name()
 
     def save(self, *args, **kwargs):
         """Save method plus validate methods."""
-
         self.full_clean()
         super().save(*args, **kwargs)
 
@@ -70,7 +65,6 @@ class Location(UUIDModel, SoftDeletableModel):
 
 class Bucket(UUIDModel, SoftDeletableModel):
     """Model to store bucket information."""
-
     available_objects = BucketManager()
 
     # 'uuid' field is inherited from UUIDModel
@@ -118,31 +112,26 @@ class Bucket(UUIDModel, SoftDeletableModel):
 
     def __str__(self):
         """Return the string representation of the model"""
-
         return self.name
 
     def get_total_allocation_percentage(self):
         """Get total allocation percentage for user's buckets."""
-
         user_buckets = Bucket.available_objects.filter(user=self.user)
         return user_buckets.aggregate(total=models.Sum("allocation_percentage"))["total"]
 
     def get_available_percentage(self):
         """Get remaining percentage available for allocation."""
-
         return Decimal("100") - self.get_total_allocation_percentage()
 
     @classmethod
     def is_allocation_complete(cls, user) -> bool:
         """Check if user's bucket allocations sum up to 100%."""
-
         user_buckets = cls.available_objects.filter(user=user)
         total = user_buckets.aggregate(total=models.Sum("allocation_percentage"))["total"]
         return total == 100
 
     def validate_name(self):
         """Validate bucket name is unique to current user."""
-
         existing_query = Bucket.available_objects.filter(
             user=self.user,
             name=self.name
@@ -173,7 +162,6 @@ class Bucket(UUIDModel, SoftDeletableModel):
 
     def clean(self):
         """Validate model as a whole, plus custom validation methods."""
-
         super().clean()
         self.validate_name()
         self.validate_allocation_percentage()
@@ -181,7 +169,6 @@ class Bucket(UUIDModel, SoftDeletableModel):
     def save(self, *args, **kwargs):
         """Save method that checks if all buckets are allocated."""
         self.full_clean()
-
         super().save(*args, **kwargs)
 
         total = self.get_total_allocation_percentage()

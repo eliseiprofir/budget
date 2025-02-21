@@ -12,7 +12,6 @@ from .models import Transaction
 
 class TransactionTypeSerializer(serializers.ModelSerializer):
     """Serializer for the TransactionType model"""
-
     user = serializers.HyperlinkedRelatedField(
         view_name="api:user-detail",
         read_only=True,
@@ -25,7 +24,6 @@ class TransactionTypeSerializer(serializers.ModelSerializer):
 
     def validate_name(self, name):
         """Validate transaction type name is unique to current user."""
-
         user = self.context["request"].user
         current_query = TransactionType.available_objects.filter(user=user, name=name)
         if self.instance:
@@ -52,7 +50,6 @@ class TransactionTypeWriteSerializer(serializers.ModelSerializer):
 
 class CategorySerializer(serializers.ModelSerializer):
     """Serializer for the Category model"""
-
     transaction_type = serializers.HyperlinkedRelatedField(
         view_name="api:transaction_type-detail",
         read_only=True,
@@ -85,7 +82,6 @@ class CategoryWriteSerializer(serializers.ModelSerializer):
 
 class TransactionListSerializer(serializers.ModelSerializer):
     """List Serializer for the Transaction model"""
-
     category = serializers.HyperlinkedRelatedField(
         view_name="api:category-detail",
         read_only=True,
@@ -111,7 +107,6 @@ class TransactionListSerializer(serializers.ModelSerializer):
 
 class TransactionDetailSerializer(serializers.ModelSerializer):
     """Detail Serializer for the Transactions model"""
-
     user = UserListSerializer(read_only=True)
     category = CategorySerializer(read_only=True)
     location = LocationSerializer(read_only=True)
@@ -125,7 +120,6 @@ class TransactionDetailSerializer(serializers.ModelSerializer):
 
 class TransactionWriteSerializer(serializers.ModelSerializer):
     """Serializer used for create operations"""
-
     category = serializers.PrimaryKeyRelatedField(
         queryset=Category.available_objects.all(),
         required=True,
@@ -146,7 +140,6 @@ class TransactionWriteSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         """Validate transaction data."""
-
         user = self.context["request"].user
         category = data["category"]
         split_income = data.get("split_income")

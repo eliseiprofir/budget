@@ -8,9 +8,8 @@ User = get_user_model()
 
 
 class UserAdminChangeForm(admin_forms.UserChangeForm):
-    """
-    Form for User modification in the Admin Area.
-    """
+    """Form for User modification in the Admin Area."""
+
     class Meta:
         model = User
         fields = ("email", "full_name", "is_active", "is_staff")
@@ -18,9 +17,7 @@ class UserAdminChangeForm(admin_forms.UserChangeForm):
 
 
 class UserAdminCreationForm(admin_forms.UserCreationForm):
-    """
-    Form for User Creation in the Admin Area.
-    """
+    """Form for User Creation in the Admin Area."""
 
     class Meta:
         model = User

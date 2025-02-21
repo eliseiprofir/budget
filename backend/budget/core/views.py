@@ -18,7 +18,6 @@ class LocationViewSet(
     mixins.CreateModelMixin,
 ):
     """Location model view."""
-
     serializer_class = LocationSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
     filter_backends = (filters.OrderingFilter,)
@@ -50,7 +49,6 @@ class BucketViewSet(
     mixins.CreateModelMixin,
 ):
     """Bucket model view."""
-
     serializer_class = BucketSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
     filter_backends = (filters.OrderingFilter,)

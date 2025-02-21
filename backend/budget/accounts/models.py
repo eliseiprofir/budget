@@ -48,7 +48,6 @@ class User(UUIDModel, AbstractUser, TimeStampedModel, SoftDeletableModel):
 
     def __str__(self) -> str:
         """Return the string representation of the model"""
-
         if not self.full_name:
             return f"No name ({self.email})"
         return f"{self.full_name} ({self.email})"
@@ -60,18 +59,15 @@ class User(UUIDModel, AbstractUser, TimeStampedModel, SoftDeletableModel):
 
     def clean_email(self) -> None:
         """Ensure that the email is lowercase"""
-
         if self.email:
             self.email = f"{self.email}".lower()
 
     def update_last_login(self) -> None:
         """Update the last_login field to the current timestamp"""
-
         self.last_login = timezone.now()
         self.save()
 
     def save(self, *args, **kwargs):
         """Override save method to ensure that the email is lowercase"""
-
         self.clean_email()
         super().save(*args, **kwargs)

@@ -10,7 +10,6 @@ class UserManager(DjangoUserManager["User"], SoftDeletableManager.from_queryset(
 
     def _create_user(self, email: str, password: str | None, **extra_fields):
         """Create and save a user with the given email and password."""
-
         if not email:
             msg = "The given email must be set"
             raise ValueError(msg)

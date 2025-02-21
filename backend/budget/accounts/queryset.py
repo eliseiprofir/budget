@@ -6,7 +6,6 @@ class UserQuerySet(QuerySet):
 
     def filter_by_user(self, user):
         """Return only the users that the given user can see."""
-
         if not user:
             return self.none()
         if user.is_superuser:

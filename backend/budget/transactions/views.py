@@ -100,7 +100,6 @@ class TransactionViewSet(
     mixins.CreateModelMixin,
 ):
     """Transaction model view."""
-
     serializer_class = TransactionListSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
     filter_backends = (filters.OrderingFilter,)
