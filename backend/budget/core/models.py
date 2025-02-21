@@ -4,17 +4,17 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from model_utils.models import UUIDModel
 from model_utils.models import SoftDeletableModel
-from model_utils.models import SoftDeletableManager
 
 from accounts.models import User
 
 from .managers import BucketManager
+from .managers import LocationManager
 
 
 class Location(UUIDModel, SoftDeletableModel):
     """Model to store location information."""
 
-    available_objects = SoftDeletableManager()
+    available_objects = LocationManager()
 
     # 'uuid' field is inherited from UUIDModel
     # 'is_removed' field is inherited from SoftDeletableModel

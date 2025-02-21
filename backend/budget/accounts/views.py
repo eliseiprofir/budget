@@ -23,13 +23,12 @@ class UserViewSet(
     ordering_fields = ("created",)
 
     def get_queryset(self):
-        """Filter queryset to return only the current user. Superusers can see all users."""
+        """Retrieve a custom queryset for users based on the current user."""
 
         return User.objects.filter_by_user(self.request.user)
 
     def get_object(self):
         """Override to ensure users can only retrieve their own profile. Superusers can retrieve any profile."""
-
         obj = super().get_object()
         if not self.request.user.is_superuser and obj.id != self.request.user.id:
             self.permission_denied(

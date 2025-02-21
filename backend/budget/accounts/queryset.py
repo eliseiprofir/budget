@@ -10,5 +10,5 @@ class UserQuerySet(QuerySet):
         if not user:
             return self.none()
         if user.is_superuser:
-            return self
+            return self.all()
         return self.filter(id=user.id)
