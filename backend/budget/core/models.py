@@ -153,6 +153,7 @@ class Location(UUIDModel, SoftDeletableModel):
         on_delete=models.CASCADE,
         related_name="locations",
         blank=False,
+        null=False,
     )
 
     def __str__(self):
