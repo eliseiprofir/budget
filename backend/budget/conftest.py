@@ -71,3 +71,37 @@ def category_recipe() -> str:
 def transaction_recipe() -> str:
     """Fixture for creating a Transaction recipe"""
     return "transactions.tests.transaction_recipe"
+
+@pytest.fixture
+def positive_transaction_type_recipe() -> str:
+    """Fixture for creating a TransactionType recipe"""
+    return "transactions.tests.positive_transaction_type_recipe"
+
+
+@pytest.fixture
+def positive_category_recipe() -> str:
+    """Fixture for creating a Category recipe"""
+    return "transactions.tests.positive_category_recipe"
+
+
+@pytest.fixture
+def positive_transaction_recipe() -> str:
+    """Fixture for creating a Transaction recipe"""
+    return "transactions.tests.positive_transaction_recipe"
+
+@pytest.fixture
+def negative_transaction_type_recipe() -> str:
+    """Fixture for creating a TransactionType recipe"""
+    return "transactions.tests.negative_transaction_type_recipe"
+
+
+@pytest.fixture
+def negative_category_recipe() -> str:
+    """Fixture for creating a Category recipe"""
+    return "transactions.tests.negative_category_recipe"
+
+
+@pytest.fixture
+def negative_transaction_recipe() -> str:
+    """Fixture for creating a Transaction recipe"""
+    return "transactions.tests.negative_transaction_recipe"
