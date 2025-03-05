@@ -9,7 +9,7 @@ class RepresentationSerializer(serializers.Serializer):
 
 
 class AnalyticsMonthlySerializer(serializers.Serializer):
-    """Serializer for current analytics."""
+    """Serializer for current month analytics."""
     positive_categories = RepresentationSerializer()
     negative_categories = RepresentationSerializer()
     balance = RepresentationSerializer()

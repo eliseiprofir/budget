@@ -15,7 +15,7 @@ class AnalyticsMonthlyService(AnalyticsBaseService):
         super().__init__(user)
 
     def get_positive_categories_data(self):
-        """Get categories data for the given user."""
+        """Get categories data for specific month for the given user."""
         categories = {}
 
         positive_categories = self.get_positive_categories()
@@ -31,7 +31,7 @@ class AnalyticsMonthlyService(AnalyticsBaseService):
         return categories
 
     def get_negative_categories_data(self):
-        """Get categories data for the given user."""
+        """Get categories data for specific month for the given user."""
         categories = {}
 
         negative_categories = self.get_negative_categories()
@@ -48,7 +48,7 @@ class AnalyticsMonthlyService(AnalyticsBaseService):
 
 
     def get_balance(self):
-        """Get balance for the given user."""
+        """Get balance for specific month for the given user."""
         month_transactions = self.get_transactions_by_month(
                 year=self.year,
                 month=self.month

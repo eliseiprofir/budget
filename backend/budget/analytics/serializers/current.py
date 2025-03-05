@@ -16,7 +16,7 @@ class BalanceSerializer(serializers.Serializer):
 
 
 class AnalyticsCurrentSerializer(serializers.Serializer):
-    """Serializer for current analytics."""
+    """Serializer for current status analytics."""
     locations = RepresentationSerializer()
     buckets = RepresentationSerializer()
     balance = BalanceSerializer()

@@ -8,9 +8,8 @@ class RepresentationSerializer(serializers.Serializer):
         return instance
 
 
-class AnalyticsYearlySerializer(serializers.Serializer):
-    """Serializer for current year analytics."""
-    monthly = RepresentationSerializer()
+class AnalyticsHistoricalSerializer(serializers.Serializer):
+    """Serializer for historical analytics."""
+    yearly = RepresentationSerializer()
     summary = RepresentationSerializer()
-    period = RepresentationSerializer()
 

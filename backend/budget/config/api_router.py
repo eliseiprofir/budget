@@ -10,6 +10,7 @@ from transactions.views import TransactionViewSet
 from analytics.views.current import AnalyticsCurrentViewSet
 from analytics.views.monthly import AnalyticsMonthlyViewSet
 from analytics.views.yearly import AnalyticsYearlyViewSet
+from analytics.views.historical import AnalyticsHistoricalViewSet
 
 
 router = DefaultRouter() if settings.DEBUG else SimpleRouter()
@@ -30,6 +31,7 @@ router.register(r"transactions", TransactionViewSet, basename="transaction")
 router.register("analytics_current", AnalyticsCurrentViewSet, basename="analytics_current")
 router.register("analytics_monthly", AnalyticsMonthlyViewSet, basename="analytics_monthly")
 router.register("analytics_yearly", AnalyticsYearlyViewSet, basename="analytics_yearly")
+router.register("analytics_historical", AnalyticsHistoricalViewSet, basename="analytics_historical")
 
 app_name = "api"
 urlpatterns = router.urls
