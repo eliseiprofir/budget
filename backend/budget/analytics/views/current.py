@@ -1,33 +1,17 @@
-# class CurrentStatusViewSet(ViewSet):
-#     permission_classes = [IsAuthenticated]
-#
-#     def get_service(self):
-#         """Initialize service with current user"""
-#         return CurrentStatusService(self.request.user)
-#
-#     @action(detail=False, methods=['GET'])
-#     def summary(self, request):
-#         """Get complete current status summary"""
-#         try:
-#             service = self.get_service()
-#             data = {
-#                 'totals': service.get_total_available(),
-#                 'locations': service.get_location_distribution(),
-#                 'buckets': service.get_bucket_distribution()
-#             }
-#             return Response(data)
-#         except ValidationError as e:
-#             return Response({'error': str(e)}, status=400)
-#         except Exception as e:
-#             return Response({'error': str(e)}, status=500)
-#
-#     @action(detail=False, methods=['GET'])
-#     def totals(self, request):
-#         try:
-#             service = self.get_service()
-#             data = service.get_total_available()
-#             return Response(data)
-#         except Exception as e:
-#             return Response({'error': str(e)}, status=500)
-#
-#     # ... restul metodelor similar
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from analytics.services.current import AnalyticsCurrentService
+from analytics.serializers.current import AnalyticsCurrentSerializer
+
+class AnalyticsCurrentViewSet(viewsets.ViewSet):
+    """ViewSet for current analytics functionality."""
+
+    permission_classes = [IsAuthenticated]
+
+    def list(self, request):
+        """Get complete current analytics summary."""
+        service = AnalyticsCurrentService(request.user)
+        data = service.get_summary()
+        serializer = AnalyticsCurrentSerializer(data)
+        return Response(serializer.data)
