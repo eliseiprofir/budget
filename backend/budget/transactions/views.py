@@ -20,6 +20,8 @@ class TransactionTypeViewSet(
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
     mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
 ):
     """TransactionType model view."""
 
@@ -37,6 +39,8 @@ class TransactionTypeViewSet(
             "list": TransactionTypeSerializer,
             "retrieve": TransactionTypeSerializer,
             "create": TransactionTypeWriteSerializer,
+            "update": TransactionTypeWriteSerializer,
+            "partial_update": TransactionTypeWriteSerializer,
         }
 
     def get_serializer_class(self):
@@ -45,12 +49,17 @@ class TransactionTypeViewSet(
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+    def perform_update(self, serializer):
+        serializer.save(user=self.request.user)
+
 
 class CategoryViewSet(
     viewsets.GenericViewSet,
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
     mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
 ):
     """Category model view."""
 
@@ -69,6 +78,8 @@ class CategoryViewSet(
             "list": CategorySerializer,
             "retrieve": CategorySerializer,
             "create": CategoryWriteSerializer,
+            "update": CategoryWriteSerializer,
+            "partial_update": CategoryWriteSerializer,
         }
 
     def get_serializer_class(self):
@@ -77,11 +88,17 @@ class CategoryViewSet(
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+    def perform_update(self, serializer):
+        serializer.save(user=self.request.user)
+
+
 class TransactionViewSet(
     viewsets.GenericViewSet,
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
     mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
 ):
     """Transaction model view."""
     serializer_class = TransactionListSerializer
@@ -98,10 +115,15 @@ class TransactionViewSet(
             "list": TransactionListSerializer,
             "retrieve": TransactionDetailSerializer,
             "create": TransactionWriteSerializer,
+            "update": TransactionWriteSerializer,
+            "partial_update": TransactionWriteSerializer,
         }
 
     def get_serializer_class(self):
         return self.get_serializer_map().get(self.action, self.serializer_class)
 
     def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
         serializer.save(user=self.request.user)

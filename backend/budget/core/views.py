@@ -16,6 +16,8 @@ class LocationViewSet(
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
     mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
 ):
     """Location model view."""
     serializer_class = LocationSerializer
@@ -32,6 +34,8 @@ class LocationViewSet(
             "list": LocationSerializer,
             "retrieve": LocationSerializer,
             "create": LocationWriteSerializer,
+            "update": LocationWriteSerializer,
+            "partial_update": LocationWriteSerializer,
         }
 
     def get_serializer_class(self):
@@ -40,6 +44,8 @@ class LocationViewSet(
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+    def perform_update(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class BucketViewSet(
@@ -47,6 +53,8 @@ class BucketViewSet(
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
     mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
 ):
     """Bucket model view."""
     serializer_class = BucketSerializer
@@ -63,10 +71,15 @@ class BucketViewSet(
             "list": BucketSerializer,
             "retrieve": BucketSerializer,
             "create": BucketWriteSerializer,
+            "update": BucketWriteSerializer,
+            "partial_update": BucketWriteSerializer,
         }
 
     def get_serializer_class(self):
         return self.get_serializer_map().get(self.action, self.serializer_class)
 
     def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
         serializer.save(user=self.request.user)
