@@ -112,7 +112,6 @@ def test_write_serializer_create(
     assert serialized_data.bucket.pk == bucket.pk
 
 
-
 @pytest.mark.django_db
 def test_write_serializer_update(
     transaction: Transaction,

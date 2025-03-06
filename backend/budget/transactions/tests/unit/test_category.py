@@ -14,6 +14,7 @@ def test_category_creation(category_recipe: str):
     assert category.is_removed in [True, False]
     assert category.user.pk is not None
 
+
 @pytest.mark.django_db
 def test_crud_operations(category_recipe: str):
     """Test the CRUD operations for the model"""

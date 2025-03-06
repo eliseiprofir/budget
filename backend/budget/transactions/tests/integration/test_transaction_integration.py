@@ -8,6 +8,7 @@ from model_bakery import baker
 from accounts.models import User
 from transactions.models import Transaction
 
+
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     ("client", "status_code", "count"),
@@ -38,6 +39,7 @@ def test_list_transaction(
         ids = [transaction["id"] for transaction in json]
         assert str(transaction.id) in ids
 
+
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     ("client", "status_code"),
@@ -64,6 +66,7 @@ def test_get_transaction(
     if status_code == status.HTTP_200_OK:
         json = response.json()
         assert json["id"] == str(transaction.id)
+
 
 @pytest.mark.django_db
 def test_superuser_sees_all_transactions(

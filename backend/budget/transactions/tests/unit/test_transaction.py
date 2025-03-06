@@ -26,7 +26,6 @@ def test_transaction_creation(transaction_recipe: str):
     assert transaction.user.pk is not None
 
 
-
 @pytest.mark.django_db
 def test_crud_transaction(
     transaction_recipe: str,
