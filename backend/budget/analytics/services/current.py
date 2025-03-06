@@ -1,6 +1,3 @@
-from transactions.models import TransactionType
-from transactions.models import Transaction
-
 from .base import AnalyticsBaseService
 
 
