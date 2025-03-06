@@ -1,7 +1,7 @@
 from rest_framework import filters
 from rest_framework import mixins
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated
 
 from core.models import Bucket
 from core.models import Location
@@ -21,7 +21,7 @@ class LocationViewSet(
 ):
     """Location model view."""
     serializer_class = LocationSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsAuthenticated,)
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("name",)
 
@@ -58,7 +58,7 @@ class BucketViewSet(
 ):
     """Bucket model view."""
     serializer_class = BucketSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsAuthenticated,)
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("name",)
 

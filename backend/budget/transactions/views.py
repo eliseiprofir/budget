@@ -1,7 +1,7 @@
 from rest_framework import filters
 from rest_framework import mixins
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated
 
 from transactions.models import TransactionType
 from transactions.models import Category
@@ -26,7 +26,7 @@ class TransactionTypeViewSet(
     """TransactionType model view."""
 
     serializer_class = TransactionTypeSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsAuthenticated,)
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("name",)
 
@@ -65,7 +65,7 @@ class CategoryViewSet(
 
     queryset = Category.available_objects.all()
     serializer_class = CategorySerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsAuthenticated,)
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("name",)
 
@@ -102,7 +102,7 @@ class TransactionViewSet(
 ):
     """Transaction model view."""
     serializer_class = TransactionListSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsAuthenticated,)
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("name",)
 

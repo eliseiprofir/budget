@@ -12,7 +12,7 @@ from accounts.models import User
 @pytest.mark.parametrize(
     ("client", "status_code", "count"),
     [
-        ("apiclient", status.HTTP_200_OK, 0),
+        ("apiclient", status.HTTP_403_FORBIDDEN, 0),
         ("authenticated_apiclient", status.HTTP_200_OK, 1),
     ],
 )
@@ -30,20 +30,22 @@ def test_list_category(
     category.save()
 
     response = client.get("/api/categories/")
-    json = response.json()
 
     assert response.status_code == status_code
-    assert len(json) == count
-    if count > 0:
-        ids = [category["id"] for category in json]
-        assert str(category.id) in ids
+
+    if status_code == status.HTTP_200_OK:
+        json = response.json()
+        assert len(json) == count
+        if count > 0:
+            ids = [category["id"] for category in json]
+            assert str(category.id) in ids
 
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     ("client", "status_code"),
     [
-        ("apiclient", status.HTTP_404_NOT_FOUND),
+        ("apiclient", status.HTTP_403_FORBIDDEN),
         ("authenticated_apiclient", status.HTTP_200_OK),
     ],
 )
