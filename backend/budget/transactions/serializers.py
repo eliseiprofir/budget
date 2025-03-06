@@ -51,7 +51,7 @@ class TransactionTypeWriteSerializer(serializers.ModelSerializer):
 class CategorySerializer(serializers.ModelSerializer):
     """Serializer for the Category model"""
     transaction_type = serializers.HyperlinkedRelatedField(
-        view_name="api:transaction_type-detail",
+        view_name="api:transaction-type-detail",
         read_only=True,
     )
     user = serializers.HyperlinkedRelatedField(

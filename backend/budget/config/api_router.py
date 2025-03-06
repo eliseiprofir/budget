@@ -23,15 +23,15 @@ router.register(r"buckets", BucketViewSet, basename="bucket")
 router.register(r"locations", LocationViewSet, basename="location")
 
 # Transactions
-router.register(r"transaction_types", TransactionTypeViewSet, basename="transaction_type")
+router.register(r"transaction-types", TransactionTypeViewSet, basename="transaction-type")
 router.register(r"categories", CategoryViewSet, basename="category")
 router.register(r"transactions", TransactionViewSet, basename="transaction")
 
 # Analytics
-router.register("analytics_current", AnalyticsCurrentViewSet, basename="analytics_current")
-router.register("analytics_monthly", AnalyticsMonthlyViewSet, basename="analytics_monthly")
-router.register("analytics_yearly", AnalyticsYearlyViewSet, basename="analytics_yearly")
-router.register("analytics_historical", AnalyticsHistoricalViewSet, basename="analytics_historical")
+router.register("analytics-current", AnalyticsCurrentViewSet, basename="analytics-current")
+router.register("analytics-monthly", AnalyticsMonthlyViewSet, basename="analytics-monthly")
+router.register("analytics-yearly", AnalyticsYearlyViewSet, basename="analytics-yearly")
+router.register("analytics-historical", AnalyticsHistoricalViewSet, basename="analytics-historical")
 
 app_name = "api"
 urlpatterns = router.urls

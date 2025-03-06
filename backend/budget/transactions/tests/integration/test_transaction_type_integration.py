@@ -29,7 +29,7 @@ def test_list_transaction_type(
     transaction_type.user = user
     transaction_type.save()
 
-    response = client.get("/api/transaction_types/")
+    response = client.get("/api/transaction-types/")
     json = response.json()
 
     assert response.status_code == status_code
@@ -59,7 +59,7 @@ def test_get_transaction_type(
     transaction_type.user = user
     transaction_type.save()
 
-    response = client.get(f"/api/transaction_types/{transaction_type.id}/")
+    response = client.get(f"/api/transaction-types/{transaction_type.id}/")
 
     assert response.status_code == status_code
     if status_code == status.HTTP_200_OK:
@@ -86,7 +86,7 @@ def test_create_transaction_type(
     transaction_type = baker.make_recipe(transaction_type_recipe)
 
     response = client.post(
-        "/api/transaction_types/",
+        "/api/transaction-types/",
         data={
             "name": transaction_type.name,
         },
@@ -114,7 +114,7 @@ def test_superuser_sees_all_transaction_types(
     admin_transaction_type.user = admin_user
     admin_transaction_type.save()
 
-    response = admin_apiclient.get("/api/transaction_types/")
+    response = admin_apiclient.get("/api/transaction-types/")
     json = response.json()
 
     assert response.status_code == status.HTTP_200_OK
