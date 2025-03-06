@@ -4,6 +4,7 @@ from model_bakery import baker
 from accounts.models import User
 from analytics.services.current import AnalyticsCurrentService
 
+
 @pytest.mark.django_db
 def test_get_location_data(
     user: User,
@@ -26,6 +27,7 @@ def test_get_location_data(
     assert service["total"] == 200
     assert service["Location 1"] == 50
     assert service["Location 2"] == 150
+
 
 @pytest.mark.django_db
 def test_get_buckets_data(
@@ -50,6 +52,7 @@ def test_get_buckets_data(
     assert service["Bucket 1"] == 50
     assert service["Bucket 2"] == 150
 
+
 @pytest.mark.django_db
 def test_get_balance(
     user: User,
@@ -71,6 +74,7 @@ def test_get_balance(
     assert service["positive"] == 100
     assert service["negative"] == 25
     assert service["balance"] == 75
+
 
 @pytest.mark.django_db
 def test_get_summary(

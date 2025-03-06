@@ -6,6 +6,7 @@ from datetime import datetime
 from accounts.models import User
 from analytics.services.yearly import AnalyticsYearlyService
 
+
 @pytest.mark.django_db
 def test_get_positive_categories_by_month(
     user: User,
@@ -32,6 +33,7 @@ def test_get_positive_categories_by_month(
     assert service_february["Positive Category 1"] == 0
     assert service_february["Positive Category 2"] == 100
 
+
 @pytest.mark.django_db
 def test_get_negative_categories_by_month(
     user: User,
@@ -57,6 +59,7 @@ def test_get_negative_categories_by_month(
     service_february = AnalyticsYearlyService(user, year=2025).get_negative_categories_by_month(month=2)
     assert service_february["Negative Category 1"] == 0
     assert service_february["Negative Category 2"] == 100
+
 
 @pytest.mark.django_db
 def test_get_balance_by_month(
@@ -90,6 +93,7 @@ def test_get_balance_by_month(
     assert service_february["negative"] == 50
     assert service_february["balance"] == 50
 
+
 @pytest.mark.django_db
 def test_get_year_data_by_month(
     user: User,
@@ -122,6 +126,7 @@ def test_get_year_data_by_month(
         monthly_data[str(month)] = data
 
     assert service_data == monthly_data
+
 
 @pytest.mark.django_db
 def test_get_year_summary(

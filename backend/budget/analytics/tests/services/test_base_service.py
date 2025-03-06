@@ -7,6 +7,7 @@ from accounts.models import User
 from transactions.models import Transaction
 from analytics.services.base import AnalyticsBaseService
 
+
 @pytest.mark.django_db
 def test_get_positive_categories(
     user: User,
@@ -16,6 +17,7 @@ def test_get_positive_categories(
     baker.make_recipe(positive_category_recipe, _quantity=3, user=user)
     service = AnalyticsBaseService.get_positive_categories(user)
     assert service.count() == 3
+
 
 @pytest.mark.django_db
 def test_get_negative_categories(
@@ -27,6 +29,7 @@ def test_get_negative_categories(
     service = AnalyticsBaseService.get_negative_categories(user)
     assert service.count() == 2
 
+
 @pytest.mark.django_db
 def test_get_positive_transactions(
     user: User,
@@ -36,6 +39,7 @@ def test_get_positive_transactions(
     baker.make_recipe(positive_transaction_recipe, _quantity=3, user=user)
     service = AnalyticsBaseService.get_positive_transactions(user)
     assert service.count() == 3
+
 
 @pytest.mark.django_db
 def test_get_negative_transactions(
@@ -47,6 +51,7 @@ def test_get_negative_transactions(
     service = AnalyticsBaseService.get_negative_transactions(user)
     assert service.count() == 2
 
+
 @pytest.mark.django_db
 def test_sum_transactions(
     user: User,
@@ -57,6 +62,7 @@ def test_sum_transactions(
     transactions = Transaction.objects.all()
     service = AnalyticsBaseService.sum_transactions(transactions)
     assert service == sum([transaction.amount for transaction in transactions])
+
 
 @pytest.mark.django_db
 def test_get_balance_for_queryset(
@@ -76,6 +82,7 @@ def test_get_balance_for_queryset(
         "balance": 50,
     }
 
+
 @pytest.mark.django_db
 def test_get_transactions_by_month(
     user: User,
@@ -93,6 +100,7 @@ def test_get_transactions_by_month(
     assert service_january.count() == 3
     assert service_february.count() == 2
     assert service_march.count() == 0
+
 
 @pytest.mark.django_db
 def test_get_transactions_by_year(

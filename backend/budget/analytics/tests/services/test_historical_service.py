@@ -6,6 +6,7 @@ from datetime import datetime
 from accounts.models import User
 from analytics.services.historical import AnalyticsHistoricalService
 
+
 @pytest.mark.django_db
 def test_get_positive_categories_by_year(
     user: User,
@@ -32,6 +33,7 @@ def test_get_positive_categories_by_year(
     assert service_year_2026["Positive Category 1"] == 0
     assert service_year_2026["Positive Category 2"] == 100
 
+
 @pytest.mark.django_db
 def test_get_negative_categories_by_year(
     user: User,
@@ -57,6 +59,7 @@ def test_get_negative_categories_by_year(
     service_year_2026 = AnalyticsHistoricalService(user).get_negative_categories_by_year(year=2026)
     assert service_year_2026["Negative Category 1"] == 0
     assert service_year_2026["Negative Category 2"] == 100
+
 
 @pytest.mark.django_db
 def test_get_balance_by_year(
@@ -89,6 +92,7 @@ def test_get_balance_by_year(
     assert service_year_2026["positive"] == 100
     assert service_year_2026["negative"] == 50
     assert service_year_2026["balance"] == 50
+
 
 @pytest.mark.django_db
 def test_get_historical_data_by_year(
@@ -124,6 +128,7 @@ def test_get_historical_data_by_year(
         yearly_data[str(year)] = data
 
     assert service_data == yearly_data
+
 
 @pytest.mark.django_db
 def test_get_historical_summary(
