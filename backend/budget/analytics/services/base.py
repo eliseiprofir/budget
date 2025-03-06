@@ -41,7 +41,10 @@ class AnalyticsBaseService:
     def sum_transactions(queryset: Transaction):
         """Sum the amount for a queryset of transactions."""
         return queryset.aggregate(
-            total=Coalesce(Sum("amount", output_field=DecimalField()), 0)
+            total=Coalesce(
+                Sum("amount", output_field=DecimalField()),
+                0, output_field=DecimalField()
+            )
         )["total"]
 
     def get_balance_for_queryset(self, queryset: Transaction):
