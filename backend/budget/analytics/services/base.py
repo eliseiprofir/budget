@@ -15,11 +15,11 @@ class AnalyticsBaseService:
 
     def __init__(self, user):
         self.user = user
-        self.locations = Location.available_objects.filter_by_user(user=self.user) or []
-        self.buckets = Bucket.available_objects.filter_by_user(user=self.user) or []
-        self.transaction_types = TransactionType.available_objects.filter_by_user(user=self.user) or []
-        self.categories = Category.available_objects.filter_by_user(user=self.user) or []
-        self.transactions = Transaction.objects.filter_by_user(user=self.user) or []
+        self.locations = Location.available_objects.filter_by_user(user=self.user)
+        self.buckets = Bucket.available_objects.filter_by_user(user=self.user)
+        self.transaction_types = TransactionType.available_objects.filter_by_user(user=self.user)
+        self.categories = Category.available_objects.filter_by_user(user=self.user)
+        self.transactions = Transaction.objects.filter_by_user(user=self.user)
 
     def get_positive_categories(self):
         """Get all positive categories for the given user."""

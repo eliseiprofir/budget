@@ -38,7 +38,7 @@ class AnalyticsCurrentService(AnalyticsBaseService):
     def get_summary(self):
         """Get complete summary of current status for the given user."""
         return {
-            "balance": self.get_balance(),
             "locations": self.get_locations_data(),
-            "buckets": self.get_buckets_data()
+            "buckets": self.get_buckets_data(),
+            "balance": self.get_balance(),
         }

@@ -12,7 +12,7 @@ class AnalyticsHistoricalService(AnalyticsBaseService):
         self.user = user
         super().__init__(user)
 
-    def get_positive_categories_data_by_year(self, year):
+    def get_positive_categories_by_year(self, year):
         """Get categories data for the given user."""
         categories = {}
 
@@ -25,7 +25,7 @@ class AnalyticsHistoricalService(AnalyticsBaseService):
 
         return categories
 
-    def get_negative_categories_data_by_year(self, year):
+    def get_negative_categories_by_year(self, year):
         """Get categories data for the given user."""
         categories = {}
 
@@ -55,8 +55,8 @@ class AnalyticsHistoricalService(AnalyticsBaseService):
         for year_date in years:
             year = year_date.year
             data = {
-                "positive_categories": self.get_positive_categories_data_by_year(year),
-                "negative_categories": self.get_negative_categories_data_by_year(year),
+                "positive_categories": self.get_positive_categories_by_year(year),
+                "negative_categories": self.get_negative_categories_by_year(year),
                 "balance": self.get_balance_by_year(year)
             }
             yearly_data[str(year)] = data
@@ -66,7 +66,7 @@ class AnalyticsHistoricalService(AnalyticsBaseService):
     def get_historical_summary(self):
         """Get yearly summary for the given user."""
 
-        historical_data = {
+        historical_summary = {
             "positive_categories": {},
             "negative_categories": {},
             "balance": {}
@@ -77,12 +77,12 @@ class AnalyticsHistoricalService(AnalyticsBaseService):
 
         for category in positive_categories:
             year_category_transactions = self.transactions.filter(category=category)
-            historical_data["positive_categories"][category.name] = self.sum_transactions(year_category_transactions)
+            historical_summary["positive_categories"][category.name] = self.sum_transactions(year_category_transactions)
 
         for category in negative_categories:
             year_category_transactions = self.transactions.filter(category=category)
-            historical_data["negative_categories"][category.name] = self.sum_transactions(year_category_transactions)
+            historical_summary["negative_categories"][category.name] = self.sum_transactions(year_category_transactions)
 
-        historical_data["balance"] = self.get_balance_for_queryset(self.transactions)
+        historical_summary["balance"] = self.get_balance_for_queryset(self.transactions)
 
-        return historical_data
+        return historical_summary

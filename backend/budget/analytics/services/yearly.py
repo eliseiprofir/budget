@@ -13,7 +13,7 @@ class AnalyticsYearlyService(AnalyticsBaseService):
         self.year = year
         super().__init__(user)
 
-    def get_positive_categories_data_by_month(self, month):
+    def get_positive_categories_by_month(self, month):
         """Get categories data for the given user."""
         categories = {}
 
@@ -26,7 +26,7 @@ class AnalyticsYearlyService(AnalyticsBaseService):
 
         return categories
 
-    def get_negative_categories_data_by_month(self, month):
+    def get_negative_categories_by_month(self, month):
         """Get categories data for the given user."""
         categories = {}
 
@@ -53,8 +53,8 @@ class AnalyticsYearlyService(AnalyticsBaseService):
 
         for month in range(1, 13):
             data = {
-                "positive_categories": self.get_positive_categories_data_by_month(month),
-                "negative_categories": self.get_negative_categories_data_by_month(month),
+                "positive_categories": self.get_positive_categories_by_month(month),
+                "negative_categories": self.get_negative_categories_by_month(month),
                 "balance": self.get_balance_by_month(month)
             }
             monthly_data[str(month)] = data
