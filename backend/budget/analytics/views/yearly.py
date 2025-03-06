@@ -24,8 +24,8 @@ class AnalyticsYearlyViewSet(viewsets.ViewSet):
         serializer = AnalyticsYearlySerializer(data)
         return Response(serializer.data)
 
-    @action(detail=False, methods=['get'], url_path=r'(?P<year>\d+)')
-    def custom_year_analytics(self, request, year=None, month=None):
+    @action(detail=False, methods=['get'], url_path=r'(?P<year>.+)')
+    def custom(self, request, year=None):
         """Get analytics summary for a specific year (YYYY)."""
         try:
             year = int(year)
