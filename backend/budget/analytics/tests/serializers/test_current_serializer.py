@@ -21,6 +21,7 @@ def test_representation_serializer():
     serializer = RepresentationSerializer(data).to_representation(data)
     assert serializer == data
 
+
 @pytest.mark.django_db
 def test_balance_serializer():
     """Test BalanceSerializer to ensure it works properly."""
@@ -35,6 +36,7 @@ def test_balance_serializer():
     assert serializer.is_valid(), serializer.errors
     assert serializer.validated_data == data
 
+
 @pytest.mark.django_db
 def test_analytics_current_serializer(
     user: User,
@@ -42,7 +44,7 @@ def test_analytics_current_serializer(
     negative_transaction_recipe: str,
 ):
     """Test AnalyticsCurrentSerializer to ensure it works properly."""
-    baker.make_recipe(positive_transaction_recipe, user=user, amount=100, _quantity=3)
+    baker.make_recipe(positive_transaction_recipe, user=user, amount=100, _quantity=2)
     baker.make_recipe(negative_transaction_recipe, user=user, amount=50, _quantity=2)
 
     service_data = AnalyticsCurrentService(user).get_summary()
@@ -52,6 +54,6 @@ def test_analytics_current_serializer(
     assert "locations" in serializer_data
     assert "buckets" in serializer_data
 
-    assert serializer_data["balance"]["positive"] == decimal.Decimal("300.00")
+    assert serializer_data["balance"]["positive"] == decimal.Decimal("200.00")
     assert serializer_data["balance"]["negative"] == decimal.Decimal("100.00")
-    assert serializer_data["balance"]["balance"] == decimal.Decimal("200.00")
+    assert serializer_data["balance"]["balance"] == decimal.Decimal("100.00")
