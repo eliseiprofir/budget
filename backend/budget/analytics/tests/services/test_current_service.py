@@ -11,7 +11,7 @@ def test_get_location_data(
     positive_transaction_recipe: str,
     negative_transaction_recipe: str,
 ):
-    """Test get_location_data function works properly."""
+    """Test get_location_data function to ensure it works properly."""
     service = AnalyticsCurrentService(user).get_locations_data()
     assert service == {"total": 0}
 
@@ -34,7 +34,7 @@ def test_get_buckets_data(
     positive_transaction_recipe: str,
     negative_transaction_recipe: str,
 ):
-    """Test get_buckets_data function works properly."""
+    """Test get_buckets_data function to ensure it works properly."""
     service = AnalyticsCurrentService(user).get_buckets_data()
     assert service == {"total": 0}
 
@@ -56,7 +56,7 @@ def test_get_balance(
     positive_transaction_recipe: str,
     negative_transaction_recipe: str,
 ):
-    """Test get_balance function works properly."""
+    """Test get_balance function to ensure it works properly."""
     service = AnalyticsCurrentService(user).get_balance()
     assert service == {
         "positive": 0,
@@ -80,7 +80,7 @@ def test_get_summary(
     positive_transaction_recipe: str,
     negative_transaction_recipe: str,
 ):
-    """Test get_summary function works properly."""
+    """Test get_summary function to ensure it works properly."""
     service = AnalyticsCurrentService(user).get_summary()
     assert service == {
         "locations": {"total": 0},

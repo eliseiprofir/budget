@@ -12,7 +12,7 @@ def test_get_positive_categories_by_year(
     positive_category_recipe: str,
     positive_transaction_recipe: str,
 ):
-    """Test get_positive_categories_by_year function works properly."""
+    """Test get_positive_categories_by_year function to ensure it works properly."""
     service = AnalyticsHistoricalService(user).get_positive_categories_by_year(year=2025)
     assert service == {}
 
@@ -38,7 +38,7 @@ def test_get_negative_categories_by_year(
     negative_category_recipe: str,
     negative_transaction_recipe: str,
 ):
-    """Test get_negative_categories_by_year function works properly."""
+    """Test get_negative_categories_by_year function to ensure it works properly."""
     service = AnalyticsHistoricalService(user).get_negative_categories_by_year(year=2025)
     assert service == {}
 
@@ -64,7 +64,7 @@ def test_get_balance_by_year(
     positive_transaction_recipe: str,
     negative_transaction_recipe: str,
 ):
-    """Test get_balance_by_year function works properly."""
+    """Test get_balance_by_year function to ensure it works properly."""
     service = AnalyticsHistoricalService(user).get_balance_by_year(year=2025)
     assert service == {
         "positive": 0,
@@ -98,7 +98,7 @@ def test_get_historical_data_by_year(
     negative_category_recipe: str,
     negative_transaction_recipe: str,
 ):
-    """Test get_historical_data_by_year function works properly."""
+    """Test get_historical_data_by_year function to ensure it works properly."""
     year_2025 = make_aware(datetime(2025, 1, 1))
     year_2026 = make_aware(datetime(2026, 2, 1))
     positive_category1 = baker.make_recipe(positive_category_recipe, user=user, name="Positive Category 1")
@@ -132,7 +132,7 @@ def test_get_historical_summary(
     negative_category_recipe: str,
     negative_transaction_recipe: str,
 ):
-    """Test get_historical_summary function works properly."""
+    """Test get_historical_summary function to ensure it works properly."""
     year_2025 = make_aware(datetime(2025, 1, 1))
     year_2026 = make_aware(datetime(2026, 2, 1))
     positive_category1 = baker.make_recipe(positive_category_recipe, user=user, name="Positive Category 1")

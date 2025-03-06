@@ -12,7 +12,7 @@ def test_get_positive_categories_by_month(
     positive_category_recipe: str,
     positive_transaction_recipe: str,
 ):
-    """Test get_positive_categories_by_month function works properly."""
+    """Test get_positive_categories_by_month function to ensure it works properly."""
     service = AnalyticsYearlyService(user, year=2025).get_positive_categories_by_month(month=1)
     assert service == {}
 
@@ -38,7 +38,7 @@ def test_get_negative_categories_by_month(
     negative_category_recipe: str,
     negative_transaction_recipe: str,
 ):
-    """Test get_negative_categories_by_month function works properly."""
+    """Test get_negative_categories_by_month function to ensure it works properly."""
     service = AnalyticsYearlyService(user, year=2025).get_negative_categories_by_month(month=1)
     assert service == {}
 
@@ -64,7 +64,7 @@ def test_get_balance_by_month(
     positive_transaction_recipe: str,
     negative_transaction_recipe: str,
 ):
-    """Test get_balance_by_month function works properly."""
+    """Test get_balance_by_month function to ensure it works properly."""
     service = AnalyticsYearlyService(user, year=2025).get_balance_by_month(month=1)
     assert service == {
         "positive": 0,
@@ -98,7 +98,7 @@ def test_get_year_data_by_month(
     negative_category_recipe: str,
     negative_transaction_recipe: str,
 ):
-    """Test get_year_data_by_month function works properly."""
+    """Test get_year_data_by_month function to ensure it works properly."""
     january = make_aware(datetime(2025, 1, 1))
     february = make_aware(datetime(2025, 2, 1))
     positive_category1 = baker.make_recipe(positive_category_recipe, user=user, name="Positive Category 1")
@@ -130,7 +130,7 @@ def test_get_year_summary(
     negative_category_recipe: str,
     negative_transaction_recipe: str,
 ):
-    """Test get_year_summary function works properly."""
+    """Test get_year_summary function to ensure it works properly."""
     year_2025 = make_aware(datetime(2025, 1, 1))
     positive_category1 = baker.make_recipe(positive_category_recipe, user=user, name="Positive Category 1")
     positive_category2 = baker.make_recipe(positive_category_recipe, user=user, name="Positive Category 2")

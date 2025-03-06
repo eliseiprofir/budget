@@ -12,7 +12,7 @@ def test_get_positive_categories_data(
     positive_category_recipe: str,
     positive_transaction_recipe: str,
 ):
-    """Test get_positive_categories_data function works properly."""
+    """Test get_positive_categories_data function to ensure it works properly."""
     service = AnalyticsMonthlyService(user, year=2025, month=1).get_positive_categories_data()
     assert service == {}
 
@@ -38,7 +38,7 @@ def test_get_negative_categories_data(
     negative_category_recipe: str,
     negative_transaction_recipe: str,
 ):
-    """Test get_negative_categories_data function works properly."""
+    """Test get_negative_categories_data function to ensure it works properly."""
     service = AnalyticsMonthlyService(user, year=2025, month=1).get_negative_categories_data()
     assert service == {}
 
@@ -64,7 +64,7 @@ def test_get_balance(
     positive_transaction_recipe: str,
     negative_transaction_recipe: str,
 ):
-    """Test get_balance function works properly."""
+    """Test get_balance function to ensure it works properly."""
     service = AnalyticsMonthlyService(user, year=2025, month=1).get_balance()
     assert service == {
         "positive": 0,
