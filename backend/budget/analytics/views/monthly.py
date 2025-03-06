@@ -8,7 +8,7 @@ from analytics.serializers.monthly import AnalyticsMonthlySerializer
 
 
 class AnalyticsMonthlyViewSet(viewsets.ViewSet):
-    """ViewSet for current month analytics functionality."""
+    """ViewSet for current month analytics functionality. Add month (YYYY-MM) in URL path for custom month analytics."""
 
     permission_classes = [IsAuthenticated]
 
@@ -31,7 +31,7 @@ class AnalyticsMonthlyViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=['get'], url_path=r'(?P<year>\d+)-(?P<month>\d+)')
     def custom_month_analytics(self, request, year=None, month=None):
-        """Get analytics summary for a specific month and year in ISO format (YYYY-MM)."""
+        """Get analytics summary for a specific month and year (YYYY-MM)."""
         try:
             year = int(year)
             month = int(month)

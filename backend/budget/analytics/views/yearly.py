@@ -8,7 +8,7 @@ from analytics.serializers.yearly import AnalyticsYearlySerializer
 
 
 class AnalyticsYearlyViewSet(viewsets.ViewSet):
-    """ViewSet for current analytics functionality."""
+    """ViewSet for current analytics functionality. Add year (YYYY) in URL path for custom year analytics."""
 
     permission_classes = [IsAuthenticated]
 
@@ -26,7 +26,7 @@ class AnalyticsYearlyViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=['get'], url_path=r'(?P<year>\d+)')
     def custom_year_analytics(self, request, year=None, month=None):
-        """Get analytics summary for a specific year in ISO format (YYYY)."""
+        """Get analytics summary for a specific year (YYYY)."""
         try:
             year = int(year)
 
