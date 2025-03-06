@@ -110,17 +110,18 @@ def test_get_year_data_by_month(
     baker.make_recipe(negative_transaction_recipe, user=user, date=january, category=negative_category1, amount=100)
     baker.make_recipe(negative_transaction_recipe, user=user, date=february, category=negative_category2, amount=50)
 
-    service = AnalyticsYearlyService(user, year=2025).get_year_data_by_month()
+    service = AnalyticsYearlyService(user, year=2025)
+    service_data = service.get_year_data_by_month()
     monthly_data = {}
     for month in range(1, 13):
         data = {
-            "positive_categories": AnalyticsYearlyService(user, year=2025).get_positive_categories_by_month(month),
-            "negative_categories": AnalyticsYearlyService(user, year=2025).get_negative_categories_by_month(month),
-            "balance": AnalyticsYearlyService(user, year=2025).get_balance_by_month(month),
+            "positive_categories": service.get_positive_categories_by_month(month),
+            "negative_categories": service.get_negative_categories_by_month(month),
+            "balance": service.get_balance_by_month(month),
         }
         monthly_data[str(month)] = data
 
-    assert service == monthly_data
+    assert service_data == monthly_data
 
 @pytest.mark.django_db
 def test_get_year_summary(
@@ -141,7 +142,8 @@ def test_get_year_summary(
     baker.make_recipe(negative_transaction_recipe, user=user, date=year_2025, category=negative_category1, amount=100)
     baker.make_recipe(negative_transaction_recipe, user=user, date=year_2025, category=negative_category2, amount=50)
 
-    service = AnalyticsYearlyService(user, year=2025).get_year_summary()
+    service = AnalyticsYearlyService(user, year=2025)
+    service_data = service.get_year_summary()
 
     year_summary = {
         "positive_categories": {},
@@ -149,9 +151,9 @@ def test_get_year_summary(
         "balance": {}
     }
 
-    positive_categories = AnalyticsYearlyService(user, year=2025).get_positive_categories()
-    negative_categories = AnalyticsYearlyService(user, year=2025).get_negative_categories()
-    year_transactions = AnalyticsYearlyService(user, year=2025).get_transactions_by_year(2025)
+    positive_categories = service.get_positive_categories()
+    negative_categories = service.get_negative_categories()
+    year_transactions = service.get_transactions_by_year(2025)
 
     for category in positive_categories:
         year_category_transactions = year_transactions.filter(category=category)
@@ -161,6 +163,6 @@ def test_get_year_summary(
         year_category_transactions = year_transactions.filter(category=category)
         year_summary["negative_categories"][category.name] = AnalyticsYearlyService.sum_transactions(year_category_transactions)
 
-    year_summary["balance"] = AnalyticsYearlyService(user, year=2025).get_balance_for_queryset(year_transactions)
+    year_summary["balance"] = service.get_balance_for_queryset(year_transactions)
 
-    assert service == year_summary
+    assert service_data == year_summary

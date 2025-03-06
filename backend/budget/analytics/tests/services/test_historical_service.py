@@ -110,19 +110,20 @@ def test_get_historical_data_by_year(
     baker.make_recipe(negative_transaction_recipe, user=user, date=year_2025, category=negative_category1, amount=100)
     baker.make_recipe(negative_transaction_recipe, user=user, date=year_2026, category=negative_category2, amount=50)
 
-    service = AnalyticsHistoricalService(user).get_historical_data_by_year()
+    service = AnalyticsHistoricalService(user)
+    service_data = service.get_historical_data_by_year()
     years = AnalyticsHistoricalService(user).transactions.dates("date", "year").distinct()
     yearly_data = {}
     for year_date in years:
         year = year_date.year
         data = {
-            "positive_categories": AnalyticsHistoricalService(user).get_positive_categories_by_year(year),
-            "negative_categories": AnalyticsHistoricalService(user).get_negative_categories_by_year(year),
-            "balance": AnalyticsHistoricalService(user).get_balance_by_year(year),
+            "positive_categories": service.get_positive_categories_by_year(year),
+            "negative_categories": service.get_negative_categories_by_year(year),
+            "balance": service.get_balance_by_year(year),
         }
         yearly_data[str(year)] = data
 
-    assert service == yearly_data
+    assert service_data == yearly_data
 
 @pytest.mark.django_db
 def test_get_historical_summary(
@@ -148,7 +149,8 @@ def test_get_historical_summary(
     baker.make_recipe(negative_transaction_recipe, user=user, date=year_2026, category=negative_category1, amount=100)
     baker.make_recipe(negative_transaction_recipe, user=user, date=year_2026, category=negative_category2, amount=50)
 
-    service = AnalyticsHistoricalService(user).get_historical_summary()
+    service = AnalyticsHistoricalService(user)
+    service_data = service.get_historical_summary()
 
     historical_summary = {
         "positive_categories": {},
@@ -156,9 +158,9 @@ def test_get_historical_summary(
         "balance": {}
     }
 
-    positive_categories = AnalyticsHistoricalService(user).get_positive_categories()
-    negative_categories = AnalyticsHistoricalService(user).get_negative_categories()
-    transactions = AnalyticsHistoricalService(user).transactions
+    positive_categories = service.get_positive_categories()
+    negative_categories = service.get_negative_categories()
+    transactions = service.transactions
 
     for category in positive_categories:
         year_category_transactions = transactions.filter(category=category)
@@ -168,6 +170,6 @@ def test_get_historical_summary(
         year_category_transactions = transactions.filter(category=category)
         historical_summary["negative_categories"][category.name] = AnalyticsHistoricalService.sum_transactions(year_category_transactions)
 
-    historical_summary["balance"] = AnalyticsHistoricalService(user).get_balance_for_queryset(transactions)
+    historical_summary["balance"] = service.get_balance_for_queryset(transactions)
 
-    assert service == historical_summary
+    assert service_data == historical_summary
