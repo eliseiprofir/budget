@@ -12,12 +12,7 @@ from analytics.serializers.current import AnalyticsCurrentSerializer
 @pytest.mark.django_db
 def test_representation_serializer():
     """Test RepresentationSerializer to ensure it works properly."""
-    data = {
-        "Back": 1000,
-        "Cash": 200,
-        "total": 1200,
-    }
-
+    data = {"Test": 1000,}
     serializer = RepresentationSerializer(data).to_representation(data)
     assert serializer == data
 

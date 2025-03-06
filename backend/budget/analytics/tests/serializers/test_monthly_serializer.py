@@ -11,6 +11,14 @@ from analytics.serializers.monthly import AnalyticsMonthlySerializer
 
 
 @pytest.mark.django_db
+def test_representation_serializer():
+    """Test RepresentationSerializer to ensure it works properly."""
+    data = {"Test": 1000,}
+    serializer = RepresentationSerializer(data).to_representation(data)
+    assert serializer == data
+
+
+@pytest.mark.django_db
 def test_analytics_monthly_serializer(
     user: User,
     positive_category_recipe: str,
