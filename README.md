@@ -4,32 +4,69 @@ A comprehensive full-stack application for managing personal and family finances
 
 ## Features
 
-- **Multi-user authentication**  
-- **Transaction tracking** (expenses/income)  
-- **Category management**  
-- **Location-based money tracking** (physical & virtual wallets)  
-- **Advanced reporting**:  
-  - Monthly category-wise analysis  
-  - Yearly profit/loss statements  
-  - Multi-year trend analysis  
-  - Current balance across locations  
-  - Financial bucket distribution  
+- **Multi-user authentication**
+  - Email-based authentication system
+  - Complete user account management
+  - Secure JWT authentication
+
+- **Transaction management**
+  - Record transactions (income/expenses)
+  - Detailed descriptions for each transaction
+  - Precise transaction dating
+
+- **Category management**
+  - Customizable categories for income and expenses
+  - Transaction types (positive, negative, neutral)
+  - Hierarchical organization of categories
+
+- **Location-based money tracking**
+  - Physical and virtual wallets (bank accounts, cash, etc.)
+  - Balance tracking by location
+  - Transfers between locations
+
+- **Financial Buckets system**
+  - Percentage allocation of income into different financial buckets
+  - Automatic distribution of income based on allocations
+  - Balance tracking by buckets
+
+- **Advanced reporting**:
+  - Monthly category-wise analysis
+  - Yearly profit/loss statements
+  - Multi-year trend analysis
+  - Current balance across locations
+  - Financial bucket distribution
+  - Complete historical reports
 
 ## Tech Stack
 
-- **Backend**: Django REST Framework  
-- **Frontend**: Streamlit  
-- **Database**: PostgreSQL  
-- **Authentication**: JWT  
-- **Testing**: pytest  
+- **Backend**:
+  - Django 5.1.4
+  - Django REST Framework 3.15.2
+  - Django Allauth for authentication
+  - Django Model Utils for advanced models
+  - PostgreSQL for database
+
+- **Frontend**:
+  - Streamlit 1.41.1
+  - Pandas for data manipulation
+  - Requests for API communication
+
+- **Authentication**:
+  - JWT (JSON Web Tokens)
+  - Secure authentication system
+
+- **Testing**:
+  - pytest
+  - pytest-django
+  - Model Bakery for fixtures
 
 ## Installation
 
 ### Prerequisites
 
-- Python 3.8+  
-- PostgreSQL  
-- `virtualenv`  
+- Python 3.8+
+- PostgreSQL
+- `virtualenv`
 
 ### Setup
 
@@ -94,6 +131,8 @@ streamlit run app.py
 ## Testing
 
 ```bash
+# From the backend directory
+cd backend
 pytest
 ```
 
