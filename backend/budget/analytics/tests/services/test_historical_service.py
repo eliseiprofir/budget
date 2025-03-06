@@ -1,0 +1,173 @@
+import pytest
+from model_bakery import baker
+from django.utils.timezone import make_aware
+from datetime import datetime
+
+from accounts.models import User
+from analytics.services.historical import AnalyticsHistoricalService
+
+@pytest.mark.django_db
+def test_get_positive_categories_by_year(
+    user: User,
+    positive_category_recipe: str,
+    positive_transaction_recipe: str,
+):
+    """Test get_positive_categories_by_year function works properly."""
+    service = AnalyticsHistoricalService(user).get_positive_categories_by_year(year=2025)
+    assert service == {}
+
+    year_2025 = make_aware(datetime(2025, 1, 1))
+    year_2026 = make_aware(datetime(2026, 2, 1))
+
+    positive_category1 = baker.make_recipe(positive_category_recipe, user=user, name="Positive Category 1")
+    positive_category2 = baker.make_recipe(positive_category_recipe, user=user, name="Positive Category 2")
+    baker.make_recipe(positive_transaction_recipe, user=user, date=year_2025, category=positive_category1, amount=200)
+    baker.make_recipe(positive_transaction_recipe, user=user, date=year_2026, category=positive_category2, amount=100)
+
+    service_year_2025 = AnalyticsHistoricalService(user).get_positive_categories_by_year(year=2025)
+    assert service_year_2025["Positive Category 1"] == 200
+    assert service_year_2025["Positive Category 2"] == 0
+
+    service_year_2026 = AnalyticsHistoricalService(user).get_positive_categories_by_year(year=2026)
+    assert service_year_2026["Positive Category 1"] == 0
+    assert service_year_2026["Positive Category 2"] == 100
+
+@pytest.mark.django_db
+def test_get_negative_categories_by_year(
+    user: User,
+    negative_category_recipe: str,
+    negative_transaction_recipe: str,
+):
+    """Test get_negative_categories_by_year function works properly."""
+    service = AnalyticsHistoricalService(user).get_negative_categories_by_year(year=2025)
+    assert service == {}
+
+    year_2025 = make_aware(datetime(2025, 1, 1))
+    year_2026 = make_aware(datetime(2026, 2, 1))
+
+    negative_category1 = baker.make_recipe(negative_category_recipe, user=user, name="Negative Category 1")
+    negative_category2 = baker.make_recipe(negative_category_recipe, user=user, name="Negative Category 2")
+    baker.make_recipe(negative_transaction_recipe, user=user, date=year_2025, category=negative_category1, amount=200)
+    baker.make_recipe(negative_transaction_recipe, user=user, date=year_2026, category=negative_category2, amount=100)
+
+    service_year_2025 = AnalyticsHistoricalService(user).get_negative_categories_by_year(year=2025)
+    assert service_year_2025["Negative Category 1"] == 200
+    assert service_year_2025["Negative Category 2"] == 0
+
+    service_year_2026 = AnalyticsHistoricalService(user).get_negative_categories_by_year(year=2026)
+    assert service_year_2026["Negative Category 1"] == 0
+    assert service_year_2026["Negative Category 2"] == 100
+
+@pytest.mark.django_db
+def test_get_balance_by_year(
+    user: User,
+    positive_transaction_recipe: str,
+    negative_transaction_recipe: str,
+):
+    """Test get_balance_by_year function works properly."""
+    service = AnalyticsHistoricalService(user).get_balance_by_year(year=2025)
+    assert service == {
+        "positive": 0,
+        "negative": 0,
+        "balance": 0,
+    }
+
+    year_2025 = make_aware(datetime(2025, 1, 1))
+    year_2026 = make_aware(datetime(2026, 2, 1))
+
+    baker.make_recipe(positive_transaction_recipe, user=user, date=year_2025, amount=200)
+    baker.make_recipe(negative_transaction_recipe, user=user, date=year_2025, amount=100)
+    baker.make_recipe(positive_transaction_recipe, user=user, date=year_2026, amount=100)
+    baker.make_recipe(negative_transaction_recipe, user=user, date=year_2026, amount=50)
+
+    service_year_2025 = AnalyticsHistoricalService(user).get_balance_by_year(year=2025)
+    assert service_year_2025["positive"] == 200
+    assert service_year_2025["negative"] == 100
+    assert service_year_2025["balance"] == 100
+
+    service_year_2026 = AnalyticsHistoricalService(user).get_balance_by_year(year=2026)
+    assert service_year_2026["positive"] == 100
+    assert service_year_2026["negative"] == 50
+    assert service_year_2026["balance"] == 50
+
+@pytest.mark.django_db
+def test_get_historical_data_by_year(
+    user: User,
+    positive_category_recipe: str,
+    positive_transaction_recipe: str,
+    negative_category_recipe: str,
+    negative_transaction_recipe: str,
+):
+    """Test get_historical_data_by_year function works properly."""
+    year_2025 = make_aware(datetime(2025, 1, 1))
+    year_2026 = make_aware(datetime(2026, 2, 1))
+    positive_category1 = baker.make_recipe(positive_category_recipe, user=user, name="Positive Category 1")
+    positive_category2 = baker.make_recipe(positive_category_recipe, user=user, name="Positive Category 2")
+    negative_category1 = baker.make_recipe(negative_category_recipe, user=user, name="Negative Category 1")
+    negative_category2 = baker.make_recipe(negative_category_recipe, user=user, name="Negative Category 2")
+    baker.make_recipe(positive_transaction_recipe, user=user, date=year_2025, category=positive_category1, amount=200)
+    baker.make_recipe(positive_transaction_recipe, user=user, date=year_2026, category=positive_category2, amount=100)
+    baker.make_recipe(negative_transaction_recipe, user=user, date=year_2025, category=negative_category1, amount=100)
+    baker.make_recipe(negative_transaction_recipe, user=user, date=year_2026, category=negative_category2, amount=50)
+
+    service = AnalyticsHistoricalService(user).get_historical_data_by_year()
+    years = AnalyticsHistoricalService(user).transactions.dates("date", "year").distinct()
+    yearly_data = {}
+    for year_date in years:
+        year = year_date.year
+        data = {
+            "positive_categories": AnalyticsHistoricalService(user).get_positive_categories_by_year(year),
+            "negative_categories": AnalyticsHistoricalService(user).get_negative_categories_by_year(year),
+            "balance": AnalyticsHistoricalService(user).get_balance_by_year(year),
+        }
+        yearly_data[str(year)] = data
+
+    assert service == yearly_data
+
+@pytest.mark.django_db
+def test_get_historical_summary(
+    user: User,
+    positive_category_recipe: str,
+    positive_transaction_recipe: str,
+    negative_category_recipe: str,
+    negative_transaction_recipe: str,
+):
+    """Test get_historical_summary function works properly."""
+    year_2025 = make_aware(datetime(2025, 1, 1))
+    year_2026 = make_aware(datetime(2026, 2, 1))
+    positive_category1 = baker.make_recipe(positive_category_recipe, user=user, name="Positive Category 1")
+    positive_category2 = baker.make_recipe(positive_category_recipe, user=user, name="Positive Category 2")
+    negative_category1 = baker.make_recipe(negative_category_recipe, user=user, name="Negative Category 1")
+    negative_category2 = baker.make_recipe(negative_category_recipe, user=user, name="Negative Category 2")
+    baker.make_recipe(positive_transaction_recipe, user=user, date=year_2025, category=positive_category1, amount=200)
+    baker.make_recipe(positive_transaction_recipe, user=user, date=year_2025, category=positive_category2, amount=100)
+    baker.make_recipe(negative_transaction_recipe, user=user, date=year_2025, category=negative_category1, amount=100)
+    baker.make_recipe(negative_transaction_recipe, user=user, date=year_2025, category=negative_category2, amount=50)
+    baker.make_recipe(positive_transaction_recipe, user=user, date=year_2026, category=positive_category1, amount=200)
+    baker.make_recipe(positive_transaction_recipe, user=user, date=year_2026, category=positive_category2, amount=100)
+    baker.make_recipe(negative_transaction_recipe, user=user, date=year_2026, category=negative_category1, amount=100)
+    baker.make_recipe(negative_transaction_recipe, user=user, date=year_2026, category=negative_category2, amount=50)
+
+    service = AnalyticsHistoricalService(user).get_historical_summary()
+
+    historical_summary = {
+        "positive_categories": {},
+        "negative_categories": {},
+        "balance": {}
+    }
+
+    positive_categories = AnalyticsHistoricalService(user).get_positive_categories()
+    negative_categories = AnalyticsHistoricalService(user).get_negative_categories()
+    transactions = AnalyticsHistoricalService(user).transactions
+
+    for category in positive_categories:
+        year_category_transactions = transactions.filter(category=category)
+        historical_summary["positive_categories"][category.name] = AnalyticsHistoricalService.sum_transactions(year_category_transactions)
+
+    for category in negative_categories:
+        year_category_transactions = transactions.filter(category=category)
+        historical_summary["negative_categories"][category.name] = AnalyticsHistoricalService.sum_transactions(year_category_transactions)
+
+    historical_summary["balance"] = AnalyticsHistoricalService(user).get_balance_for_queryset(transactions)
+
+    assert service == historical_summary

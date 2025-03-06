@@ -68,6 +68,7 @@ def test_get_balance_for_queryset(
     baker.make_recipe(positive_transaction_recipe, amount=100, user=user)
     baker.make_recipe(negative_transaction_recipe, amount=50, user=user)
     transactions = Transaction.objects.all()
+
     service = AnalyticsBaseService(user).get_balance_for_queryset(transactions)
     assert service == {
         "positive": 100,
@@ -88,6 +89,7 @@ def test_get_transactions_by_month(
     service_january = AnalyticsBaseService(user).get_transactions_by_month(1, 2025)
     service_february = AnalyticsBaseService(user).get_transactions_by_month(2, 2025)
     service_march = AnalyticsBaseService(user).get_transactions_by_month(3, 2025)
+
     assert service_january.count() == 3
     assert service_february.count() == 2
     assert service_march.count() == 0
@@ -105,6 +107,7 @@ def test_get_transactions_by_year(
     service_2024 = AnalyticsBaseService(user).get_transactions_by_year(2024)
     service_2025 = AnalyticsBaseService(user).get_transactions_by_year(2025)
     service_2026 = AnalyticsBaseService(user).get_transactions_by_year(2026)
+
     assert service_2024.count() == 3
     assert service_2025.count() == 2
     assert service_2026.count() == 0
