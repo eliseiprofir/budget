@@ -16,11 +16,7 @@ class AnalyticsYearlyViewSet(viewsets.ViewSet):
         """Get complete current analytics summary."""
         current_year = timezone.now().year
         service = AnalyticsYearlyService(request.user, year=current_year)
-        data = {
-            "monthly": service.get_year_data_by_month(),
-            "summary": service.get_year_summary(),
-            "period": current_year,
-        }
+        data = service.get_summary()
         serializer = AnalyticsYearlySerializer(data)
         return Response(serializer.data)
 
@@ -35,11 +31,7 @@ class AnalyticsYearlyViewSet(viewsets.ViewSet):
                 return Response({"error": "Year must be between 1900 and 2100"}, status=400)
 
             service = AnalyticsYearlyService(request.user, year=year)
-            data = {
-                "monthly": service.get_year_data_by_month(),
-                "summary": service.get_year_summary(),
-                "period": year,
-            }
+            data = service.get_summary()
             serializer = AnalyticsYearlySerializer(data)
             return Response(serializer.data)
         except ValueError:

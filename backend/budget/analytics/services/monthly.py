@@ -52,3 +52,15 @@ class AnalyticsMonthlyService(AnalyticsBaseService):
             )
 
         return self.get_balance_for_queryset(month_transactions)
+
+    def get_summary(self):
+        """Get complete summary of monthly report for the given user."""
+        return {
+            "positive_categories": self.get_positive_categories_data(),
+            "negative_categories": self.get_negative_categories_data(),
+            "balance": self.get_balance(),
+            "period": {
+                "year": self.year,
+                "month": self.month
+            },
+        }

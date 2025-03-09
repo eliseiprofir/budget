@@ -13,9 +13,6 @@ class AnalyticsHistoricalViewSet(viewsets.ViewSet):
     def list(self, request):
         """Get complete current analytics summary."""
         service = AnalyticsHistoricalService(request.user)
-        data = {
-            "yearly": service.get_historical_data_by_year(),
-            "summary": service.get_historical_summary(),
-        }
+        data = service.get_summary()
         serializer = AnalyticsHistoricalSerializer(data)
         return Response(serializer.data)

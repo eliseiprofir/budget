@@ -82,3 +82,11 @@ class AnalyticsYearlyService(AnalyticsBaseService):
         year_summary["balance"] = self.get_balance_for_queryset(year_transactions)
 
         return year_summary
+
+    def get_summary(self):
+        """Get yearly summary for the given user."""
+        return {
+            "monthly": self.get_year_data_by_month(),
+            "summary": self.get_year_summary(),
+            "period": self.year,
+        }

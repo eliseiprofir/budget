@@ -83,3 +83,10 @@ class AnalyticsHistoricalService(AnalyticsBaseService):
         historical_summary["balance"] = self.get_balance_for_queryset(self.transactions)
 
         return historical_summary
+
+    def get_summary(self):
+        """Get summary of all time for the given user."""
+        return {
+            "yearly": self.get_historical_data_by_year(),
+            "summary": self.get_historical_summary(),
+        }
