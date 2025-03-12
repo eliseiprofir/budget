@@ -171,4 +171,4 @@ cython_debug/
 .pypirc
 
 # Visual Studio Code
-.vscode/
+.vscode
