@@ -17,13 +17,7 @@ class AnalyticsHistoricalViewSet(viewsets.ViewSet):
 
     def list(self, request):
         """Get complete historical analytics summary."""
-        cached_data = get_or_generate_historical_report(request.user)
-        if cached_data:
-            serializer = AnalyticsHistoricalSerializer(cached_data)
-            return Response(serializer.data)
-
-        service = AnalyticsHistoricalService(request.user)
-        data = service.get_summary()
+        data = get_or_generate_historical_report(request.user)
         serializer = AnalyticsHistoricalSerializer(data)
         return Response(serializer.data)
 

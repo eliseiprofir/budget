@@ -17,13 +17,7 @@ class AnalyticsCurrentViewSet(viewsets.ViewSet):
 
     def list(self, request):
         """Get complete current analytics summary. First checks cache - if not available, generates and caches it."""
-        cached_data = get_or_generate_current_report(request.user)
-        if cached_data:
-            serializer = AnalyticsCurrentSerializer(cached_data)
-            return Response(serializer.data)
-
-        service = AnalyticsCurrentService(request.user)
-        data = service.get_summary()
+        data = get_or_generate_current_report(request.user)
         serializer = AnalyticsCurrentSerializer(data)
         return Response(serializer.data)
 

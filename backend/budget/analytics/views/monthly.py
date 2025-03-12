@@ -19,14 +19,7 @@ class AnalyticsMonthlyViewSet(viewsets.ViewSet):
         """Get analytics summary for the current month and year."""
         current_month = timezone.now().month
         current_year = timezone.now().year
-
-        cached_data = get_or_generate_monthly_report(request.user, month=current_month, year=current_year)
-        if cached_data:
-            serializer = AnalyticsMonthlySerializer(cached_data)
-            return Response(serializer.data)
-
-        service = AnalyticsMonthlyService(request.user, month=current_month, year=current_year)
-        data = service.get_summary()
+        data = get_or_generate_monthly_report(request.user, year=current_year, month=current_month)
         serializer = AnalyticsMonthlySerializer(data)
         return Response(serializer.data)
 
@@ -43,13 +36,7 @@ class AnalyticsMonthlyViewSet(viewsets.ViewSet):
             if year < 1900 or year > 2100:  # Arbitrary reasonable range
                 return Response({"error": "Year must be between 1900 and 2100"}, status=400)
 
-            cached_data = get_or_generate_monthly_report(request.user, month=year, year=month)
-            if cached_data:
-                serializer = AnalyticsMonthlySerializer(cached_data)
-                return Response(serializer.data)
-
-            service = AnalyticsMonthlyService(request.user, month=month, year=year)
-            data = service.get_summary()
+            data = get_or_generate_monthly_report(request.user, year=year, month=month)
             serializer = AnalyticsMonthlySerializer(data)
             return Response(serializer.data)
         except ValueError:

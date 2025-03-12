@@ -18,14 +18,7 @@ class AnalyticsYearlyViewSet(viewsets.ViewSet):
     def list(self, request):
         """Get complete yearly analytics summary."""
         current_year = timezone.now().year
-
-        cached_data = get_or_generate_yearly_report(request.user, year=current_year)
-        if cached_data:
-            serializer = AnalyticsYearlySerializer(cached_data)
-            return Response(serializer.data)
-
-        service = AnalyticsYearlyService(request.user, year=current_year)
-        data = service.get_summary()
+        data = get_or_generate_yearly_report(request.user, year=current_year)
         serializer = AnalyticsYearlySerializer(data)
         return Response(serializer.data)
 
@@ -41,13 +34,7 @@ class AnalyticsYearlyViewSet(viewsets.ViewSet):
                     {"error": "Year must be between 1900 and 2100"}, status=400
                 )
 
-            cached_data = get_or_generate_yearly_report(request.user, year=year)
-            if cached_data:
-                serializer = AnalyticsYearlySerializer(cached_data)
-                return Response(serializer.data)
-
-            service = AnalyticsYearlyService(request.user, year=year)
-            data = service.get_summary()
+            data = get_or_generate_yearly_report(request.user, year=year)
             serializer = AnalyticsYearlySerializer(data)
             return Response(serializer.data)
         except ValueError:
