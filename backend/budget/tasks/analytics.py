@@ -34,7 +34,7 @@ def generate_current_report(user_id):
     except Exception as e:
         return {
             "status": "error",
-            "message": f"Error generating yearly report: {str(e)}",
+            "message": f"Error generating current report: {str(e)}",
             "user_id": user_id,
         }
 
