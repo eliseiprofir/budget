@@ -20,7 +20,10 @@ def generate_current_report(user_id):
         report_data["generated_at"] = timezone.now().isoformat()
 
         cache_key = f"current_report_{user_id}"
+
+        print(f"Saving report to cache with key: {cache_key}")
         cache.set(cache_key, report_data, timeout=settings.CACHE_TTL)
+        print(f"Report saved successfully for user {user_id}")
 
         return {
             "status": "success",

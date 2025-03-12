@@ -205,8 +205,9 @@ CORS_ALLOW_HEADERS = [
 ]
 
 # Celery Configuration
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'django-db'
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379'
+CELERY_BROKER_TRANSPORT = 'redis'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
@@ -216,12 +217,13 @@ CELERY_TIMEZONE = TIME_ZONE
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://localhost:6379/1",
+        "LOCATION": "redis://127.0.0.1:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        }
+        },
+        "KEY_PREFIX": "budget",
     }
 }
 
-# Cache time to live is 15 minutes (in seconds)
-CACHE_TTL = 60 * 15
+# Cache time to live is 60 minutes (in seconds)
+CACHE_TTL = 60 * 60
