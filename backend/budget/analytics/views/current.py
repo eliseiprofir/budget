@@ -5,7 +5,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from analytics.services.current import AnalyticsCurrentService
 from analytics.serializers.current import AnalyticsCurrentSerializer
 from analytics.services.cache_utils import get_or_generate_current_report
 

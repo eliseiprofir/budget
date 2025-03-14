@@ -5,7 +5,6 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.utils import timezone
 
-from analytics.services.yearly import AnalyticsYearlyService
 from analytics.serializers.yearly import AnalyticsYearlySerializer
 from analytics.services.cache_utils import get_or_generate_yearly_report
 

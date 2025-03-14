@@ -7,4 +7,4 @@ class AnalyticsConfig(AppConfig):
 
     def ready(self):
         """Import signals when the app is ready."""
-        import analytics.signals
+        import analytics.signals  # noqa

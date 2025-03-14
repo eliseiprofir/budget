@@ -5,7 +5,6 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.utils import timezone
 
-from analytics.services.historical import AnalyticsHistoricalService
 from analytics.serializers.historical import AnalyticsHistoricalSerializer
 from analytics.services.cache_utils import get_or_generate_historical_report
 
