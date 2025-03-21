@@ -14,6 +14,8 @@ from transactions.serializers import TransactionListSerializer
 from transactions.serializers import TransactionDetailSerializer
 from transactions.serializers import TransactionWriteSerializer
 
+from .permissions import IsOwner
+
 
 class TransactionTypeViewSet(
     viewsets.GenericViewSet,
@@ -26,7 +28,7 @@ class TransactionTypeViewSet(
     """TransactionType model view."""
 
     serializer_class = TransactionTypeSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, IsOwner)
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("name",)
 

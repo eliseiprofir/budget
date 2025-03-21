@@ -8,6 +8,7 @@ from accounts.serializers import UserListSerializer
 from accounts.serializers import UserDetailSerializer
 from accounts.serializers import UserWriteSerializer
 
+from .permissions import IsOwner
 
 class UserViewSet(
     viewsets.GenericViewSet,
@@ -17,7 +18,7 @@ class UserViewSet(
 ):
     """User model view."""
     serializer_class = UserListSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, IsOwner)
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("created",)
 

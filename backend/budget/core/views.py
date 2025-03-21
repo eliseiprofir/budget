@@ -10,6 +10,8 @@ from core.serializers import BucketWriteSerializer
 from core.serializers import LocationSerializer
 from core.serializers import LocationWriteSerializer
 
+from .permissions import IsOwner
+
 
 class LocationViewSet(
     viewsets.GenericViewSet,
@@ -21,7 +23,7 @@ class LocationViewSet(
 ):
     """Location model view."""
     serializer_class = LocationSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, IsOwner)
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("name",)
 
