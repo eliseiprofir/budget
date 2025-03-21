@@ -10,6 +10,7 @@ from accounts.serializers import UserWriteSerializer
 
 from .permissions import IsOwner
 
+
 class UserViewSet(
     viewsets.GenericViewSet,
     mixins.ListModelMixin,
