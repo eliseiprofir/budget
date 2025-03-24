@@ -82,13 +82,13 @@ def test_crud_transaction(
 @pytest.mark.django_db
 def test_str_method(transaction: Transaction):
     """Test the string representation of the model"""
-    assert f"{truncate(str(transaction.description), 15)}: {transaction.amount}"
+    assert str(transaction) ==f"{truncate(str(transaction.description), 15)}: {transaction.amount}"
 
 
 @pytest.mark.django_db
 def test_full_info_method(transaction: Transaction):
     """Test the full info method of the model"""
-    assert f"{transaction.date}, {transaction.transaction_type}, {transaction.category.name}, {truncate(str(transaction.description), 10)}, {transaction.location}, {transaction.bucket}"
+    assert transaction.get_full_info() == f"{transaction.date}, {transaction.transaction_type}, {transaction.category.name}, {truncate(str(transaction.description), 10)}, {transaction.location}, {transaction.bucket}"
 
 
 @pytest.mark.django_db
