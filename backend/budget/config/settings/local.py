@@ -5,7 +5,7 @@ Local development settings.
 from .base import *  # noqa
 from .base import env
 
-env.read_env(str(BASE_DIR / "config" / "env" / ".env.local"))
+env.read_env(str(BASE_DIR / "config" / "env" / ".env.local"))  # noqa: F405
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY", default="django-insecure-rvshwjb(%&j#l+y#-z2g@&gkpj5r67wo%dz9zj&3g8nrpp4k0w")

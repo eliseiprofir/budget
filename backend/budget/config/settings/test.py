@@ -5,7 +5,7 @@ Test settings.
 from .base import *  # noqa
 from .base import env
 
-env.read_env(str(BASE_DIR / "config" / "env" / ".env.test"))
+env.read_env(str(BASE_DIR / "config" / "env" / ".env.test"))  # noqa: F405
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "test-secret-key"
@@ -19,7 +19,7 @@ ALLOWED_HOSTS = ["*"]
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.test.sqlite3',
+        'NAME': BASE_DIR / 'db.test.sqlite3',  # noqa: F405
     }
 }
 
