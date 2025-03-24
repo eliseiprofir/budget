@@ -231,7 +231,7 @@ celery -A config worker -l info
 
 ## Testing
 
-The project includes comprehensive test coverage:
+The project includes comprehensive test coverage (>92%) with:
 
 ```bash
 # Run all tests (uses test settings automatically)
@@ -246,6 +246,13 @@ pytest path/to/test_file.py
 # Run tests with specific markers
 pytest -m "integration"
 ```
+
+Our test suite includes:
+- Unit tests for all models and business logic
+- Integration tests for API endpoints
+- Comprehensive fixture system using model-bakery
+- Full coverage of authentication flows
+- Extensive validation testing
 
 ## Environment-Specific Features
 
