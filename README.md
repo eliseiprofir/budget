@@ -281,9 +281,8 @@ For detailed API documentation and examples, see [API Documentation](docs/api.md
 ## Author
 
 Elisei Profir
-- GitHub: [Your GitHub]
-- LinkedIn: [Your LinkedIn]
-- Portfolio: [Your Portfolio]
+- GitHub: https://github.com/eliseiprofir
+- LinkedIn: https://www.linkedin.com/in/eliseiprofir/
 
 ## License
 
