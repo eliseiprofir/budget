@@ -172,3 +172,12 @@ cython_debug/
 
 # Visual Studio Code
 .vscode
+
+# Environment variables
+config/env/.env
+config/env/.env.local
+config/env/.env.production
+config/env/.env.test
+
+# Lasă .env.example în Git
+!config/env/.env.example

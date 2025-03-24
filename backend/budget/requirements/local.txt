@@ -1,0 +1,7 @@
+-r base.txt
+
+# Development tools
+colorama>=0.4.6
+prompt_toolkit>=3.0.50
+wcwidth>=0.2.13
+ruff>=0.9.1  # linting
