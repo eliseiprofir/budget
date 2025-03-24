@@ -105,15 +105,7 @@ budget/
 │   │   ├── transactions/  # Transaction handling
 │   │   └── config/        # Project configuration
 │   │       └── settings/  # Environment-specific settings
-│   │           ├── base.py
-│   │           ├── local.py
-│   │           ├── test.py
-│   │           └── production.py
 │   └── requirements/      # Environment-specific dependencies
-│       ├── base.txt
-│       ├── local.txt
-│       ├── test.txt
-│       └── production.txt
 └── frontend/
     └── streamlit/         # UI components
 ```
