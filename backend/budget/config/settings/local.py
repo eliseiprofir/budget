@@ -22,7 +22,7 @@ DATABASES = {
         'NAME': env("DB_NAME", default="budget"),
         'USER': env("DB_USER", default="postgres"),
         'PASSWORD': env("DB_PASSWORD", default="postgres"),
-        'HOST': env("DB_HOST", default="localhost"),
+        'HOST': env("DB_HOST", default="db"),
         'PORT': env("DB_PORT", default="5432"),
     }
 }
@@ -35,14 +35,14 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_CREDENTIALS = True
 
 # Celery
-CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
-CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379'
+CELERY_BROKER_URL = 'redis://redis:6379'
+CELERY_RESULT_BACKEND = 'redis://redis:6379'
 
 # Cache
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": "redis://redis:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },

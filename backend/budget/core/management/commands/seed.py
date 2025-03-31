@@ -5,6 +5,8 @@ from itertools import cycle
 from datetime import datetime
 from django.utils.timezone import make_aware
 
+from accounts.models import User
+
 user_recipe = "accounts.tests.user_recipe"
 location_recipe = "core.tests.location_recipe"
 bucket_recipe = "core.tests.bucket_recipe"
@@ -41,12 +43,16 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # Create user
         self.stdout.write(self.style.NOTICE("\nCreating user..."))
-        from accounts.models import User
-        user = User.objects.create_user(
+
+        try:
+            user = User.objects.create_user(
             email=USER_EMAIL,
             password=USER_PASSWORD,
             full_name="Test User"
         )
+        except:
+            self.stdout.write(self.style.ERROR("You already used 'seed' command before. If you want to use it again, run the 'clear' command first."))
+            return
 
         # Create locations
         self.stdout.write(self.style.NOTICE("\nCreating locations..."))

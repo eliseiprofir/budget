@@ -1,0 +1,26 @@
+services:
+  backend:
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings.production
+      - DEBUG=0
+    ports:
+      - "8000:8000"
+    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000
+    restart: always
+
+  frontend:
+    ports:
+      - "8501:8501"
+    environment:
+      - BACKEND_URL=https://api.yourdomain.com
+    restart: always
+
+  db:
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    restart: always
+
+  redis:
+    restart: always
