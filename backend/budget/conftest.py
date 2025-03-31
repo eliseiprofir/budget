@@ -28,6 +28,7 @@ def admin_user(user) -> User:  # noqa: F811
     user.save()
     return user
 
+
 @pytest.fixture
 def admin_apiclient(admin_user) -> APIClient:
     """Fixture for creating an authenticated admin API client."""
@@ -72,6 +73,7 @@ def transaction_recipe() -> str:
     """Fixture for creating a Transaction recipe"""
     return "transactions.tests.transaction_recipe"
 
+
 @pytest.fixture
 def positive_transaction_type_recipe() -> str:
     """Fixture for creating a TransactionType recipe"""
@@ -88,6 +90,7 @@ def positive_category_recipe() -> str:
 def positive_transaction_recipe() -> str:
     """Fixture for creating a Transaction recipe"""
     return "transactions.tests.positive_transaction_recipe"
+
 
 @pytest.fixture
 def negative_transaction_type_recipe() -> str:
