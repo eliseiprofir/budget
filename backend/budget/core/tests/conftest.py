@@ -4,6 +4,10 @@ from django.core.management import call_command
 from model_bakery import baker
 
 from core.management.commands.createdefaultsuperuser import DEFAULT_EMAIL
+from core.management.commands.seed import TOTAL_ENTRIES_CREATED
+from core.management.commands.seed import USER_EMAIL
+from core.management.commands.seed import USER_PASSWORD
+
 from core.models import Bucket
 from core.models import Location
 
@@ -27,3 +31,17 @@ def defaultsuperuser():
     """Fixture that creates and returns the default superuser."""
     call_command("createdefaultsuperuser")
     return User.objects.get(email=DEFAULT_EMAIL)
+
+
+@pytest.fixture
+def seed():
+    """Fixture that runs the seed command and returns the total number of entries created."""
+    call_command("seed")
+    return TOTAL_ENTRIES_CREATED
+
+
+@pytest.fixture
+def clear():
+    """Fixture that runs the clear command and returns the number of entries remaining (should be 0)."""
+    call_command("clear", "--no-input")
+    return 0
