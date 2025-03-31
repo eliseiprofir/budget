@@ -105,15 +105,7 @@ budget/
 │   │   ├── transactions/  # Transaction handling
 │   │   └── config/        # Project configuration
 │   │       └── settings/  # Environment-specific settings
-│   │           ├── base.py
-│   │           ├── local.py
-│   │           ├── test.py
-│   │           └── production.py
 │   └── requirements/      # Environment-specific dependencies
-│       ├── base.txt
-│       ├── local.txt
-│       ├── test.txt
-│       └── production.txt
 └── frontend/
     └── streamlit/         # UI components
 ```
@@ -289,9 +281,8 @@ For detailed API documentation and examples, see [API Documentation](docs/api.md
 ## Author
 
 Elisei Profir
-- GitHub: [Your GitHub]
-- LinkedIn: [Your LinkedIn]
-- Portfolio: [Your Portfolio]
+- GitHub: https://github.com/eliseiprofir
+- LinkedIn: https://www.linkedin.com/in/eliseiprofir/
 
 ## License
 
