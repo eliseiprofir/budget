@@ -4,8 +4,10 @@ WORKDIR /app
 
 COPY budget/requirements/base.txt requirements/base.txt
 COPY budget/requirements/local.txt requirements/local.txt
+COPY budget/requirements/test.txt requirements/test.txt
+
 RUN mkdir -p requirements
-RUN pip install -r requirements/local.txt
+RUN pip install -r requirements/local.txt -r requirements/test.txt
 
 COPY . .
 

@@ -52,17 +52,9 @@ createdefaultsuperuser: ## Create a superuser
 	$(COMPOSE) $(COMPOSE_FILE) run --rm backend python budget/manage.py createdefaultsuperuser
 .PHONY: createdefaultsuperuser
 
-seed: ## Seed database with random data
-	$(COMPOSE) $(COMPOSE_FILE) run --rm backend python budget/manage.py seed
-.PHONY: seed
-
-clear: ## Clear database except for superusers
-	$(COMPOSE) $(COMPOSE_FILE) run --rm backend python budget/manage.py clear
-.PHONY: clear
-
 # Testing
 test: ## Run tests
-	$(COMPOSE) $(COMPOSE_FILE) exec backend pytest
+	$(COMPOSE) $(COMPOSE_FILE) run --rm backend python -m pytest budget/
 .PHONY: test
 
 # Logs

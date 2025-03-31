@@ -21,7 +21,9 @@ def location(location_recipe) -> Location:
     """Fixture for creating a Location instance."""
     return baker.make_recipe(location_recipe)
 
+
 @pytest.fixture
 def defaultsuperuser():
+    """Fixture that creates and returns the default superuser."""
     call_command("createdefaultsuperuser")
     return User.objects.get(email=DEFAULT_EMAIL)
