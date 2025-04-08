@@ -26,7 +26,7 @@ def main():
             if st.button("Logout"):
                 st.session_state['api'].logout()
                 st.session_state['authenticated'] = False
-                st.experimental_rerun()
+                st.rerun()
         
         # Main content
         st.title("Budget Management System")

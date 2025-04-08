@@ -11,12 +11,12 @@ def show():
         st.write("Please login to access the Budget Management System")
         
         # Login form
-        username = st.text_input("Username")
+        username = st.text_input("Email")
         password = st.text_input("Password", type="password")
         
         if st.button("Login", use_container_width=True):
             if not username or not password:
-                st.error("Please enter both username and password")
+                st.error("Please enter both email and password")
                 return
                 
             try:
@@ -30,7 +30,7 @@ def show():
                 if api.is_authenticated():
                     st.session_state['authenticated'] = True
                     st.success("Login successful!")
-                    st.experimental_rerun()
+                    st.rerun()
                 else:
                     st.error("Invalid credentials")
             except Exception as e:

@@ -5,6 +5,7 @@ Contains settings that are common across all environments.
 
 import environ
 from pathlib import Path
+from datetime import timedelta
 
 # Initialize environ
 env = environ.Env()
@@ -158,3 +159,22 @@ CORS_ALLOW_HEADERS = [
 
 # Specific origins sunt definite în fiecare mediu (local.py, production.py)
 CORS_ALLOW_CREDENTIALS = True
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',  # Adaugă asta pentru compatibilitate cu browsable API
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
+
+# JWT settings
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+}

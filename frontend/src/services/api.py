@@ -1,8 +1,9 @@
+import os
 import requests
 
 class APIService:
     def __init__(self):
-        self.base_url = "http://localhost:8000/api"
+        self.base_url = "http://backend:8000/api"
         self.headers = {
             "Content-Type": "application/json"
         }
@@ -16,7 +17,7 @@ class APIService:
             response = requests.post(
                 f"{self.base_url}/token/",
                 json={
-                    "username": username,
+                    "email": username,  # Folosim username ca email
                     "password": password
                 }
             )

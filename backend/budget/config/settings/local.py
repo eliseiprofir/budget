@@ -13,7 +13,7 @@ SECRET_KEY = env("SECRET_KEY", default="django-insecure-rvshwjb(%&j#l+y#-z2g@&gk
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1"]
+ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1", "backend"]
 
 # Database
 DATABASES = {
