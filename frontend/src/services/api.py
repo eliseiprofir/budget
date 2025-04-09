@@ -17,7 +17,7 @@ class APIService:
             response = requests.post(
                 f"{self.base_url}/token/",
                 json={
-                    "email": username,  # Folosim username ca email
+                    "email": username,
                     "password": password
                 }
             )

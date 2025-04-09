@@ -1,3 +1,4 @@
+import time
 import streamlit as st
 from src.services.api import APIService
 
@@ -30,6 +31,7 @@ def show():
                 if api.is_authenticated():
                     st.session_state['authenticated'] = True
                     st.success("Login successful!")
+                    time.sleep(2)
                     st.rerun()
                 else:
                     st.error("Invalid credentials")
