@@ -50,7 +50,7 @@ class Command(BaseCommand):
             password=USER_PASSWORD,
             full_name="Test User"
         )
-        except:
+        except Exception:
             self.stdout.write(self.style.ERROR("You already used 'seed' command before. If you want to use it again, run the 'clear' command first."))
             return
 

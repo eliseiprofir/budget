@@ -32,6 +32,19 @@ down-v: ## Stop development environment and remove volumes
 	$(COMPOSE) $(COMPOSE_FILE) down -v
 .PHONY: down-v
 
+# Linting commands
+lint: ## Run ruff linter
+	$(COMPOSE) $(COMPOSE_FILE) run --rm backend ruff check budget/
+.PHONY: lint
+
+lint-fix: ## Fix linting issues automatically
+	$(COMPOSE) $(COMPOSE_FILE) run --rm backend ruff check --fix budget/
+.PHONY: lint-fix
+
+format: ## Format code using ruff
+	$(COMPOSE) $(COMPOSE_FILE) run --rm backend ruff format budget/
+.PHONY: format
+
 # Database commands
 makemigrations: ## Create new migrations
 	$(COMPOSE) $(COMPOSE_FILE) run --rm backend python budget/manage.py makemigrations

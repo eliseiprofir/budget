@@ -5,8 +5,6 @@ from model_bakery import baker
 
 from core.management.commands.createdefaultsuperuser import DEFAULT_EMAIL
 from core.management.commands.seed import TOTAL_ENTRIES_CREATED
-from core.management.commands.seed import USER_EMAIL
-from core.management.commands.seed import USER_PASSWORD
 
 from core.models import Bucket
 from core.models import Location

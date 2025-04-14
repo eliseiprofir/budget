@@ -1,7 +1,6 @@
 import pytest
 from django.contrib.auth import get_user_model
 from core.management.commands.createdefaultsuperuser import DEFAULT_EMAIL
-from accounts.models import User
 from core.models import Location
 from core.models import Bucket
 from transactions.models import TransactionType
