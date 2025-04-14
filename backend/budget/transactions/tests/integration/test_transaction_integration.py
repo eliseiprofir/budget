@@ -13,7 +13,7 @@ from transactions.models import Transaction
 @pytest.mark.parametrize(
     ("client", "status_code", "count"),
     [
-        ("apiclient", status.HTTP_403_FORBIDDEN, 0),
+        ("apiclient", status.HTTP_401_UNAUTHORIZED, 0),
         ("authenticated_apiclient", status.HTTP_200_OK, 1),
     ],
 )
@@ -46,7 +46,7 @@ def test_list_transaction(
 @pytest.mark.parametrize(
     ("client", "status_code"),
     [
-        ("apiclient", status.HTTP_403_FORBIDDEN),
+        ("apiclient", status.HTTP_401_UNAUTHORIZED),
         ("authenticated_apiclient", status.HTTP_200_OK),
     ],
 )

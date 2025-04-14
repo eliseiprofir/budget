@@ -3,7 +3,8 @@ from model_bakery import baker
 
 from accounts.serializers import UserListSerializer
 from accounts.serializers import UserDetailSerializer
-from accounts.serializers import UserWriteSerializer
+from accounts.serializers import UserCreateSerializer
+from accounts.serializers import UserUpdateSerializer
 
 
 @pytest.mark.django_db
@@ -31,30 +32,51 @@ def test_detail_serializer_create(user_recipe: str):
 
 
 @pytest.mark.django_db
-def test_write_serializer_create(user_recipe: str):
-    """Test the UserWriteSerializer create method"""
+def test_create_serializer_create(user_recipe: str):
+    """Test the UserCreateSerializer create method"""
     user = baker.prepare_recipe(user_recipe)
     data = {
         "full_name": user.full_name,
         "email": user.email,
+        "password": "testpassword123"
     }
-    serializer = UserWriteSerializer(data=data)
+    serializer = UserCreateSerializer(data=data)
     assert serializer.is_valid(), serializer.errors
     serialized_data = serializer.save()
     assert serialized_data.full_name == user.full_name
     assert serialized_data.email == user.email
+    assert serialized_data.check_password("testpassword123")
 
 
 @pytest.mark.django_db
-def test_write_serializer_update(user_recipe: str):
-    """Test the UserWriteSerializer update method"""
+def test_update_serializer_update(user_recipe: str):
+    """Test the UserUpdateSerializer update method"""
     user = baker.make_recipe(user_recipe)
     data = {
         "full_name": f"{user.full_name} - unique",
         "email": "updated@email.com",
+        "password": "newpassword123"
     }
-    serializer = UserWriteSerializer(user, data=data)
+    serializer = UserUpdateSerializer(user, data=data)
     assert serializer.is_valid(), serializer.errors
     updated_user = serializer.save()
     assert updated_user.full_name == data["full_name"]
     assert updated_user.email == data["email"]
+    assert updated_user.check_password("newpassword123")
+
+
+@pytest.mark.django_db
+def test_update_serializer_update_without_password(user_recipe: str):
+    """Test the UserUpdateSerializer update method without changing password"""
+    user = baker.make_recipe(user_recipe)
+    original_password_hash = user.password
+    data = {
+        "full_name": f"{user.full_name} - unique",
+        "email": "updated@email.com",
+    }
+    serializer = UserUpdateSerializer(user, data=data)
+    assert serializer.is_valid(), serializer.errors
+    updated_user = serializer.save()
+    assert updated_user.full_name == data["full_name"]
+    assert updated_user.email == data["email"]
+    assert updated_user.password == original_password_hash

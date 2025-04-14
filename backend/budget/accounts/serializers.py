@@ -16,14 +16,44 @@ class UserDetailSerializer(serializers.ModelSerializer):
     """Detail Serializer for the User Model"""
 
     class Meta(UserListSerializer.Meta):
-        fields = (*UserListSerializer.Meta.fields, "last_login", "created", "modified")
+        fields = (*UserListSerializer.Meta.fields, "password", "last_login", "created", "modified")
         read_only_fields = fields
 
 
-class UserWriteSerializer(serializers.ModelSerializer):
-    """Serializer used for create operations"""
+class UserCreateSerializer(serializers.ModelSerializer):
+    """Serializer used specifically for create operations"""
+    password = serializers.CharField(write_only=True, required=True)
 
     class Meta:
         model = User
-        fields = ("full_name", "email")
-        read_only_fields = ("id",)
+        fields = ("email", "full_name", "password")
+        extra_kwargs = {
+            "password": {"write_only": True},
+            "email": {"required": True},
+        }
+
+    def create(self, validated_data):
+        return User.objects.create_user(
+            email=validated_data["email"],
+            password=validated_data["password"],
+            full_name=validated_data.get("full_name", "")
+        )
+
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    """Serializer used specifically for update operations"""
+    password = serializers.CharField(write_only=True, required=False, allow_blank=True)
+
+    class Meta:
+        model = User
+        fields = ("email", "full_name", "password")
+        extra_kwargs = {
+            "password": {"write_only": True},
+            "email": {"required": True},
+        }
+
+    def update(self, instance, validated_data):
+        password = validated_data.pop("password", None)
+        if password:
+            instance.set_password(password)
+        return super().update(instance, validated_data)

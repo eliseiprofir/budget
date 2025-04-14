@@ -8,7 +8,7 @@ from django.urls import reverse
 @pytest.mark.parametrize(
     ("client", "status_code"),
     [
-        ("apiclient", status.HTTP_403_FORBIDDEN),
+        ("apiclient", status.HTTP_401_UNAUTHORIZED),
         ("authenticated_apiclient", status.HTTP_200_OK),
     ],
 )
@@ -34,7 +34,7 @@ def test_current_analytics(
 @pytest.mark.parametrize(
     ("client", "status_code"),
     [
-        ("apiclient", status.HTTP_403_FORBIDDEN),
+        ("apiclient", status.HTTP_401_UNAUTHORIZED),
         ("authenticated_apiclient", status.HTTP_200_OK),
     ],
 )
@@ -63,7 +63,7 @@ def test_monthly_analytics(
 @pytest.mark.parametrize(
     ("client", "status_code"),
     [
-        ("apiclient", status.HTTP_403_FORBIDDEN),
+        ("apiclient", status.HTTP_401_UNAUTHORIZED),
         ("authenticated_apiclient", status.HTTP_200_OK),
     ],
 )
@@ -93,7 +93,7 @@ def test_yearly_analytics(
 @pytest.mark.parametrize(
     ("client", "status_code"),
     [
-        ("apiclient", status.HTTP_403_FORBIDDEN),
+        ("apiclient", status.HTTP_401_UNAUTHORIZED),
         ("authenticated_apiclient", status.HTTP_200_OK),
     ],
 )

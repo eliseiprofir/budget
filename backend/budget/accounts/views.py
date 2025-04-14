@@ -2,11 +2,13 @@ from rest_framework import filters
 from rest_framework import mixins
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny
 
 from accounts.models import User
 from accounts.serializers import UserListSerializer
 from accounts.serializers import UserDetailSerializer
-from accounts.serializers import UserWriteSerializer
+from accounts.serializers import UserCreateSerializer
+from accounts.serializers import UserUpdateSerializer
 
 from .permissions import IsOwner
 
@@ -15,6 +17,7 @@ class UserViewSet(
     viewsets.GenericViewSet,
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
     mixins.CreateModelMixin,
 ):
     """User model view."""
@@ -23,8 +26,18 @@ class UserViewSet(
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("created",)
 
+    def get_permissions(self):
+        """Return permissions depending on action."""
+        if self.action in ["create", "list"]:
+            permission_classes = [AllowAny]
+        else:
+            permission_classes = [IsAuthenticated, IsOwner]
+        return [permission() for permission in permission_classes]
+
     def get_queryset(self):
         """Retrieve a custom queryset for users based on the current user."""
+        if self.action == "list" and not self.request.user.is_authenticated:
+            return User.objects.none()
         return User.objects.filter_by_user(self.request.user)
 
     def get_object(self):
@@ -41,7 +54,9 @@ class UserViewSet(
         return {
             "list": UserListSerializer,
             "retrieve": UserDetailSerializer,
-            "create": UserWriteSerializer,
+            "create": UserCreateSerializer,
+            "update": UserUpdateSerializer,
+            "partial_update": UserUpdateSerializer,
         }
 
     def get_serializer_class(self):

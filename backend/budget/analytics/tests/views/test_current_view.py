@@ -41,4 +41,4 @@ def test_analytics_current_view_unauthorized():
     client = APIClient()
     url = reverse("api:analytics-current-list")
     response = client.get(url)
-    assert response.status_code == 403
+    assert response.status_code == 401

@@ -44,9 +44,11 @@ def test_crud_operations(user_recipe: str):
 
     # Update
     user.full_name = "Vasile Paul"
+    user.email = "vasile.paul@example.com"
     user.save()
     updated_user = User.available_objects.get(pk=user.pk)
     assert updated_user.full_name == "Vasile Paul"
+    assert updated_user.email == "vasile.paul@example.com"
 
     # Delete
     user.delete()

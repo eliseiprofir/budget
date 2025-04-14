@@ -91,7 +91,7 @@ def test_analytics_yearly_view_unauthorized():
     client = APIClient()
     url = reverse("api:analytics-yearly-list")
     response = client.get(url)
-    assert response.status_code == 403
+    assert response.status_code == 401
 
 
 @pytest.mark.django_db
