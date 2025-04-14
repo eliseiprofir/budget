@@ -130,6 +130,7 @@ celerybeat.pid
 # Environments
 # backend/budget/config/.env
 .venv
+venv*
 env/
 venv/
 ENV/
