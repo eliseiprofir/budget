@@ -17,13 +17,13 @@ def signup_page():
                 st.error("Please complete all fields.")
                 return
 
-            api = st.session_state.get("auth_api")
+            api = st.session_state["api_auth"]["service"]
             response = api.signup(name=name, email=email, password=password)
             
             if isinstance(response, dict):
                 api.login(email=email, password=password)
                 if api.is_authenticated():
-                    st.session_state["authenticated"] = True
+                    st.session_state["api_auth"]["authenticated"] = True
                     st.success("Account created successfully!")
                     time.sleep(1)
                     st.success("Login successful!")
@@ -42,5 +42,5 @@ def signup_page():
         """)
 
         if st.button("Log in"):
-            st.session_state["current_page"] = "login"
+            st.session_state.current_page = "login"
             st.rerun()

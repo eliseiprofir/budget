@@ -2,18 +2,30 @@ import requests
 import streamlit as st
 
 class AuthAPIService:
+    """Service class for handling authentication-related API calls."""
+    
     def __init__(self):
-        self.base_url = "http://backend:8000/api"
-        self.headers = {
-            "Content-Type": "application/json"
-        }
-        self.token = st.session_state.get("token")
-        self.user_id = st.session_state.get("user_id")
+        self.base_url = st.session_state["api_auth"]["base_url"]
+        self.headers = st.session_state["api_auth"]["headers"]
+        self.token = st.session_state["api_auth"]["token"]
+        self.user_id = st.session_state["api_auth"]["user_id"]
+
+    def _update_headers_and_token(self, token):
+        """Helper function to update token and headers with token."""
+        self.token = token
+        st.session_state["api_auth"]["token"] = token
+        if token is None:
+            self.headers["Authorization"] = None
+            st.session_state["api_auth"]["headers"]["Authorization"] = None
+        else:
+            self.headers["Authorization"] = f"Bearer {self.token}"
+            st.session_state["api_auth"]["headers"]["Authorization"] = f"Bearer {self.token}"
+        st.session_state["api_auth"]["headers"] = self.headers
 
     def _update_user_id(self, user_id):
         """Helper function to update the user ID."""
         self.user_id = user_id
-        st.session_state["user_id"] = user_id
+        st.session_state["api_auth"]["user_id"] = user_id
 
     def login(self, email: str, password: str) -> dict:
         """Authenticate user and get JWT token"""
@@ -29,9 +41,8 @@ class AuthAPIService:
             response.raise_for_status()
             data = response.json()
             if "access" in data:
-                self.token = data["access"]
-                st.session_state["token"] = self.token
-                self.headers["Authorization"] = f"Bearer {self.token}"
+                self._update_headers_and_token(data["access"])
+                st.session_state["api_auth"]["authenticated"] = True
             return data
         except requests.exceptions.RequestException as e:
             return f"Connection error: {str(e)}"
@@ -42,9 +53,7 @@ class AuthAPIService:
 
     def logout(self):
         """Clear authentication token"""
-        self.token = None
-        if "Authorization" in self.headers:
-            del self.headers["Authorization"]
+        self._update_headers_and_token(None)
 
     def get_user_info(self):
         """Get user information"""
@@ -114,3 +123,9 @@ class AuthAPIService:
             
         except requests.exceptions.RequestException as e:
             return f"Connection error: {str(e)}"
+
+    def _update(self):
+        self.base_url = st.session_state["api_auth"]["base_url"]
+        self.headers = st.session_state["api_auth"]["headers"]
+        self.token = st.session_state["api_auth"]["token"]
+        self.user_id = st.session_state["api_auth"]["user_id"]

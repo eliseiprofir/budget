@@ -16,10 +16,10 @@ def login_page():
                 st.error("Please enter both email and password")
                 return
 
-            api = st.session_state.get('auth_api')
+            api = st.session_state["api_auth"]["service"]
             api.login(email, password)
             if api.is_authenticated():
-                st.session_state['authenticated'] = True
+                st.session_state["api_auth"]["authenticated"] = True
                 st.success("Login successful!")
                 time.sleep(1)
                 st.rerun()
@@ -33,5 +33,5 @@ def login_page():
         """)
 
         if st.button("Sign Up"):
-            st.session_state["current_page"] = "signup"
+            st.session_state.current_page = "signup"
             st.rerun()

@@ -1,16 +1,16 @@
 import streamlit as st
 
-def settings_account_page():
+def account_settings_page():
     """Settings page for user's account."""
 
-    if "authenticated" not in st.session_state or not st.session_state["authenticated"]:
+    if not st.session_state["api_auth"]["authenticated"]:
         st.error("You need to be logged in to access this page")
         st.stop()
-
+    
     with st.form("edit_profile"):
         st.subheader("👤 Edit your account")
         
-        api = st.session_state.get('auth_api')
+        api = st.session_state["api_auth"]["service"]
         user_info = api.get_user_info() or {}
 
         name = st.text_input("Name *", value=user_info.get("full_name", "")).strip()
