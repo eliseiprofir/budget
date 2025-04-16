@@ -33,7 +33,9 @@ if "api_auth" not in st.session_state:
     
 if "api_locations" not in st.session_state:
     st.session_state["api_locations"] = {
-        "service": None
+        "service": None,
+        "edit_name": None,
+        "delete_name": None,
     }
     st.session_state["api_locations"]["service"] = LocationsAPIService()
 if "current_page" not in st.session_state:
