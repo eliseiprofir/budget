@@ -2,12 +2,15 @@ import streamlit as st
 
 from services.auth import AuthAPIService
 from services.locations import LocationsAPIService
+from services.buckets import BucketsAPIService
+from services.transaction_types import TransactionTypesAPIService
+from services.categories import CategoriesAPIService
 
 from pages.auth.login import login_page
 from pages.auth.signout import signout_page
 from pages.auth.signup import signup_page
 from pages.settings.account import account_settings_page
-from pages.settings.budget import budget_settings_page
+from pages.settings.budget.budget import budget_settings_page
 
 st.set_page_config(
     page_title="Budget Management System",
@@ -15,7 +18,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Initialize session state variables
+# Initialize session state variables and services
 if "api_auth" not in st.session_state:
     st.session_state["api_auth"] = {
         "service": None,
@@ -28,16 +31,40 @@ if "api_auth" not in st.session_state:
         "authenticated": False,
         "user_id": None
     }
-
     st.session_state["api_auth"]["service"] = AuthAPIService()
-    
+
 if "api_locations" not in st.session_state:
     st.session_state["api_locations"] = {
         "service": None,
-        "edit_name": None,
-        "delete_name": None,
+        "edit_loc_name": None,
+        "delete_loc_name": None,
     }
     st.session_state["api_locations"]["service"] = LocationsAPIService()
+
+if "api_buckets" not in st.session_state:
+    st.session_state["api_buckets"] = {
+        "service": None,
+        "edit_buc_name": None,
+        "delete_buc_name": None,
+    }
+    st.session_state["api_buckets"]["service"] = BucketsAPIService()
+
+if "api_transaction_types" not in st.session_state:
+    st.session_state["api_transaction_types"] = {
+        "service": None,
+        "edit_ttype_name": None,
+        "delete_ttype_name": None,
+    }
+    st.session_state["api_transaction_types"]["service"] = TransactionTypesAPIService()
+
+if "api_categories" not in st.session_state:
+    st.session_state["api_categories"] = {
+        "service": None,
+        "edit_cat_name": None,
+        "delete_cat_name": None,
+    }
+    st.session_state["api_categories"]["service"] = CategoriesAPIService()
+
 if "current_page" not in st.session_state:
     st.session_state["current_page"] = "login"
 
@@ -45,7 +72,7 @@ if "current_page" not in st.session_state:
 login = st.Page(login_page, title="Login", icon="🔑")
 signout = st.Page(signout_page, title="Sign Out", icon="🚪")
 signup = st.Page(signup_page, title="Sign Up", icon="👤")
-# dashboard = st.Page(settings_account_page, title="Dashboard", icon="📊", default=True)
+
 budget_settings = st.Page(budget_settings_page, title="Budget Configuration", icon="💰")
 account_settings = st.Page(account_settings_page, title="Edit Account", icon="👤")
 

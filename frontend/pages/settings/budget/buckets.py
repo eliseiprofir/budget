@@ -1,0 +1,132 @@
+import time
+import streamlit as st
+
+COL1 = 4
+COL2 = 4
+COL3 = 3
+COL4 = 3
+
+def buckets_settings():
+    """Settings section for buckets."""
+    
+    st.header("🪙 Buckets")
+    st.write("Configure your buckets here. You can add, edit or delete your buckets.")
+    
+    # Bucket API
+    buckets_api = st.session_state["api_buckets"]["service"]
+    buckets = buckets_api.get_buckets_list()
+    buckets_names = buckets_api.get_buckets_names()
+    allocation_status = buckets_api.get_allocation_status()
+    total_allocation = buckets_api.get_total_allocation()
+
+    # Form for adding a new bucket
+    with st.form("add_bucket"):
+        col1, col2 = st.columns([5, 5])
+        
+        new_bucket = col1.text_input("Name of the bucket")
+        col1.info("Different purposes for your money (e.g. Economy, Education, Necessities, Donations).")
+        new_percentage = col2.number_input("Allocation percentage", step=1)
+        col2.info("The percentage of your income that will be allocated to this bucket, if you choose 'split income' option.")
+        
+        submitted = st.form_submit_button("Add new bucket")
+        if submitted:
+            if not new_bucket:
+                st.error("Psst... you forgot to enter the name.")
+            elif new_bucket in buckets_names:
+                st.error("This bucket already exists.")
+            elif new_percentage < 0:
+                st.error("Allocation percentage should be greater than 0.")
+            elif new_percentage > 100 or (total_allocation + new_percentage > 100):
+                st.error(f"Total allocation cannot exceed 100%. For this bucket you can have up to {100-total_allocation}%.")
+            else:
+                response = buckets_api.add_bucket(new_bucket, new_percentage)
+                if isinstance(response, dict):
+                    st.session_state["api_buckets"]["edit_buc_name"] = None
+                    st.success("Bucket added!")
+                    time.sleep(1)
+                    st.rerun()
+                else:
+                    st.error(response)
+
+    # Show head of the table
+    col1, col2, col3, col4 = st.columns([COL1, COL2, COL3, COL4])
+    col1.markdown("**Name**")
+    col2.markdown("**Allocation percentage**")
+    col3.markdown("**Edit**")
+    col4.markdown("**Delete**")
+
+    # Show existing buckets
+    for name, percentage in buckets:
+        col1, col2, col3, col4 = st.columns([COL1, COL2, COL3, COL4])
+
+        # Edit mode
+        if st.session_state["api_buckets"]["edit_buc_name"] == name:
+            buckets_names = [buc for buc in buckets_names if buc != name]
+            
+            new_name = col1.text_input("Edit bucket name", value=name, key=f"edit_buc_{name}")
+            new_percentage = col2.number_input("Allocation percentage", step=1, value=int(percentage))
+            
+            if col3.button("💾 Save", key=f"save_buc_{name}"):
+                if not new_name:
+                    st.error("Psst... you forgot to enter the name.")
+                elif new_name in buckets_names:
+                    st.error("This name already exists.")
+                elif new_percentage < 0:
+                    st.error("Allocation percentage should be greater than 0.")
+                elif new_percentage > 100 or (total_allocation - int(percentage) + new_percentage > 100):
+                    st.error(f"Total allocation cannot exceed 100%. For this bucket you can have up to {100-total_allocation+int(percentage)}%.")
+                else:
+                    response = buckets_api.update_bucket(old_name=name, new_name=new_name, new_percentage=new_percentage)
+                    if isinstance(response, dict):
+                        buckets_names += [new_name]
+                        st.session_state["api_buckets"]["edit_buc_name"] = None
+                        st.success("Bucket updated!")
+                        time.sleep(1)
+                        st.rerun()
+                    else:
+                        st.error(response)
+            
+            if col4.button("✖️ Cancel", key=f"cancel_buc_{name}"):
+                st.session_state["api_buckets"]["edit_buc_name"] = None
+                st.rerun()
+        
+        # Delete mode
+        elif st.session_state["api_buckets"]["delete_buc_name"] == name:
+            col1.write(name)
+            col2.write(f"{percentage}%")
+            st.warning(f"Are you sure you want to delete this bucket: {st.session_state['api_buckets']['delete_buc_name']}?")
+            
+            if col3.button("✔️ Confirm", key="confirm_buc_delete"):
+                response = buckets_api.delete_bucket(st.session_state["api_buckets"]["delete_buc_name"])
+                if isinstance(response, dict):
+                    st.success("Bucket deleted!")
+                    st.session_state["api_buckets"]["delete_buc_name"] = None
+                    time.sleep(1)
+                    st.rerun()
+                else:
+                    st.error(response)
+        
+            if col4.button("✖️ Cancel", key="cancel_buc_delete"):
+                st.session_state["api_buckets"]["delete_buc_name"] = None
+                st.rerun()
+
+        # Show mode
+        else:
+            col1.write(name)
+            col2.write(f"{percentage}%")
+            
+            if col3.button("✏️ Edit", key=f"edit_buc_{name}"):
+                st.session_state["api_buckets"]["edit_buc_name"] = name
+                st.rerun()
+            
+            if col4.button("🗑️ Delete", key=f"delete_buc_{name}"):
+                st.session_state["api_buckets"]["delete_buc_name"] = name
+                st.rerun()
+    
+    # Warnings for different cases
+    if allocation_status == "COMPLETE":
+        st.success("Your bucket allocations are complete (100%). You can add now income transactions with 'split income' option.")
+    elif allocation_status == "INCOMPLETE":
+        st.warning(f"Your bucket allocations are incomplete ({total_allocation}%). It should be 100%. Add {100-total_allocation}% to one of your buckets if you want to use 'split income' option for income transactions.")
+    else:
+        st.warning("Add at least one bucket to be able to add new transactions.")

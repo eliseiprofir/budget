@@ -18,7 +18,16 @@ class LocationsAPIService(AuthAPIService):
             data = response.json()
             return data
         except requests.exceptions.RequestException as e:
-            return f"Connection error: {str(e)}"
+            return f"Error: {str(e)}. Response: {response.text}"
+
+    def get_locations_list(self):
+        """Get list of locations for the current user."""
+        self._update()
+        locations_data = self.get_locations()
+        location_list = []
+        for location in locations_data:
+            location_list.append(location["name"])
+        return location_list
 
     def add_location(self, location_name: str):
         """Add a new location for the current user."""
@@ -33,16 +42,7 @@ class LocationsAPIService(AuthAPIService):
             data = response.json()
             return data
         except requests.exceptions.RequestException as e:
-            return f"Connection error: {str(e)}"
-
-    def get_locations_list(self):
-        """Get list of locations for the current user."""
-        self._update()
-        locations_data = self.get_locations()
-        location_list = []
-        for location in locations_data:
-            location_list.append(location["name"])
-        return location_list
+            return f"Error: {str(e)}. Response: {response.text}"
 
     def update_location(self, old_name: str, new_name: str):
         """Update a location's name."""
@@ -53,7 +53,7 @@ class LocationsAPIService(AuthAPIService):
             return f"Error: Location '{old_name}' not found."
         
         try:
-            response = requests.put(
+            response = requests.patch(
                 f"{self.base_url}/locations/{location_id}/",
                 headers=self.headers,
                 json={"name": new_name}
@@ -62,7 +62,7 @@ class LocationsAPIService(AuthAPIService):
             data = response.json()
             return data
         except requests.exceptions.RequestException as e:
-            return f"Connection error: {str(e)}"
+            return f"Error: {str(e)}. Response: {response.text}"
     
     def delete_location(self, location_name: str):
         """Delete a location."""
@@ -73,15 +73,16 @@ class LocationsAPIService(AuthAPIService):
             return f"Error: Location '{location_name}' not found."
 
         try:
-            response = requests.delete(
+            response = requests.patch(
                 f"{self.base_url}/locations/{location_id}/",
                 headers=self.headers,
+                json={"is_removed": True}
             )
             response.raise_for_status()
             data = response.json()
             return data
         except requests.exceptions.RequestException as e:
-            return f"Connection error: {str(e)}"
+            return f"Error: {str(e)}. Response: {response.text}"
     
     def _get_location_id(self, location_name: str):
         """Get ID of a location by its name."""
