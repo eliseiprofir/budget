@@ -43,8 +43,11 @@ class TransactionTypeWriteSerializer(serializers.ModelSerializer):
 
     def validate_name(self, value):
         user = self.context["request"].user
-        if TransactionType.available_objects.filter(user=user, name=value).exists():
-            raise serializers.ValidationError({"name": "You already have a bucket with that name."})
+        current_query = TransactionType.available_objects.filter(user=user, name=value)
+        if self.instance:
+            current_query = current_query.exclude(pk=self.instance.pk)
+        if current_query.exists():
+            raise serializers.ValidationError({"name": "You already have a transaction type with this name."})
         return value
 
 
@@ -88,7 +91,10 @@ class CategoryWriteSerializer(serializers.ModelSerializer):
 
     def validate_name(self, value):
         user = self.context["request"].user
-        if Category.available_objects.filter(user=user, name=value).exists():
+        current_query = Category.available_objects.filter(user=user, name=value)
+        if self.instance:
+            current_query = current_query.exclude(pk=self.instance.pk)
+        if current_query.exists():
             raise serializers.ValidationError({"name": "You already have a category with that name."})
         return value
 
