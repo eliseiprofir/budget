@@ -38,6 +38,7 @@ if "api_locations" not in st.session_state:
         "service": None,
         "edit_loc_name": None,
         "delete_loc_name": None,
+        "cache": {},
     }
     st.session_state["api_locations"]["service"] = LocationsAPIService()
 
@@ -46,6 +47,7 @@ if "api_buckets" not in st.session_state:
         "service": None,
         "edit_buc_name": None,
         "delete_buc_name": None,
+        "cache": {},
     }
     st.session_state["api_buckets"]["service"] = BucketsAPIService()
 
@@ -54,6 +56,7 @@ if "api_transaction_types" not in st.session_state:
         "service": None,
         "edit_ttype_name": None,
         "delete_ttype_name": None,
+        "cache": {},
     }
     st.session_state["api_transaction_types"]["service"] = TransactionTypesAPIService()
 
@@ -62,6 +65,7 @@ if "api_categories" not in st.session_state:
         "service": None,
         "edit_cat_name": None,
         "delete_cat_name": None,
+        "cache": {},
     }
     st.session_state["api_categories"]["service"] = CategoriesAPIService()
 

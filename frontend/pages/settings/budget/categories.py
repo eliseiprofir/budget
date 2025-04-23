@@ -1,5 +1,6 @@
 import time
 import streamlit as st
+from utils.cache_utils import update_cache
 
 COL1 = 4
 COL2 = 4
@@ -12,14 +13,15 @@ def categories_settings():
     st.header("🔖 Categories")
     st.write("Configure your categories here. You can add, edit or delete your categories.")
     
-    # Category API
+    # Category API and cache
     categories_api = st.session_state["api_categories"]["service"]
-    categories = categories_api.get_categories_list()
-    categories_names = categories_api.get_categories_names()
+    cache = st.session_state["api_categories"]["cache"]
+    categories = cache["list"]
+    categories_names = cache["names"]
 
     # Transaction Types API
     transaction_types_api = st.session_state["api_transaction_types"]["service"]
-    transaction_types_names = transaction_types_api.get_transaction_types_names()
+    transaction_types_names = st.session_state["api_transaction_types"]["cache"]["names"]
 
     # Form for adding a new category
     with st.form("add_category"):
@@ -39,6 +41,7 @@ def categories_settings():
                 if isinstance(response, dict):
                     st.session_state["api_categories"]["edit_cat_name"] = None
                     st.success("category added!")
+                    update_cache("categories")
                     time.sleep(1)
                     st.rerun()
                 else:
@@ -73,6 +76,7 @@ def categories_settings():
                         categories_names += [new_name]
                         st.session_state["api_categories"]["edit_cat_name"] = None
                         st.success("Category updated!")
+                        update_cache("categories")
                         time.sleep(1)
                         st.rerun()
                     else:
@@ -92,6 +96,7 @@ def categories_settings():
                 response = categories_api.delete_category(st.session_state["api_categories"]["delete_cat_name"])
                 if isinstance(response, dict):
                     st.success("Transaction type deleted!")
+                    update_cache("categories")
                     st.session_state["api_categories"]["delete_cat_name"] = None
                     time.sleep(1)
                     st.rerun()

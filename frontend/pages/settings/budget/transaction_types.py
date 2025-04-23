@@ -1,5 +1,6 @@
 import time
 import streamlit as st
+from utils.cache_utils import update_cache
 
 OPTIONS = ("POSITIVE", "NEGATIVE", "NEUTRAL")
 
@@ -14,10 +15,11 @@ def transaction_types_settings():
     st.header("📈 Transaction Types")
     st.write("Configure your transaction types here. You can add, edit or delete your transaction types.")
     
-    # Transaction Type API
+    # Transaction Type API and cache
     transaction_types_api = st.session_state["api_transaction_types"]["service"]
-    transaction_types = transaction_types_api.get_transaction_types_list()
-    transaction_types_names = transaction_types_api.get_transaction_types_names()
+    cache = st.session_state["api_transaction_types"]["cache"]
+    transaction_types = cache["list"]
+    transaction_types_names = cache["names"]
 
     # Form for adding a new transaction type
     with st.form("add_transaction_type"):
@@ -37,6 +39,7 @@ def transaction_types_settings():
                 if isinstance(response, dict):
                     st.session_state["api_transaction_types"]["edit_ttype_name"] = None
                     st.success("Transaction type added!")
+                    update_cache("transaction_types")
                     time.sleep(1)
                     st.rerun()
                 else:
@@ -71,6 +74,7 @@ def transaction_types_settings():
                         transaction_types_names += [new_name]
                         st.session_state["api_transaction_types"]["edit_ttype_name"] = None
                         st.success("Transaction type updated!")
+                        update_cache("transaction_types")
                         time.sleep(1)
                         st.rerun()
                     else:
@@ -90,6 +94,7 @@ def transaction_types_settings():
                 response = transaction_types_api.delete_transaction_type(st.session_state["api_transaction_types"]["delete_ttype_name"])
                 if isinstance(response, dict):
                     st.success("Transacino type deleted!")
+                    update_cache("transaction_types")
                     st.session_state["api_transaction_types"]["delete_ttype_name"] = None
                     time.sleep(1)
                     st.rerun()

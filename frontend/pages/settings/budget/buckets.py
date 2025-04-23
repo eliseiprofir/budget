@@ -1,5 +1,6 @@
 import time
 import streamlit as st
+from utils.cache_utils import update_cache
 
 COL1 = 4
 COL2 = 4
@@ -12,12 +13,13 @@ def buckets_settings():
     st.header("🪙 Buckets")
     st.write("Configure your buckets here. You can add, edit or delete your buckets.")
     
-    # Bucket API
+    # Bucket API and cache
     buckets_api = st.session_state["api_buckets"]["service"]
-    buckets = buckets_api.get_buckets_list()
-    buckets_names = buckets_api.get_buckets_names()
-    allocation_status = buckets_api.get_allocation_status()
-    total_allocation = buckets_api.get_total_allocation()
+    cache = st.session_state["api_buckets"]["cache"]
+    buckets = cache["list"]
+    buckets_names = cache["names"]
+    allocation_status = cache["allocation_status"]
+    total_allocation = cache["total_allocation"]
 
     # Form for adding a new bucket
     with st.form("add_bucket"):
@@ -43,6 +45,7 @@ def buckets_settings():
                 if isinstance(response, dict):
                     st.session_state["api_buckets"]["edit_buc_name"] = None
                     st.success("Bucket added!")
+                    update_cache("buckets")
                     time.sleep(1)
                     st.rerun()
                 else:
@@ -81,6 +84,7 @@ def buckets_settings():
                         buckets_names += [new_name]
                         st.session_state["api_buckets"]["edit_buc_name"] = None
                         st.success("Bucket updated!")
+                        update_cache("buckets")
                         time.sleep(1)
                         st.rerun()
                     else:
@@ -100,6 +104,7 @@ def buckets_settings():
                 response = buckets_api.delete_bucket(st.session_state["api_buckets"]["delete_buc_name"])
                 if isinstance(response, dict):
                     st.success("Bucket deleted!")
+                    update_cache("buckets")
                     st.session_state["api_buckets"]["delete_buc_name"] = None
                     time.sleep(1)
                     st.rerun()
