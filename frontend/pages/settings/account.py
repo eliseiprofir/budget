@@ -38,3 +38,5 @@ def account_settings_page():
                     st.error("Email already exists. Please use a different email.")
                 else:
                     st.error(f"Failed to update profile: {response}")
+
+    st.info("If you want to delete your account, please contact us at pro.elisei@gmail.com. We will remove all of your data within 7 days after receiving your request. Thank you!")
