@@ -14,8 +14,8 @@ bucket_recipe = Recipe(
     Bucket,
     name=lambda: fake.word(),
     allocation_percentage=lambda: fake.pydecimal(
-        left_digits=2,
-        right_digits=2,
+        left_digits=3,
+        right_digits=0,
         positive=True,
         min_value=1,
         max_value=100

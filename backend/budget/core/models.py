@@ -89,8 +89,8 @@ class Bucket(UUIDModel, SoftDeletableModel):
     )
     allocation_percentage = models.DecimalField(
         help_text="Percentage of income to allocate to this bucket",
-        max_digits=5,
-        decimal_places=2,
+        max_digits=3,
+        decimal_places=0,
         default=0,
         null=False,
     )
@@ -170,10 +170,10 @@ class Bucket(UUIDModel, SoftDeletableModel):
         """Save method that checks if all buckets are allocated."""
         self.full_clean()
         super().save(*args, **kwargs)
-
         total = self.get_total_allocation_percentage()
         new_status = self.AllocationStatus.COMPLETE if total == Decimal("100") else self.AllocationStatus.INCOMPLETE
-        Bucket.available_objects.filter(user=self.user).update(allocation_status=new_status)
+        Bucket.all_objects.filter(user=self.user).update(allocation_status=new_status)
+
 
     class Meta:
         verbose_name = "Bucket"

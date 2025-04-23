@@ -74,13 +74,20 @@ class BucketWriteSerializer(serializers.ModelSerializer):
         """Validate total allocation percentage does not exceed 100%."""
         if new_percentage < 0 or new_percentage > 100:
             raise serializers.ValidationError({"allocation_percentage": "Allocation percentage must be between 0 and 100."})
+        
         user = self.context["request"].user
         current_total = Bucket.available_objects.filter(
             user=user
         ).aggregate(
             models.Sum("allocation_percentage")
         )["allocation_percentage__sum"] or Decimal("0")
-        new_total = Decimal(str(current_total)) + Decimal(str(new_percentage))
+        
+        if self.instance:
+            new_total = Decimal(str(current_total)) - Decimal(str(self.instance.allocation_percentage)) + Decimal(str(new_percentage))
+        else:
+            new_total = Decimal(str(current_total)) + Decimal(str(new_percentage))
+        
         if new_total > 100:
             raise serializers.ValidationError({"allocation_percentage": f"Total allocation cannot exceed 100%. Allocation left: {100-current_total}%."})
+        
         return new_percentage

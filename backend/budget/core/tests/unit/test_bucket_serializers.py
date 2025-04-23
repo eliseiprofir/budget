@@ -55,7 +55,7 @@ def test_write_serializer_update(bucket_recipe: str, user_recipe: str):
     data = {
         "user": bucket.user.pk,
         "name": f"{bucket.name}",
-        "allocation_percentage": "55.55",
+        "allocation_percentage": "55",
     }
     mock_request = type("Request", (), {"user": user})()
     serializer = BucketWriteSerializer(bucket, data=data, context={"request": mock_request})
