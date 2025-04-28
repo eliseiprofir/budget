@@ -12,7 +12,7 @@ COL4 = 3
 def transaction_types_settings():
     """Settings section for Transaction Types."""
 
-    st.header("📈 Transaction Types")
+    st.subheader("📈 Transaction Types")
     st.write("Configure your transaction types here. You can add, edit or delete your transaction types.")
     
     # Transaction Type API and cache

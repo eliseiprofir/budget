@@ -5,12 +5,17 @@ from services.locations import LocationsAPIService
 from services.buckets import BucketsAPIService
 from services.transaction_types import TransactionTypesAPIService
 from services.categories import CategoriesAPIService
+from services.transactions import TransactionAPIService
 
 from pages.auth.login import login_page
 from pages.auth.signout import signout_page
 from pages.auth.signup import signup_page
 from pages.settings.account import account_settings_page
 from pages.settings.budget.budget import budget_settings_page
+
+from pages.transactions import transactions_page
+
+from utils.cache_utils import fetch_and_cache_data
 
 st.set_page_config(
     page_title="Budget Management System",
@@ -69,6 +74,19 @@ if "api_categories" not in st.session_state:
     }
     st.session_state["api_categories"]["service"] = CategoriesAPIService()
 
+if "api_transactions" not in st.session_state:
+    st.session_state["api_transactions"] = {
+        "service": None,
+        "edit_mode": False,
+        "delete_mode": False,
+        "confirm_delete": False,
+        "to_delete": None,
+        "to_update": None,
+        "new_data": None,
+        "cache": {},
+    }
+    st.session_state["api_transactions"]["service"] = TransactionAPIService()
+
 if "current_page" not in st.session_state:
     st.session_state["current_page"] = "login"
 
@@ -80,9 +98,12 @@ signup = st.Page(signup_page, title="Sign Up", icon="👤")
 budget_settings = st.Page(budget_settings_page, title="Budget Configuration", icon="💰")
 account_settings = st.Page(account_settings_page, title="Edit Account", icon="👤")
 
+transactions = st.Page(transactions_page, title="Transactions", icon="💸")
+
 # Navigation logic
 if st.session_state["api_auth"]["authenticated"]:
     pg = st.navigation({
+        "Reports": [transactions],
         "Settings": [budget_settings, account_settings, signout],
     })
 else:

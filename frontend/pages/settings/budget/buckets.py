@@ -10,7 +10,7 @@ COL4 = 3
 def buckets_settings():
     """Settings section for buckets."""
     
-    st.header("🪙 Buckets")
+    st.subheader("🪙 Buckets")
     st.write("Configure your buckets here. You can add, edit or delete your buckets.")
     
     # Bucket API and cache

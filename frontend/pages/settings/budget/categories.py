@@ -10,7 +10,7 @@ COL4 = 3
 def categories_settings():
     """Settings section for Categories."""
 
-    st.header("🔖 Categories")
+    st.subheader("🔖 Categories")
     st.write("Configure your categories here. You can add, edit or delete your categories.")
     
     # Category API and cache

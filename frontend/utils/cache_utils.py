@@ -6,6 +6,7 @@ def fetch_and_cache_data():
     update_cache("buckets")
     update_cache("transaction_types")
     update_cache("categories")
+    update_cache("transactions")
 
 def update_cache(entity_type: str):
     """Update specific entity data in cache after change."""
@@ -26,6 +27,12 @@ def update_cache(entity_type: str):
     elif entity_type == "categories":
         st.session_state["api_categories"]["cache"]["list"] = st.session_state["api_categories"]["service"].get_categories_list()
         st.session_state["api_categories"]["cache"]["names"] = st.session_state["api_categories"]["service"].get_categories_names()
+    
+    elif entity_type == "transactions":
+        st.session_state["api_transactions"]["cache"]["list"] = st.session_state["api_transactions"]["service"].get_transactions()
+    
+    else:
+        raise ValueError(f"Invalid entity type: {entity_type}")
 
 def clear_cache(entity_type: str):
     """Clear cached data for a specific entity type."""
@@ -45,6 +52,13 @@ def clear_cache(entity_type: str):
     elif entity_type == "categories":
         st.session_state["api_categories"]["service"]._clear_cache()
         st.session_state["api_categories"]["cache"] = {}
+    
+    elif entity_type == "transactions":
+        st.session_state["api_transactions"]["service"]._clear_cache()
+        st.session_state["api_transactions"]["cache"] = {}
+    
+    else:
+        raise ValueError(f"Invalid entity type: {entity_type}")
 
 def clear_all_cache():
     """Clear all cached data."""
@@ -56,3 +70,5 @@ def clear_all_cache():
     st.session_state["api_transaction_types"]["cache"] = {}
     st.session_state["api_categories"]["service"]._clear_cache()
     st.session_state["api_categories"]["cache"] = {}
+    st.session_state["api_transactions"]["service"]._clear_cache()
+    st.session_state["api_transactions"]["cache"] = {}

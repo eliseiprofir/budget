@@ -10,7 +10,7 @@ COL3 = 3
 def locations_settings():
     """Settings section for locations."""
 
-    st.header("🏦 Locations")
+    st.subheader("🏦 Locations")
     st.write("Configure your locations here. You can add, edit or delete your locations.")
 
     # Location API and cache

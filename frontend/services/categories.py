@@ -27,12 +27,10 @@ class CategoriesAPIService(AuthAPIService):
 
     def get_categories_list(self):
         """Get list of categories and their transaction types."""
-        transaction_types_api = st.session_state["api_transaction_types"]["service"]
         categories_data = self.get_categories()
         category_list = []
         for category in categories_data:
-            transaction_type_name = transaction_types_api.get_transaction_type_name(category["transaction_type"])
-            category_list.append([category["name"], transaction_type_name])
+            category_list.append([category["name"], category["transaction_type"]["sign"]])
         return category_list
 
     def get_categories_names(self):
@@ -48,10 +46,31 @@ class CategoriesAPIService(AuthAPIService):
                 return category["id"]
         return None
 
+    def get_category_type_sign(self, category_id: str):
+        """Get transaction type of a category by its ID."""
+        categories_data = self.get_categories()
+        for category in categories_data:
+            if category["id"] == category_id:
+                return category["transaction_type"]["sign"]
+        return None
+
     def _clear_cache(self):
         """Clear the cached categories data."""
         if hasattr(self, "_categories_data"):
             self._categories_data = None
+
+    def get_category(self, id: str):
+        """Get details of a category."""
+        self._update()
+        try:
+            response = requests.get(
+                f"{self.base_url}/categories/{id}",
+                headers=self.headers,
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            return f"Error: {str(e)}. Response: {response.text}"
 
     def add_category(self, name: str, transaction_type_id: str):
         """Add a new category for the current user."""

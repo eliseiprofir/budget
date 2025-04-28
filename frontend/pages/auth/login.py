@@ -5,7 +5,7 @@ def login_page():
     col1, col2, col3 = st.columns([1, 2, 1])
 
     with col2:
-        st.title("Login")
+        st.title("🔐 Login")
         st.write("Please login to access the Budget Management System")
         
         email = st.text_input("Email")

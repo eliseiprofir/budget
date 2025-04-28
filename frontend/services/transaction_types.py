@@ -45,9 +45,6 @@ class TransactionTypesAPIService(AuthAPIService):
     def get_transaction_type_name(self, transaction_type_id: str):
         """Get the name of a transaction type by its ID."""
         transaction_types_data = self.get_transaction_types()
-        # If we receive a URL, extract the ID
-        if transaction_type_id.startswith('http'):
-            transaction_type_id = transaction_type_id.split("/")[-2]
         for transaction_type in transaction_types_data:
             if transaction_type["id"] == transaction_type_id:
                 return transaction_type["name"]
