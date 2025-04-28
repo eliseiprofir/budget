@@ -18,8 +18,6 @@ def test_serializer_create(category_recipe: str):
     assert serializer.data["transaction_type"] is not None
     assert serializer.data["is_removed"] in [True, False]
     assert serializer.data["user"] is not None
-    assert "/api/transaction-types/" in serializer.data["transaction_type"]
-    assert isinstance(serializer.data["transaction_type"], str)
     assert "/api/users/" in serializer.data["user"]
     assert isinstance(serializer.data["user"], str)
 

@@ -19,6 +19,15 @@ class LocationSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
 
+class LocationSerializerSummary(serializers.ModelSerializer):
+    """Detail Serializer for the Location model"""
+
+    class Meta:
+        model = Location
+        fields = ("id", "name")
+        read_only_fields = fields
+
+
 class LocationWriteSerializer(serializers.ModelSerializer):
     """Serializer used for create operations"""
 
@@ -40,7 +49,6 @@ class LocationWriteSerializer(serializers.ModelSerializer):
 
 class BucketSerializer(serializers.ModelSerializer):
     """Serializer for the Bucket model"""
-
     user = serializers.HyperlinkedRelatedField(
         view_name="api:user-detail",
         read_only=True,
@@ -49,6 +57,15 @@ class BucketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bucket
         fields = ("id", "name", "allocation_percentage", "allocation_status", "is_removed", "user")
+        read_only_fields = fields
+
+
+class BucketSerializerSummary(serializers.ModelSerializer):
+    """Serializer for the Bucket model"""
+
+    class Meta:
+        model = Bucket
+        fields = ("id", "name")
         read_only_fields = fields
 
 

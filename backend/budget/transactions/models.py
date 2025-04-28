@@ -270,7 +270,6 @@ class Transaction(UUIDModel):
         ).update(
             amount=0,
             description=f"{self.description} ({self.amount})",
-            bucket=None,
         )
 
     def validate_user(self):

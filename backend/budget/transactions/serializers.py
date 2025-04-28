@@ -4,7 +4,9 @@ from accounts.serializers import UserListSerializer
 from core.models import Location
 from core.models import Bucket
 from core.serializers import LocationSerializer
+from core.serializers import LocationSerializerSummary
 from core.serializers import BucketSerializer
+from core.serializers import BucketSerializerSummary
 from transactions.models import TransactionType
 from transactions.models import Category
 from .models import Transaction
@@ -33,6 +35,15 @@ class TransactionTypeSerializer(serializers.ModelSerializer):
         return name
 
 
+class TransactionTypeSerializerSummary(serializers.ModelSerializer):
+    """Serializer for the TransactionType model"""
+
+    class Meta:
+        model = TransactionType
+        fields = ("id", "name", "sign")
+        read_only_fields = fields
+
+
 class TransactionTypeWriteSerializer(serializers.ModelSerializer):
     """Serializer used for create operations"""
 
@@ -53,10 +64,7 @@ class TransactionTypeWriteSerializer(serializers.ModelSerializer):
 
 class CategorySerializer(serializers.ModelSerializer):
     """Serializer for the Category model"""
-    transaction_type = serializers.HyperlinkedRelatedField(
-        view_name="api:transaction-type-detail",
-        read_only=True,
-    )
+    transaction_type = TransactionTypeSerializerSummary(read_only=True)
     user = serializers.HyperlinkedRelatedField(
         view_name="api:user-detail",
         read_only=True,
@@ -65,6 +73,15 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ("id", "name", "transaction_type", "is_removed", "user")
+        read_only_fields = fields
+
+
+class CategorySerializerSummary(serializers.ModelSerializer):
+    """Serializer for the Category model"""
+
+    class Meta:
+        model = Category
+        fields = ("id", "name")
         read_only_fields = fields
 
 
@@ -101,18 +118,9 @@ class CategoryWriteSerializer(serializers.ModelSerializer):
 
 class TransactionListSerializer(serializers.ModelSerializer):
     """List Serializer for the Transaction model"""
-    category = serializers.HyperlinkedRelatedField(
-        view_name="api:category-detail",
-        read_only=True,
-    )
-    location = serializers.HyperlinkedRelatedField(
-        view_name="api:location-detail",
-        read_only=True,
-    )
-    bucket = serializers.HyperlinkedRelatedField(
-        view_name="api:bucket-detail",
-        read_only=True,
-    )
+    category = CategorySerializerSummary(read_only=True)
+    location = LocationSerializerSummary(read_only=True)
+    bucket = BucketSerializerSummary(read_only=True)
     user = serializers.HyperlinkedRelatedField(
         view_name="api:user-detail",
         read_only=True,

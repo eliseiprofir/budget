@@ -130,7 +130,6 @@ def test_split_income(
     parent_transaction.refresh_from_db()
     assert parent_transaction.amount == 0
     assert parent_transaction.description == f"Test Income ({amount})"
-    assert parent_transaction.bucket is None
 
     for transaction in split_transactions:
         assert transaction.user == parent_transaction.user

@@ -25,13 +25,8 @@ def test_list_serializer_create(transaction_recipe: str):
     assert serializer.data["bucket"] is not None
     assert serializer.data["split_income"] is not None
     assert serializer.data["user"] is not None
-    assert "/api/users/" in serializer.data["user"]
     assert isinstance(serializer.data["user"], str)
-    assert "/api/categories/" in serializer.data["category"]
-    assert isinstance(serializer.data["location"], str)
-    assert "/api/locations/" in serializer.data["location"]
-    assert isinstance(serializer.data["bucket"], str)
-    assert "/api/buckets/" in serializer.data["bucket"]
+    assert "/api/users/" in serializer.data["user"]
 
 
 @pytest.mark.django_db

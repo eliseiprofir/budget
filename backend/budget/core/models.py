@@ -85,7 +85,6 @@ class Bucket(UUIDModel, SoftDeletableModel):
         help_text="Bucket name (e.g. Economy, Necessities, Education, Donation, etc.)",
         max_length=255,
         blank=False,
-        null=False,
     )
     allocation_percentage = models.DecimalField(
         help_text="Percentage of income to allocate to this bucket",
