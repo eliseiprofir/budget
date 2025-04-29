@@ -85,11 +85,11 @@ positive_transaction_recipe = Recipe(
     category=foreign_key(positive_category_recipe),
     date=lambda: make_aware(fake.date_time()),
     amount=lambda: fake.pydecimal(
-        left_digits=2,
+        left_digits=4,
         right_digits=2,
         positive=True,
-        min_value=1,
-        max_value=100
+        min_value=10,
+        max_value=1000
     ),
     location=foreign_key(location_recipe),
     bucket=foreign_key(bucket_recipe),
