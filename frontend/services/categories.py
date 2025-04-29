@@ -30,7 +30,7 @@ class CategoriesAPIService(AuthAPIService):
         categories_data = self.get_categories()
         category_list = []
         for category in categories_data:
-            category_list.append([category["name"], category["transaction_type"]["sign"]])
+            category_list.append([category["name"], category["transaction_type"]["name"]])
         return category_list
 
     def get_categories_names(self):

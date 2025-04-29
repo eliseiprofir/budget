@@ -62,7 +62,12 @@ def categories_config():
         if st.session_state["api_categories"]["edit_cat_name"] == name:
             categories_names = [cat for cat in categories_names if cat != name]
             new_name = col1.text_input("Edit category name", value=name, key=f"edit_cat_{name}")
-            new_transaction_type = col2.selectbox(options=transaction_types_names, label="Transaction type *", key=f"edit_{name}")
+            new_transaction_type = col2.selectbox(
+                options=transaction_types_names,
+                label="Transaction type *",
+                key=f"edit_{name}",
+                index=transaction_types_names.index(transaction_type)
+            )
             
             if col3.button("💾 Save", key=f"save_cat_{name}"):
                 if not new_name:

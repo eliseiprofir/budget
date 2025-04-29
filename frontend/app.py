@@ -6,16 +6,18 @@ from services.buckets import BucketsAPIService
 from services.transaction_types import TransactionTypesAPIService
 from services.categories import CategoriesAPIService
 from services.transactions import TransactionAPIService
-
-from pages.data.budget.config import budget_config_page
-from pages.data.transactions.add_transactions import add_transactions_form
-from pages.data.transactions.transactions import transactions_page
+from services.analytics import AnalyticsAPIService
 
 from pages.account.auth_login import login_page
 from pages.account.auth_signup import signup_page
 from pages.account.auth_signout import signout_page
 from pages.account.settings import account_settings_page
 
+from pages.data.budget.config import budget_config_page
+from pages.data.transactions.add_transactions import add_transactions_form
+from pages.data.transactions.transactions import transactions_page
+
+from pages.reports.current import current_report
 
 st.set_page_config(
     page_title="Budget Management System",
@@ -89,6 +91,13 @@ if "api_transactions" not in st.session_state:
     }
     st.session_state["api_transactions"]["service"] = TransactionAPIService()
 
+if "api_analytics" not in st.session_state:
+    st.session_state["api_analytics"] = {
+        "service": None,
+        "cache": {},
+    }
+    st.session_state["api_analytics"]["service"] = AnalyticsAPIService()
+
 if "current_page" not in st.session_state:
     st.session_state["current_page"] = "login"
 
@@ -100,6 +109,8 @@ add_transactions = st.Page(add_transactions_form, title="Add Transactions", icon
 transactions = st.Page(transactions_page, title="Transactions", icon="💸")
 budget_settings = st.Page(budget_config_page, title="Budget Configuration", icon="💰")
 
+current_status = st.Page(current_report, title="Current status", icon="📊")
+
 account_settings = st.Page(account_settings_page, title="Edit Account", icon="👤")
 signout = st.Page(signout_page, title="Sign Out", icon="🚪")
 
@@ -107,7 +118,7 @@ signout = st.Page(signout_page, title="Sign Out", icon="🚪")
 if st.session_state["api_auth"]["authenticated"]:
     pg = st.navigation({
         "Data management": [add_transactions, transactions, budget_settings],
-        "Reports": [],
+        "Reports": [current_status],
         "Account settings": [account_settings, signout],
     })
 else:
