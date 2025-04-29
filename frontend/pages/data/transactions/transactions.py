@@ -2,7 +2,7 @@ import time
 import streamlit as st
 import pandas as pd
 
-from .add_transactions import add_transactions
+from .add_transactions import add_transactions_form
 
 from utils.cache_utils import update_cache
 from utils.cache_utils import clear_all_cache
@@ -34,7 +34,7 @@ def transactions_page():
         st.session_state["api_transactions"]["add_form"] = not st.session_state["api_transactions"]["add_form"]  
     st.button("➕ Add transaction", on_click=toggle_add_transaction_form)
     if st.session_state["api_transactions"]["add_form"]:
-        add_transactions()
+        add_transactions_form()
 
     # Displaying all transactions
     st.subheader("🔢 All transactions")

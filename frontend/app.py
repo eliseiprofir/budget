@@ -8,7 +8,7 @@ from services.categories import CategoriesAPIService
 from services.transactions import TransactionAPIService
 
 from pages.data.budget.config import budget_config_page
-from pages.data.transactions.add_transactions import add_transactions
+from pages.data.transactions.add_transactions import add_transactions_form
 from pages.data.transactions.transactions import transactions_page
 
 from pages.account.auth_login import login_page
@@ -94,13 +94,14 @@ if "current_page" not in st.session_state:
 
 # Define pages
 login = st.Page(login_page, title="Login", icon="🔑")
-signout = st.Page(signout_page, title="Sign Out", icon="🚪")
 signup = st.Page(signup_page, title="Sign Up", icon="👤")
 
-budget_settings = st.Page(budget_config_page, title="Budget Configuration", icon="💰")
-account_settings = st.Page(account_settings_page, title="Edit Account", icon="👤")
-add_transactions = st.Page(add_transactions, title="Add Transactions", icon="➕")
+add_transactions = st.Page(add_transactions_form, title="Add Transactions", icon="➕")
 transactions = st.Page(transactions_page, title="Transactions", icon="💸")
+budget_settings = st.Page(budget_config_page, title="Budget Configuration", icon="💰")
+
+account_settings = st.Page(account_settings_page, title="Edit Account", icon="👤")
+signout = st.Page(signout_page, title="Sign Out", icon="🚪")
 
 # Navigation logic
 if st.session_state["api_auth"]["authenticated"]:
@@ -115,4 +116,5 @@ else:
     else:
         pg = st.navigation([login])
 
+# Enjoy!
 pg.run()

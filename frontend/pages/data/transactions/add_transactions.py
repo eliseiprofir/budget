@@ -4,7 +4,7 @@ import streamlit as st
 from utils.cache_utils import fetch_and_cache_data
 
 
-def add_transactions():
+def add_transactions_form():
     """Transactions page."""
 
     # Transactions API and cache
