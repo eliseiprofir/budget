@@ -9,7 +9,7 @@ COL2 = 4
 COL3 = 3
 COL4 = 3
 
-def transaction_types_settings():
+def transaction_types_config():
     """Settings section for Transaction Types."""
 
     st.subheader("📈 Transaction Types")

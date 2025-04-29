@@ -7,7 +7,7 @@ COL2 = 4
 COL3 = 3
 COL4 = 3
 
-def categories_settings():
+def categories_config():
     """Settings section for Categories."""
 
     st.subheader("🔖 Categories")

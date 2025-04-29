@@ -1,14 +1,13 @@
-import time
 import streamlit as st
-from .locations import locations_settings
-from .buckets import buckets_settings
-from .transaction_types import transaction_types_settings
-from .categories import categories_settings
+from .locations import locations_config
+from .buckets import buckets_config
+from .transaction_types import transaction_types_config
+from .categories import categories_config
 from utils.cache_utils import fetch_and_cache_data
 from utils.cache_utils import update_cache
 from utils.cache_utils import clear_all_cache
 
-def budget_settings_page():
+def budget_config_page():
     """Settings page for budget application."""
 
     st.title("💰 Budget Configuration")
@@ -28,10 +27,10 @@ def budget_settings_page():
     if st.session_state["api_categories"]["cache"] == {}:
         update_cache("categories")
 
-    locations_settings()
+    locations_config()
     st.markdown("---")
-    buckets_settings()
+    buckets_config()
     st.markdown("---")
-    transaction_types_settings()
+    transaction_types_config()
     st.markdown("---")
-    categories_settings()
+    categories_config()

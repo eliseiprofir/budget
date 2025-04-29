@@ -7,7 +7,7 @@ COL2 = 3
 COL3 = 3
 
 
-def locations_settings():
+def locations_config():
     """Settings section for locations."""
 
     st.subheader("🏦 Locations")

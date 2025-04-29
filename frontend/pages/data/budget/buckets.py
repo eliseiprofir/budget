@@ -7,7 +7,7 @@ COL2 = 4
 COL3 = 3
 COL4 = 3
 
-def buckets_settings():
+def buckets_config():
     """Settings section for buckets."""
     
     st.subheader("🪙 Buckets")

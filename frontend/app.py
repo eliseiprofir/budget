@@ -7,15 +7,15 @@ from services.transaction_types import TransactionTypesAPIService
 from services.categories import CategoriesAPIService
 from services.transactions import TransactionAPIService
 
-from pages.auth.login import login_page
-from pages.auth.signout import signout_page
-from pages.auth.signup import signup_page
-from pages.settings.account import account_settings_page
-from pages.settings.budget.budget import budget_settings_page
+from pages.data.budget.config import budget_config_page
+from pages.data.transactions.add_transactions import add_transactions
+from pages.data.transactions.transactions import transactions_page
 
-from pages.transactions import transactions_page
+from pages.account.auth_login import login_page
+from pages.account.auth_signup import signup_page
+from pages.account.auth_signout import signout_page
+from pages.account.settings import account_settings_page
 
-from utils.cache_utils import fetch_and_cache_data
 
 st.set_page_config(
     page_title="Budget Management System",
@@ -83,6 +83,8 @@ if "api_transactions" not in st.session_state:
         "to_delete": None,
         "to_update": None,
         "new_data": None,
+        "filter_mode": False,
+        "add_form": False,
         "cache": {},
     }
     st.session_state["api_transactions"]["service"] = TransactionAPIService()
@@ -95,16 +97,17 @@ login = st.Page(login_page, title="Login", icon="🔑")
 signout = st.Page(signout_page, title="Sign Out", icon="🚪")
 signup = st.Page(signup_page, title="Sign Up", icon="👤")
 
-budget_settings = st.Page(budget_settings_page, title="Budget Configuration", icon="💰")
+budget_settings = st.Page(budget_config_page, title="Budget Configuration", icon="💰")
 account_settings = st.Page(account_settings_page, title="Edit Account", icon="👤")
-
+add_transactions = st.Page(add_transactions, title="Add Transactions", icon="➕")
 transactions = st.Page(transactions_page, title="Transactions", icon="💸")
 
 # Navigation logic
 if st.session_state["api_auth"]["authenticated"]:
     pg = st.navigation({
-        "Reports": [transactions],
-        "Settings": [budget_settings, account_settings, signout],
+        "Data management": [add_transactions, transactions, budget_settings],
+        "Reports": [],
+        "Account settings": [account_settings, signout],
     })
 else:
     if st.session_state.current_page == "signup":
