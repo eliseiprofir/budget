@@ -58,21 +58,26 @@ def test_get_balance(
     user: User,
     positive_transaction_recipe: str,
     negative_transaction_recipe: str,
+    neutral_transaction_recipe: str,
 ):
     """Test get_balance function to ensure it works properly."""
     service = AnalyticsCurrentService(user).get_balance()
     assert service == {
         "positive": 0,
         "negative": 0,
+        "neutral": 0,
         "balance": 0,
     }
 
     baker.make_recipe(positive_transaction_recipe, amount=100, user=user)
     baker.make_recipe(negative_transaction_recipe, amount=25, user=user)
+    baker.make_recipe(neutral_transaction_recipe, amount=5, user=user)
+    baker.make_recipe(neutral_transaction_recipe, amount=-5, user=user)
 
     service = AnalyticsCurrentService(user).get_balance()
     assert service["positive"] == 100
     assert service["negative"] == 25
+    assert service["neutral"] == 0
     assert service["balance"] == 75
 
 
@@ -83,6 +88,7 @@ def test_get_summary(
     bucket_recipe: str,
     positive_transaction_recipe: str,
     negative_transaction_recipe: str,
+    neutral_transaction_recipe: str,
 ):
     """Test get_summary function to ensure it works properly."""
     service = AnalyticsCurrentService(user).get_summary()
@@ -92,6 +98,7 @@ def test_get_summary(
         "balance": {
             "positive": 0,
             "negative": 0,
+            "neutral": 0,
             "balance": 0,
         },
     }
@@ -104,6 +111,10 @@ def test_get_summary(
     baker.make_recipe(positive_transaction_recipe, user=user, bucket=bucket2, location=location2, amount=300)
     baker.make_recipe(negative_transaction_recipe, user=user, bucket=bucket1, location=location1, amount=50)
     baker.make_recipe(negative_transaction_recipe, user=user, bucket=bucket2, location=location2, amount=150)
+    baker.make_recipe(neutral_transaction_recipe, user=user, bucket=bucket1, location=location1, amount=10)
+    baker.make_recipe(neutral_transaction_recipe, user=user, bucket=bucket2, location=location2, amount=10)
+    baker.make_recipe(neutral_transaction_recipe, user=user, bucket=bucket1, location=location1, amount=-10)
+    baker.make_recipe(neutral_transaction_recipe, user=user, bucket=bucket2, location=location2, amount=-10)
 
     service = AnalyticsCurrentService(user).get_summary()
     assert service["locations"]["total"] == 200
@@ -114,4 +125,5 @@ def test_get_summary(
     assert service["buckets"]["Bucket 2"] == 150
     assert service["balance"]["positive"] == 400
     assert service["balance"]["negative"] == 200
+    assert service["balance"]["neutral"] == 0
     assert service["balance"]["balance"] == 200

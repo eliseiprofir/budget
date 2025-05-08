@@ -31,6 +31,17 @@ def test_get_negative_categories(
 
 
 @pytest.mark.django_db
+def test_get_neutral_categories(
+    user: User,
+    neutral_category_recipe: str,
+):
+    """Test get_neutral_categories function to ensure it works properly."""
+    baker.make_recipe(neutral_category_recipe, _quantity=2, user=user)
+    service = AnalyticsBaseService.get_neutral_categories(user)
+    assert service.count() == 2
+
+
+@pytest.mark.django_db
 def test_get_positive_transactions(
     user: User,
     positive_transaction_recipe: str,
@@ -53,6 +64,17 @@ def test_get_negative_transactions(
 
 
 @pytest.mark.django_db
+def test_get_neutral_transactions(
+    user: User,
+    neutral_transaction_recipe: str,
+):
+    """Test get_neutral_transactions function to ensure it works properly."""
+    baker.make_recipe(neutral_transaction_recipe, _quantity=2, user=user)
+    service = AnalyticsBaseService.get_neutral_transactions(user)
+    assert service.count() == 2
+
+
+@pytest.mark.django_db
 def test_sum_transactions(
     user: User,
     transaction_recipe: str,
@@ -69,16 +91,20 @@ def test_get_balance_for_queryset(
     user: User,
     positive_transaction_recipe: str,
     negative_transaction_recipe: str,
+    neutral_transaction_recipe: str,
 ):
     """Test get_balance_for_queryset function to ensure it works properly."""
     baker.make_recipe(positive_transaction_recipe, amount=100, user=user)
     baker.make_recipe(negative_transaction_recipe, amount=50, user=user)
+    baker.make_recipe(neutral_transaction_recipe, amount=10, user=user)
+    baker.make_recipe(neutral_transaction_recipe, amount=-10, user=user)
     transactions = Transaction.objects.all()
 
     service = AnalyticsBaseService(user).get_balance_for_queryset(transactions)
     assert service == {
         "positive": 100,
         "negative": 50,
+        "neutral": 0,
         "balance": 50,
     }
 

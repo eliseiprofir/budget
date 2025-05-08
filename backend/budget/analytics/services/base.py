@@ -29,6 +29,10 @@ class AnalyticsBaseService:
         """Get all negative categories for the given user."""
         return self.categories.filter(transaction_type__sign=TransactionType.Sign.NEGATIVE)
 
+    def get_neutral_categories(self):
+        """Get all neutral categories for the given user."""
+        return self.categories.filter(transaction_type__sign=TransactionType.Sign.NEUTRAL)
+
     def get_positive_transactions(self):
         """Get all positive transactions for the given user."""
         return self.transactions.filter(category__transaction_type__sign=TransactionType.Sign.POSITIVE)
@@ -36,6 +40,10 @@ class AnalyticsBaseService:
     def get_negative_transactions(self):
         """Get all negative transactions for the given user."""
         return self.transactions.filter(category__transaction_type__sign=TransactionType.Sign.NEGATIVE)
+
+    def get_neutral_transactions(self):
+        """Get all neutral transactions for the given user."""
+        return self.transactions.filter(category__transaction_type__sign=TransactionType.Sign.NEUTRAL)
 
     @staticmethod
     def sum_transactions(queryset: Transaction):
@@ -57,10 +65,15 @@ class AnalyticsBaseService:
             category__transaction_type__sign=TransactionType.Sign.NEGATIVE
         ))
 
+        neutral = self.sum_transactions(queryset.filter(
+            category__transaction_type__sign=TransactionType.Sign.NEUTRAL
+        ))
+
         return {
             "positive": positive,
             "negative": negative,
-            "balance": positive - negative
+            "neutral": neutral,
+            "balance": positive - negative + neutral
         }
 
     def get_transactions_by_month(self, month, year):

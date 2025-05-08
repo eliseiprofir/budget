@@ -43,6 +43,21 @@ class AnalyticsMonthlyService(AnalyticsBaseService):
 
         return categories
 
+    def get_neutral_categories_data(self):
+        """Get neutral categories data for specific month for the given user."""
+        categories = {}
+
+        neutral_categories = self.get_neutral_categories()
+        month_transactions = self.get_transactions_by_month(
+            year=self.year,
+            month=self.month
+        )
+
+        for category in neutral_categories:
+            month_category_transactions = month_transactions.filter(category=category)
+            categories[category.name] = self.sum_transactions(month_category_transactions)
+        
+        return categories
 
     def get_balance(self):
         """Get balance for specific month for the given user."""
@@ -58,6 +73,7 @@ class AnalyticsMonthlyService(AnalyticsBaseService):
         return {
             "positive_categories": self.get_positive_categories_data(),
             "negative_categories": self.get_negative_categories_data(),
+            "neutral_categories": self.get_neutral_categories_data(),
             "balance": self.get_balance(),
             "period": {
                 "year": self.year,

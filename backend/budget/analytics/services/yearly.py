@@ -36,6 +36,18 @@ class AnalyticsYearlyService(AnalyticsBaseService):
 
         return categories
 
+    def get_neutral_categories_by_month(self, month):
+        """Get categories data for the given user."""
+        categories = {}
+
+        neutral_categories = self.get_neutral_categories()
+        month_transactions = self.get_transactions_by_month(month=month, year=self.year)
+
+        for category in neutral_categories:
+            month_category_transactions = month_transactions.filter(category=category)
+            categories[category.name] = self.sum_transactions(month_category_transactions)
+        
+        return categories
 
     def get_balance_by_month(self, month):
         """Get balance for the given user."""
@@ -52,6 +64,7 @@ class AnalyticsYearlyService(AnalyticsBaseService):
             data = {
                 "positive_categories": self.get_positive_categories_by_month(month),
                 "negative_categories": self.get_negative_categories_by_month(month),
+                "neutral_categories": self.get_neutral_categories_by_month(month),
                 "balance": self.get_balance_by_month(month)
             }
             monthly_data[str(month)] = data
@@ -64,11 +77,13 @@ class AnalyticsYearlyService(AnalyticsBaseService):
         year_summary = {
             "positive_categories": {},
             "negative_categories": {},
+            "neutral_categories": {},
             "balance": {}
         }
 
         positive_categories = self.get_positive_categories()
         negative_categories = self.get_negative_categories()
+        neutral_categories = self.get_neutral_categories()
         year_transactions = self.get_transactions_by_year(year=self.year)
 
         for category in positive_categories:
@@ -78,6 +93,10 @@ class AnalyticsYearlyService(AnalyticsBaseService):
         for category in negative_categories:
             year_category_transactions = year_transactions.filter(category=category)
             year_summary["negative_categories"][category.name] = self.sum_transactions(year_category_transactions)
+
+        for category in neutral_categories:
+            year_category_transactions = year_transactions.filter(category=category)
+            year_summary["neutral_categories"][category.name] = self.sum_transactions(year_category_transactions)
 
         year_summary["balance"] = self.get_balance_for_queryset(year_transactions)
 

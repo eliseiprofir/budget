@@ -11,10 +11,12 @@ def test_analytics_current_view(
     user: User,
     positive_transaction_recipe: str,
     negative_transaction_recipe: str,
+    neutral_transaction_recipe: str,
 ):
     """Test for AnalyticsCurrentViewSet to ensure it works correctly."""
     baker.make_recipe(positive_transaction_recipe, user=user, amount=100, _quantity=2)
     baker.make_recipe(negative_transaction_recipe, user=user, amount=50, _quantity=2)
+    baker.make_recipe(neutral_transaction_recipe, user=user, amount=0, _quantity=2)
 
     client = APIClient()
     client.force_authenticate(user=user)
@@ -32,6 +34,7 @@ def test_analytics_current_view(
 
     assert data["balance"]["positive"] == 200
     assert data["balance"]["negative"] == 100
+    assert data["balance"]["neutral"] == 0
     assert data["balance"]["balance"] == 100
 
 

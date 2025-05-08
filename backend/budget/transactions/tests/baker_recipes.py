@@ -22,7 +22,10 @@ __all__ = [
     "positive_transaction_recipe",
     "negative_transaction_type_recipe",
     "negative_category_recipe",
-    "negative_transaction_recipe"
+    "negative_transaction_recipe",
+    "neutral_transaction_type_recipe",
+    "neutral_category_recipe",
+    "neutral_transaction_recipe",
 ]
 
 fake = Faker()
@@ -123,6 +126,32 @@ negative_transaction_recipe = Recipe(
         min_value=1,
         max_value=100
     ),
+    location=foreign_key(location_recipe),
+    bucket=foreign_key(bucket_recipe),
+    user=foreign_key(user_recipe),
+)
+
+# Neutral transaction type/category/transaction recipes
+neutral_transaction_type_recipe = Recipe(
+    TransactionType,
+    sign=lambda: TransactionType.Sign.NEUTRAL,
+    name=lambda: fake.word(),
+    user=foreign_key(user_recipe),
+)
+
+neutral_category_recipe = Recipe(
+    Category,
+    name=lambda: fake.word(),
+    transaction_type=foreign_key(neutral_transaction_type_recipe),
+    user=foreign_key(user_recipe),
+)
+
+neutral_transaction_recipe = Recipe(
+    Transaction,
+    description=lambda: fake.word(),
+    category=foreign_key(neutral_category_recipe),
+    date=lambda: make_aware(fake.date_time()),
+    amount=lambda: 0,
     location=foreign_key(location_recipe),
     bucket=foreign_key(bucket_recipe),
     user=foreign_key(user_recipe),

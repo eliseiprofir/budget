@@ -23,8 +23,10 @@ def test_analytics_monthly_serializer(
     user: User,
     positive_category_recipe: str,
     negative_category_recipe: str,
+    neutral_category_recipe: str,
     positive_transaction_recipe: str,
     negative_transaction_recipe: str,
+    neutral_transaction_recipe: str,
 ):
     """Test AnalyticsMonthlySerializer to ensure it works properly."""
     january = make_aware(datetime(2025, 1, 1))
@@ -32,16 +34,20 @@ def test_analytics_monthly_serializer(
 
     positive_category = baker.make_recipe(positive_category_recipe, user=user, name="Positive Category")
     negative_category = baker.make_recipe(negative_category_recipe, user=user, name="Negative Category")
+    neutral_category = baker.make_recipe(neutral_category_recipe, user=user, name="Neutral Category")
     baker.make_recipe(positive_transaction_recipe, user=user, category=positive_category, date=january, amount=200, _quantity=2)
     baker.make_recipe(negative_transaction_recipe, user=user, category=negative_category, date=january, amount=100, _quantity=2)
+    baker.make_recipe(neutral_transaction_recipe, user=user, category=neutral_category, date=january, amount=0, _quantity=2)
     baker.make_recipe(positive_transaction_recipe, user=user, category=positive_category, date=february, amount=100, _quantity=2)
     baker.make_recipe(negative_transaction_recipe, user=user, category=negative_category, date=february, amount=50, _quantity=2)
+    baker.make_recipe(neutral_transaction_recipe, user=user, category=neutral_category, date=february, amount=0, _quantity=2)
 
     # Test for January
     january_service = AnalyticsMonthlyService(user, year=2025, month=1)
     january_data = {
         "positive_categories": january_service.get_positive_categories_data(),
         "negative_categories": january_service.get_negative_categories_data(),
+        "neutral_categories": january_service.get_neutral_categories_data(),
         "balance": january_service.get_balance(),
         "period": {
             "year": 2025,
@@ -51,8 +57,10 @@ def test_analytics_monthly_serializer(
     serializer_data = AnalyticsMonthlySerializer(january_data).data
     assert serializer_data["positive_categories"]["Positive Category"] == decimal.Decimal("400.00")
     assert serializer_data["negative_categories"]["Negative Category"] == decimal.Decimal("200.00")
+    assert serializer_data["neutral_categories"]["Neutral Category"] == decimal.Decimal("0.00")
     assert serializer_data["balance"]["positive"] == decimal.Decimal("400.00")
     assert serializer_data["balance"]["negative"] == decimal.Decimal("200.00")
+    assert serializer_data["balance"]["neutral"] == decimal.Decimal("0.00")
     assert serializer_data["balance"]["balance"] == decimal.Decimal("200.00")
     assert serializer_data["period"]["year"] == 2025
     assert serializer_data["period"]["month"] == 1
@@ -62,6 +70,7 @@ def test_analytics_monthly_serializer(
     february_data = {
         "positive_categories": february_service.get_positive_categories_data(),
         "negative_categories": february_service.get_negative_categories_data(),
+        "neutral_categories": february_service.get_neutral_categories_data(),
         "balance": february_service.get_balance(),
         "period": {
             "year": 2025,
@@ -71,8 +80,10 @@ def test_analytics_monthly_serializer(
     serializer_data = AnalyticsMonthlySerializer(february_data).data
     assert serializer_data["positive_categories"]["Positive Category"] == decimal.Decimal("200.00")
     assert serializer_data["negative_categories"]["Negative Category"] == decimal.Decimal("100.00")
+    assert serializer_data["neutral_categories"]["Neutral Category"] == decimal.Decimal("0.00")
     assert serializer_data["balance"]["positive"] == decimal.Decimal("200.00")
     assert serializer_data["balance"]["negative"] == decimal.Decimal("100.00")
+    assert serializer_data["balance"]["neutral"] == decimal.Decimal("0.00")
     assert serializer_data["balance"]["balance"] == decimal.Decimal("100.00")
     assert serializer_data["period"]["year"] == 2025
     assert serializer_data["period"]["month"] == 2

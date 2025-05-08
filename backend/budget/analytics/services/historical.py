@@ -34,7 +34,19 @@ class AnalyticsHistoricalService(AnalyticsBaseService):
             categories[category.name] = self.sum_transactions(year_category_transactions)
 
         return categories
+    
+    def get_neutral_categories_by_year(self, year):
+        """Get categories data for the given user."""
+        categories = {}
 
+        neutral_categories = self.get_neutral_categories()
+        year_transactions = self.get_transactions_by_year(year=year)
+
+        for category in neutral_categories:
+            year_category_transactions = year_transactions.filter(category=category)
+            categories[category.name] = self.sum_transactions(year_category_transactions)
+        
+        return categories
 
     def get_balance_by_year(self, year):
         """Get balance for the given user."""
@@ -54,6 +66,7 @@ class AnalyticsHistoricalService(AnalyticsBaseService):
             data = {
                 "positive_categories": self.get_positive_categories_by_year(year),
                 "negative_categories": self.get_negative_categories_by_year(year),
+                "neutral_categories": self.get_neutral_categories_by_year(year),
                 "balance": self.get_balance_by_year(year)
             }
             yearly_data[str(year)] = data
@@ -66,11 +79,13 @@ class AnalyticsHistoricalService(AnalyticsBaseService):
         historical_summary = {
             "positive_categories": {},
             "negative_categories": {},
+            "neutral_categories": {},
             "balance": {}
         }
 
         positive_categories = self.get_positive_categories()
         negative_categories = self.get_negative_categories()
+        neutral_categories = self.get_neutral_categories()
 
         for category in positive_categories:
             year_category_transactions = self.transactions.filter(category=category)
@@ -79,6 +94,10 @@ class AnalyticsHistoricalService(AnalyticsBaseService):
         for category in negative_categories:
             year_category_transactions = self.transactions.filter(category=category)
             historical_summary["negative_categories"][category.name] = self.sum_transactions(year_category_transactions)
+
+        for category in neutral_categories:
+            year_category_transactions = self.transactions.filter(category=category)
+            historical_summary["neutral_categories"][category.name] = self.sum_transactions(year_category_transactions)
 
         historical_summary["balance"] = self.get_balance_for_queryset(self.transactions)
 

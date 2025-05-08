@@ -12,6 +12,7 @@ class BalanceSerializer(serializers.Serializer):
     """Serializer for balance data."""
     positive = serializers.DecimalField(max_digits=10, decimal_places=2, coerce_to_string=False)
     negative = serializers.DecimalField(max_digits=10, decimal_places=2, coerce_to_string=False)
+    neutral = serializers.DecimalField(max_digits=10, decimal_places=2, coerce_to_string=False)
     balance = serializers.DecimalField(max_digits=10, decimal_places=2, coerce_to_string=False)
 
 

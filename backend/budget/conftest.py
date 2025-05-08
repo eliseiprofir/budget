@@ -76,35 +76,53 @@ def transaction_recipe() -> str:
 
 @pytest.fixture
 def positive_transaction_type_recipe() -> str:
-    """Fixture for creating a TransactionType recipe"""
+    """Fixture for creating a positive TransactionType recipe"""
     return "transactions.tests.positive_transaction_type_recipe"
 
 
 @pytest.fixture
 def positive_category_recipe() -> str:
-    """Fixture for creating a Category recipe"""
+    """Fixture for creating a positive Category recipe"""
     return "transactions.tests.positive_category_recipe"
 
 
 @pytest.fixture
 def positive_transaction_recipe() -> str:
-    """Fixture for creating a Transaction recipe"""
+    """Fixture for creating a positive Transaction recipe"""
     return "transactions.tests.positive_transaction_recipe"
 
 
 @pytest.fixture
 def negative_transaction_type_recipe() -> str:
-    """Fixture for creating a TransactionType recipe"""
+    """Fixture for creating a negative TransactionType recipe"""
     return "transactions.tests.negative_transaction_type_recipe"
 
 
 @pytest.fixture
 def negative_category_recipe() -> str:
-    """Fixture for creating a Category recipe"""
+    """Fixture for creating a negative Category recipe"""
     return "transactions.tests.negative_category_recipe"
 
 
 @pytest.fixture
 def negative_transaction_recipe() -> str:
-    """Fixture for creating a Transaction recipe"""
+    """Fixture for creating a negative Transaction recipe"""
     return "transactions.tests.negative_transaction_recipe"
+
+
+@pytest.fixture
+def neutral_transaction_type_recipe() -> str:
+    """Fixture for creating a neutral TransactionType recipe"""
+    return "transactions.tests.neutral_transaction_type_recipe"
+
+
+@pytest.fixture
+def neutral_category_recipe() -> str:
+    """Fixture for creating a neutral Category recipe"""
+    return "transactions.tests.neutral_category_recipe"
+
+
+@pytest.fixture
+def neutral_transaction_recipe() -> str:
+    """Fixture for creating a neutral Transaction recipe"""
+    return "transactions.tests.neutral_transaction_recipe"
