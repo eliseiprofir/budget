@@ -102,10 +102,10 @@ def test_get_balance_for_queryset(
 
     service = AnalyticsBaseService(user).get_balance_for_queryset(transactions)
     assert service == {
+        "_total": 50,
         "positive": 100,
         "negative": 50,
         "neutral": 0,
-        "balance": 50,
     }
 
 

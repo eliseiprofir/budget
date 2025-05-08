@@ -55,18 +55,18 @@ def test_analytics_yearly_view(
     assert data["monthly"]["1"]["positive_categories"]["Positive Category"] == decimal.Decimal("400.00")
     assert data["monthly"]["1"]["negative_categories"]["Negative Category"] == decimal.Decimal("200.00")
     assert data["monthly"]["1"]["neutral_categories"]["Neutral Category"] == decimal.Decimal("0.00")
+    assert data["monthly"]["1"]["balance"]["_total"] == decimal.Decimal("200.00")
     assert data["monthly"]["1"]["balance"]["positive"] == decimal.Decimal("400.00")
     assert data["monthly"]["1"]["balance"]["negative"] == decimal.Decimal("200.00")
     assert data["monthly"]["1"]["balance"]["neutral"] == decimal.Decimal("0.00")
-    assert data["monthly"]["1"]["balance"]["balance"] == decimal.Decimal("200.00")
 
     assert data["summary"]["positive_categories"]["Positive Category"] == decimal.Decimal("400.00")
     assert data["summary"]["negative_categories"]["Negative Category"] == decimal.Decimal("200.00")
     assert data["summary"]["neutral_categories"]["Neutral Category"] == decimal.Decimal("0.00")
+    assert data["summary"]["balance"]["_total"] == decimal.Decimal("200.00")
     assert data["summary"]["balance"]["positive"] == decimal.Decimal("400.00")
     assert data["summary"]["balance"]["negative"] == decimal.Decimal("200.00")
     assert data["summary"]["balance"]["neutral"] == decimal.Decimal("0.00")
-    assert data["summary"]["balance"]["balance"] == decimal.Decimal("200.00")
 
     assert data["period"] == 2025
 
@@ -86,18 +86,19 @@ def test_analytics_yearly_view(
     assert data["monthly"]["1"]["positive_categories"]["Positive Category"] == decimal.Decimal("200.00")
     assert data["monthly"]["1"]["negative_categories"]["Negative Category"] == decimal.Decimal("100.00")
     assert data["monthly"]["1"]["neutral_categories"]["Neutral Category"] == decimal.Decimal("0.00")
+    assert data["monthly"]["1"]["balance"]["_total"] == decimal.Decimal("100.00")
+
     assert data["monthly"]["1"]["balance"]["positive"] == decimal.Decimal("200.00")
     assert data["monthly"]["1"]["balance"]["negative"] == decimal.Decimal("100.00")
     assert data["monthly"]["1"]["balance"]["neutral"] == decimal.Decimal("0.00")
-    assert data["monthly"]["1"]["balance"]["balance"] == decimal.Decimal("100.00")
 
     assert data["summary"]["positive_categories"]["Positive Category"] == decimal.Decimal("200.00")
     assert data["summary"]["negative_categories"]["Negative Category"] == decimal.Decimal("100.00")
     assert data["summary"]["neutral_categories"]["Neutral Category"] == decimal.Decimal("0.00")
+    assert data["summary"]["balance"]["_total"] == decimal.Decimal("100.00")
     assert data["summary"]["balance"]["positive"] == decimal.Decimal("200.00")
     assert data["summary"]["balance"]["negative"] == decimal.Decimal("100.00")
     assert data["summary"]["balance"]["neutral"] == decimal.Decimal("0.00")
-    assert data["summary"]["balance"]["balance"] == decimal.Decimal("100.00")
 
     assert data["period"] == 2026
 

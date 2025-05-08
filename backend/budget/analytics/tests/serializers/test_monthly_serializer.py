@@ -58,10 +58,10 @@ def test_analytics_monthly_serializer(
     assert serializer_data["positive_categories"]["Positive Category"] == decimal.Decimal("400.00")
     assert serializer_data["negative_categories"]["Negative Category"] == decimal.Decimal("200.00")
     assert serializer_data["neutral_categories"]["Neutral Category"] == decimal.Decimal("0.00")
+    assert serializer_data["balance"]["_total"] == decimal.Decimal("200.00")
     assert serializer_data["balance"]["positive"] == decimal.Decimal("400.00")
     assert serializer_data["balance"]["negative"] == decimal.Decimal("200.00")
     assert serializer_data["balance"]["neutral"] == decimal.Decimal("0.00")
-    assert serializer_data["balance"]["balance"] == decimal.Decimal("200.00")
     assert serializer_data["period"]["year"] == 2025
     assert serializer_data["period"]["month"] == 1
 
@@ -81,9 +81,9 @@ def test_analytics_monthly_serializer(
     assert serializer_data["positive_categories"]["Positive Category"] == decimal.Decimal("200.00")
     assert serializer_data["negative_categories"]["Negative Category"] == decimal.Decimal("100.00")
     assert serializer_data["neutral_categories"]["Neutral Category"] == decimal.Decimal("0.00")
+    assert serializer_data["balance"]["_total"] == decimal.Decimal("100.00")
     assert serializer_data["balance"]["positive"] == decimal.Decimal("200.00")
     assert serializer_data["balance"]["negative"] == decimal.Decimal("100.00")
     assert serializer_data["balance"]["neutral"] == decimal.Decimal("0.00")
-    assert serializer_data["balance"]["balance"] == decimal.Decimal("100.00")
     assert serializer_data["period"]["year"] == 2025
     assert serializer_data["period"]["month"] == 2

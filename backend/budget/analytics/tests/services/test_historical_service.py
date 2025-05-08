@@ -100,10 +100,10 @@ def test_get_balance_by_year(
     """Test get_balance_by_year function to ensure it works properly."""
     service = AnalyticsHistoricalService(user).get_balance_by_year(year=2025)
     assert service == {
+        "_total": 0,
         "positive": 0,
         "negative": 0,
         "neutral": 0,
-        "balance": 0,
     }
 
     year_2025 = make_aware(datetime(2025, 1, 1))
@@ -119,16 +119,18 @@ def test_get_balance_by_year(
     baker.make_recipe(neutral_transaction_recipe, user=user, date=year_2026, amount=-10)
 
     service_year_2025 = AnalyticsHistoricalService(user).get_balance_by_year(year=2025)
+    assert service_year_2025["_total"] == 100
     assert service_year_2025["positive"] == 200
     assert service_year_2025["negative"] == 100
     assert service_year_2025["neutral"] == 0
-    assert service_year_2025["balance"] == 100
+
 
     service_year_2026 = AnalyticsHistoricalService(user).get_balance_by_year(year=2026)
+    assert service_year_2026["_total"] == 50
     assert service_year_2026["positive"] == 100
     assert service_year_2026["negative"] == 50
     assert service_year_2026["neutral"] == 0
-    assert service_year_2026["balance"] == 50
+
 
 
 @pytest.mark.django_db

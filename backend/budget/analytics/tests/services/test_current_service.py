@@ -14,7 +14,7 @@ def test_get_location_data(
 ):
     """Test get_location_data function to ensure it works properly."""
     service = AnalyticsCurrentService(user).get_locations_data()
-    assert service == {"total": 0}
+    assert service == {"_total": 0}
 
     location1 = baker.make_recipe(location_recipe, user=user, name="Location 1")
     location2 = baker.make_recipe(location_recipe, user=user, name="Location 2")
@@ -24,7 +24,7 @@ def test_get_location_data(
     baker.make_recipe(negative_transaction_recipe, user=user, location=location2, amount=150)
 
     service = AnalyticsCurrentService(user).get_locations_data()
-    assert service["total"] == 200
+    assert service["_total"] == 200
     assert service["Location 1"] == 50
     assert service["Location 2"] == 150
 
@@ -38,7 +38,7 @@ def test_get_buckets_data(
 ):
     """Test get_buckets_data function to ensure it works properly."""
     service = AnalyticsCurrentService(user).get_buckets_data()
-    assert service == {"total": 0}
+    assert service == {"_total": 0}
 
     bucket1 = baker.make_recipe(bucket_recipe, user=user, name="Bucket 1", allocation_percentage=50)
     bucket2 = baker.make_recipe(bucket_recipe, user=user, name="Bucket 2", allocation_percentage=50)
@@ -48,7 +48,7 @@ def test_get_buckets_data(
     baker.make_recipe(negative_transaction_recipe, user=user, bucket=bucket2, amount=150)
 
     service = AnalyticsCurrentService(user).get_buckets_data()
-    assert service["total"] == 200
+    assert service["_total"] == 200
     assert service["Bucket 1"] == 50
     assert service["Bucket 2"] == 150
 
@@ -63,10 +63,10 @@ def test_get_balance(
     """Test get_balance function to ensure it works properly."""
     service = AnalyticsCurrentService(user).get_balance()
     assert service == {
+        "_total": 0,
         "positive": 0,
         "negative": 0,
         "neutral": 0,
-        "balance": 0,
     }
 
     baker.make_recipe(positive_transaction_recipe, amount=100, user=user)
@@ -75,10 +75,10 @@ def test_get_balance(
     baker.make_recipe(neutral_transaction_recipe, amount=-5, user=user)
 
     service = AnalyticsCurrentService(user).get_balance()
+    assert service["_total"] == 75
     assert service["positive"] == 100
     assert service["negative"] == 25
     assert service["neutral"] == 0
-    assert service["balance"] == 75
 
 
 @pytest.mark.django_db
@@ -93,13 +93,13 @@ def test_get_summary(
     """Test get_summary function to ensure it works properly."""
     service = AnalyticsCurrentService(user).get_summary()
     assert service == {
-        "locations": {"total": 0},
-        "buckets": {"total": 0},
+        "locations": {"_total": 0},
+        "buckets": {"_total": 0},
         "balance": {
+            "_total": 0,
             "positive": 0,
             "negative": 0,
             "neutral": 0,
-            "balance": 0,
         },
     }
 
@@ -117,13 +117,13 @@ def test_get_summary(
     baker.make_recipe(neutral_transaction_recipe, user=user, bucket=bucket2, location=location2, amount=-10)
 
     service = AnalyticsCurrentService(user).get_summary()
-    assert service["locations"]["total"] == 200
+    assert service["locations"]["_total"] == 200
     assert service["locations"]["Location 1"] == 50
     assert service["locations"]["Location 2"] == 150
-    assert service["buckets"]["total"] == 200
+    assert service["buckets"]["_total"] == 200
     assert service["buckets"]["Bucket 1"] == 50
     assert service["buckets"]["Bucket 2"] == 150
+    assert service["balance"]["_total"] == 200
     assert service["balance"]["positive"] == 400
     assert service["balance"]["negative"] == 200
     assert service["balance"]["neutral"] == 0
-    assert service["balance"]["balance"] == 200

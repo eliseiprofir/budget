@@ -32,10 +32,10 @@ def test_analytics_current_view(
     assert "locations" in data
     assert "buckets" in data
 
+    assert data["balance"]["_total"] == 100
     assert data["balance"]["positive"] == 200
     assert data["balance"]["negative"] == 100
     assert data["balance"]["neutral"] == 0
-    assert data["balance"]["balance"] == 100
 
 
 @pytest.mark.django_db

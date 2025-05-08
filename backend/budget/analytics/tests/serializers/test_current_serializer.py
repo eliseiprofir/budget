@@ -21,10 +21,10 @@ def test_representation_serializer():
 def test_balance_serializer():
     """Test BalanceSerializer to ensure it works properly."""
     data = {
+        "_total": 800,
         "positive": 1000,
         "negative": 200,
         "neutral": 0,
-        "balance": 800
     }
 
     serializer = BalanceSerializer(data=data)
@@ -52,7 +52,7 @@ def test_analytics_current_serializer(
     assert "locations" in serializer_data
     assert "buckets" in serializer_data
 
+    assert serializer_data["balance"]["_total"] == decimal.Decimal("100.00")
     assert serializer_data["balance"]["positive"] == decimal.Decimal("200.00")
     assert serializer_data["balance"]["negative"] == decimal.Decimal("100.00")
     assert serializer_data["balance"]["neutral"] == decimal.Decimal("0.00")
-    assert serializer_data["balance"]["balance"] == decimal.Decimal("100.00")

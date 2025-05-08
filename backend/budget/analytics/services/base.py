@@ -49,11 +49,11 @@ class AnalyticsBaseService:
     def sum_transactions(queryset: Transaction):
         """Sum the amount for a queryset of transactions."""
         return queryset.aggregate(
-            total=Coalesce(
+            _total=Coalesce(
                 Sum("amount", output_field=DecimalField()),
                 0, output_field=DecimalField()
             )
-        )["total"]
+        )["_total"]
 
     def get_balance_for_queryset(self, queryset: Transaction):
         """Get balance for a specific queryset of transactions."""
@@ -70,10 +70,10 @@ class AnalyticsBaseService:
         ))
 
         return {
+            "_total": positive - negative + neutral,
             "positive": positive,
             "negative": negative,
-            "neutral": neutral,
-            "balance": positive - negative + neutral
+            "neutral": neutral
         }
 
     def get_transactions_by_month(self, month, year):

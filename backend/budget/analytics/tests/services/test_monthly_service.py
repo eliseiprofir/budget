@@ -100,10 +100,10 @@ def test_get_balance(
     """Test get_balance function to ensure it works properly."""
     service = AnalyticsMonthlyService(user, year=2025, month=1).get_balance()
     assert service == {
+        "_total": 0,
         "positive": 0,
         "negative": 0,
         "neutral": 0,
-        "balance": 0,
     }
 
     january = make_aware(datetime(2025, 1, 1))
@@ -119,13 +119,13 @@ def test_get_balance(
     baker.make_recipe(neutral_transaction_recipe, user=user, date=february, amount=-10)
 
     service_january = AnalyticsMonthlyService(user, year=2025, month=1).get_balance()
+    assert service_january["_total"] == 100
     assert service_january["positive"] == 200
     assert service_january["negative"] == 100
     assert service_january["neutral"] == 0
-    assert service_january["balance"] == 100
 
     service_february = AnalyticsMonthlyService(user, year=2025, month=2).get_balance()
+    assert service_february["_total"] == 50
     assert service_february["positive"] == 100
     assert service_february["negative"] == 50
     assert service_february["neutral"] == 0
-    assert service_february["balance"] == 50

@@ -18,30 +18,31 @@ def current_report():
     locations_data = data["locations"]
     locations_df = pd.DataFrame.from_dict(data["locations"], orient="index", columns=["Amount"])
     locations_df.index.name = "Location"
-    only_locations_df = pd.DataFrame.from_dict({k: v for k, v in locations_data.items() if k != "total"}, orient="index", columns=["Amount"])
+    only_locations_df = pd.DataFrame.from_dict({k: v for k, v in locations_data.items() if k != "_total"}, orient="index", columns=["Amount"])
     only_locations_df = only_locations_df.reset_index()
     only_locations_df.columns = ["Location", "Amount"]
-    locations_total = locations_data["total"]
+    locations_total = locations_data["_total"]
     
     buckets_data = data["buckets"]
     buckets_df = pd.DataFrame.from_dict(data["buckets"], orient="index", columns=["Amount"])
     buckets_df.index.name = "Bucket"
-    only_buckets_df = pd.DataFrame.from_dict({k: v for k, v in buckets_data.items() if k != "total"}, orient="index", columns=["Amount"])
+    only_buckets_df = pd.DataFrame.from_dict({k: v for k, v in buckets_data.items() if k != "_total"}, orient="index", columns=["Amount"])
     only_buckets_df = only_buckets_df.reset_index()
     only_buckets_df.columns = ["Bucket", "Amount"]
-    buckets_total = buckets_data["total"]
+    buckets_total = buckets_data["_total"]
     
     balance_data = {
         "Income": data["balance"]["positive"],
         "Expense": data["balance"]["negative"],
-        "balance": data["balance"]["balance"]
+        "neutral": data["balance"]["neutral"],
+        "balance": data["balance"]["_total"]
     }
     balance_df = pd.DataFrame.from_dict(balance_data, orient="index", columns=["Amount"])
     balance_df.index.name = "Balance"
-    only_balance_df = pd.DataFrame.from_dict({k: v for k, v in balance_data.items() if k != "balance"}, orient="index", columns=["Amount"])
+    only_balance_df = pd.DataFrame.from_dict({k: v for k, v in balance_data.items() if k != "_total"}, orient="index", columns=["Amount"])
     only_balance_df = only_balance_df.reset_index()
     only_balance_df.columns = ["Balance", "Amount"]
-    balance_total = balance_data["balance"]
+    balance_total = balance_data["_total"]
 
     # TOTAL
     if locations_total == buckets_total == balance_total:
@@ -66,7 +67,7 @@ def current_report():
     ).configure_title(
         fontSize=25
     ).transform_filter(
-        alt.datum.Location != "total"
+        alt.datum.Location != "_total"
     )
     
     table.dataframe(only_locations_df.set_index("Location"))
@@ -87,7 +88,7 @@ def current_report():
     ).configure_title(
         fontSize=25
     ).transform_filter(
-        alt.datum.Bucket != "total"
+        alt.datum.Bucket != "_total"
     )
     
     table.dataframe(only_buckets_df.set_index("Bucket"))

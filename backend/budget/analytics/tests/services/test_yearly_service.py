@@ -100,10 +100,10 @@ def test_get_balance_by_month(
     """Test get_balance_by_month function to ensure it works properly."""
     service = AnalyticsYearlyService(user, year=2025).get_balance_by_month(month=1)
     assert service == {
+        "_total": 0,
         "positive": 0,
         "negative": 0,
         "neutral": 0,
-        "balance": 0,
     }
 
     january = make_aware(datetime(2025, 1, 1))
@@ -119,16 +119,16 @@ def test_get_balance_by_month(
     baker.make_recipe(neutral_transaction_recipe, user=user, date=february, amount=-10)
 
     service_january = AnalyticsYearlyService(user, year=2025).get_balance_by_month(month=1)
+    assert service_january["_total"] == 100
     assert service_january["positive"] == 200
     assert service_january["negative"] == 100
     assert service_january["neutral"] == 0
-    assert service_january["balance"] == 100
 
     service_february = AnalyticsYearlyService(user, year=2025).get_balance_by_month(month=2)
+    assert service_february["_total"] == 50
     assert service_february["positive"] == 100
     assert service_february["negative"] == 50
     assert service_february["neutral"] == 0
-    assert service_february["balance"] == 50
 
 
 @pytest.mark.django_db
