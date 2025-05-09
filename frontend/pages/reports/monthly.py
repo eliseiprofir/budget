@@ -5,7 +5,7 @@ import pandas as pd
 def monthly_analytics():
     """Monthly report section."""
 
-    st.title("📊 Monthly report")
+    st.title("📅 Monthly report")
     st.write("Here you can see monthly reports.")
 
     # Analytics API and unpacking data
@@ -59,7 +59,7 @@ def monthly_analytics():
     balance_total = balance_data["_total"]
 
     # POSITIVE CATEGORIES SECTION
-    st.subheader(f"📈 Positive categories ({positive_categories_total})")
+    st.subheader(f"➕ Positive categories ({positive_categories_total})")
     graph, table = st.columns([8, 2])
     
     positive_categories_chart = alt.Chart(positive_categories_df.reset_index()).mark_bar().encode(
@@ -78,7 +78,7 @@ def monthly_analytics():
     graph.altair_chart(positive_categories_chart, use_container_width=True)
 
     # NEGATIVE CATEGORIES SECTION
-    st.subheader(f"📉 Negative categories ({negative_categories_total})")
+    st.subheader(f"➖ Negative categories ({negative_categories_total})")
     graph, table = st.columns([8, 2])
     
     negative_categories_chart = alt.Chart(negative_categories_df.reset_index()).mark_bar().encode(
@@ -97,7 +97,7 @@ def monthly_analytics():
     graph.altair_chart(negative_categories_chart, use_container_width=True)
 
     # NEUTRAL CATEGORIES SECTION
-    st.subheader(f"Neutral categories ({neutral_categories_total})")
+    st.subheader(f"🟰 Neutral categories ({neutral_categories_total})")
     graph, table = st.columns([8, 2])
     
     neutral_categories_chart = alt.Chart(neutral_categories_df.reset_index()).mark_bar().encode(

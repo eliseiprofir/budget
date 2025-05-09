@@ -10,7 +10,7 @@ def add_transactions_form():
     # Transactions API and cache
     transactions_api = st.session_state["api_transactions"]["service"]
 
-    # Other services
+    # Services
     categories_api = st.session_state["api_categories"]["service"]
     locations_api = st.session_state["api_locations"]["service"]
     buckets_api = st.session_state["api_buckets"]["service"]
@@ -27,7 +27,7 @@ def add_transactions_form():
         
         category = col2.selectbox("🔖 Category", key="category", options=st.session_state["api_categories"]["cache"]["names"])
         category = categories_api.get_category_id(category_name=category)
-        transaction_type = categories_api.get_category_type_sign(category_id=category)
+        transaction_type = categories_api.get_category_sign(category_id=category)
 
         date = col3.date_input("📆 Date", key="date")
         amount = col3.number_input("🔢 Amount", key="amount")

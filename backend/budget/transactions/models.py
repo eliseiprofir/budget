@@ -12,14 +12,13 @@ from core.models import Bucket
 
 from utils.strings import truncate
 
-from .managers import TransactionTypeManager
 from .managers import CategoryManager
 from .managers import TransactionManager
 
 
-class TransactionType(UUIDModel, SoftDeletableModel):
+class Category(UUIDModel, SoftDeletableModel):
     """Model to store category information."""
-    available_objects = TransactionTypeManager()
+    available_objects = CategoryManager()
 
     # 'uuid' field is inherited from UUIDModel
     # 'is_removed' field is inherited from SoftDeletableModel
@@ -38,7 +37,7 @@ class TransactionType(UUIDModel, SoftDeletableModel):
         )
 
     name = models.CharField(
-        help_text="Transaction type name (e.g. Income, Expense, Transfer, etc.)",
+        help_text="Category name (e.g. (1) for Income: Salary, Bonuses, etc.; (2) for Expense: Utilities, Necessities/Utilities, Books, Education/Books, etc.",
         max_length=255,
         blank=False,
     )
@@ -48,71 +47,6 @@ class TransactionType(UUIDModel, SoftDeletableModel):
         default=Sign.NEUTRAL,
         help_text="Specifies the nature of the transactions. POSITIVE: money coming in, NEGATIVE: money going out, or NEUTRAL: moving between locations/buckets.",
         blank=False,
-    )
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="transaction_types",
-        blank=False,
-        null=False,
-    )
-
-    def __str__(self):
-        """Return the string representation of the model"""
-        return self.name
-
-    def validate_name(self):
-        """Validate transaction type name is unique to current user."""
-        existing_query = TransactionType.available_objects.filter(
-            user=self.user,
-            name=self.name
-        )
-        if self.pk:
-            existing_query = existing_query.exclude(pk=self.pk)
-        if existing_query.exists():
-            raise ValidationError("You already have a transaction type with that name.")
-
-    def clean(self):
-        """Validate model as a whole."""
-        super().clean()
-        self.validate_name()
-
-    def save(self, *args, **kwargs):
-        """Save method plus validate methods."""
-
-        # The sign cannot be changed once created.
-        if self.pk and TransactionType.all_objects.filter(pk=self.pk).exists():
-            old_instance = TransactionType.all_objects.get(pk=self.pk)
-            if old_instance.sign != self.sign:
-                raise ValidationError("The 'sign' field cannot be changed after creation.")
-
-        self.full_clean()
-        super().save(*args, **kwargs)
-
-    class Meta:
-        verbose_name = "Transaction Type"
-        verbose_name_plural = "Transaction Types"
-        ordering = ("name",)
-
-
-class Category(UUIDModel, SoftDeletableModel):
-    """Model to store category information."""
-    available_objects = CategoryManager()
-
-    # 'uuid' field is inherited from UUIDModel
-    # 'is_removed' field is inherited from SoftDeletableModel
-
-    name = models.CharField(
-        help_text="Category name (e.g. (1) for Income: Salary, Bonuses, etc.; (2) for Expense: Utilities, Necessities/Utilities, Books, Education/Books, etc.",
-        max_length=255,
-        blank=False,
-    )
-    transaction_type = models.ForeignKey(
-        TransactionType,
-        on_delete=models.CASCADE,
-        related_name="categories",
-        blank=False,
-        null=False,
     )
     user = models.ForeignKey(
         User,
@@ -222,22 +156,13 @@ class Transaction(UUIDModel):
         null=False,
     )
 
-    @property
-    def transaction_type(self):
-        """Return the transaction_type from the related Category."""
-        return self.category.transaction_type.name if self.category else None
-
-    @transaction_type.setter
-    def transaction_type(self, value):
-        pass
-
     def __str__(self):
         """Return the string representation of the model"""
         return f"{truncate(str(self.description), 15)}: {self.amount}"
 
     def get_full_info(self):
         """Return all information about the transaction"""
-        return f"{self.date}, {self.transaction_type}, {self.category.name}, {truncate(str(self.description), 10)}, {self.location}, {self.bucket}"
+        return f"{self.date}, {self.category.name}, {truncate(str(self.description), 10)}, {self.location}, {self.bucket}"
 
     def _split_income(self):
         """Split income into multiple transactions based on bucket allocations."""
@@ -281,14 +206,14 @@ class Transaction(UUIDModel):
 
     def validate_bucket(self):
         """Validate bucket field should be selected if not splitting income."""
-        if self.category.transaction_type.sign == TransactionType.Sign.POSITIVE and not self.split_income and not self.bucket:
+        if self.category.sign == Category.Sign.POSITIVE and not self.split_income and not self.bucket:
             raise ValidationError({"bucket": "Bucket is required on positive non-split transactions."})
-        if self.category.transaction_type.sign == TransactionType.Sign.NEGATIVE and not self.bucket:
+        if self.category.sign == Category.Sign.NEGATIVE and not self.bucket:
             raise ValidationError({"bucket": "Bucket is required on negative transactions."})
 
     def validate_split_income(self):
         """Validate split_income field for positive transactions."""
-        if self.category.transaction_type.sign == TransactionType.Sign.POSITIVE:
+        if self.category.sign == Category.Sign.POSITIVE:
             if self.split_income and not Bucket.is_allocation_complete(self.user):
                 raise ValidationError({"split_income":"Cannot create a positive transaction and split it, until bucket allocations sum to 100%. Please complete your bucket allocations first."})
         else:
@@ -307,7 +232,7 @@ class Transaction(UUIDModel):
         self.full_clean()
         super().save(*args, **kwargs)
 
-        if self.category.transaction_type.sign == TransactionType.Sign.POSITIVE and self.split_income:
+        if self.category.sign == Category.Sign.POSITIVE and self.split_income:
             self._split_income()
 
     class Meta:

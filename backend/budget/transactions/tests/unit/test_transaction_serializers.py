@@ -17,7 +17,6 @@ def test_list_serializer_create(transaction_recipe: str):
     serializer = TransactionListSerializer(transaction, context={"request": request})
     assert serializer.data["id"] == str(transaction.id)
     assert serializer.data["description"] == transaction.description
-    assert serializer.data["transaction_type"] is not None
     assert serializer.data["category"] is not None
     assert serializer.data["date"] is not None
     assert serializer.data["amount"] is not None
@@ -54,7 +53,6 @@ def test_detail_serializer_create(
     serializer = TransactionDetailSerializer(transaction, context={"request": request})
     assert serializer.data["id"] == str(transaction.id)
     assert serializer.data["description"] == transaction.description
-    assert serializer.data["transaction_type"] == transaction.transaction_type
     assert serializer.data["category"]["id"] == str(category.id)
     assert serializer.data["date"].split("T")[0] == str(transaction.date).split(" ")[0]
     assert str(serializer.data["amount"]) == str(transaction.amount)
@@ -67,7 +65,6 @@ def test_detail_serializer_create(
 @pytest.mark.django_db
 def test_write_serializer_create(
     user_recipe: str,
-    transaction_type_recipe: str,
     category_recipe: str,
     location_recipe: str,
     bucket_recipe: str,
@@ -75,8 +72,7 @@ def test_write_serializer_create(
 ):
     """Test the TransactionWriteSerializer create method"""
     user = baker.make_recipe(user_recipe)
-    transaction_type = baker.make_recipe(transaction_type_recipe, user=user)
-    category = baker.make_recipe(category_recipe, transaction_type=transaction_type, user=user)
+    category = baker.make_recipe(category_recipe, user=user)
     location = baker.make_recipe(location_recipe, user=user)
     bucket = baker.make_recipe(bucket_recipe, user=user, allocation_percentage=100)
     transaction = baker.prepare_recipe(
@@ -99,7 +95,6 @@ def test_write_serializer_create(
     assert serializer.is_valid(), serializer.errors
     serialized_data = serializer.save(user=user)
     assert serialized_data.description == transaction.description
-    assert serialized_data.transaction_type == transaction.transaction_type
     assert serialized_data.category.pk == category.pk
     assert serialized_data.date == transaction.date
     assert serialized_data.amount == transaction.amount
@@ -110,21 +105,17 @@ def test_write_serializer_create(
 @pytest.mark.django_db
 def test_write_serializer_update(
     transaction: Transaction,
-    user_recipe: str,
-    transaction_type_recipe: str,
     category_recipe: str,
     location_recipe: str,
     bucket_recipe: str,
 ):
     """Test the TransactionWriteSerializer update method"""
     original_user = transaction.user
-    transaction_type = baker.make_recipe(transaction_type_recipe, user=original_user)
-    category = baker.make_recipe(category_recipe, name="New Category", transaction_type=transaction_type, user=original_user)
+    category = baker.make_recipe(category_recipe, name="New Category", user=original_user)
     location = baker.make_recipe(location_recipe, name="New Location", user=original_user)
     bucket = baker.make_recipe(bucket_recipe, name="New Bucket", user=original_user, allocation_percentage=100)
     data = {
         "description": transaction.description,
-        "transaction_type": str(category.transaction_type),
         "category": str(category.id),
         "date": transaction.date,
         "amount": transaction.amount,
@@ -137,7 +128,6 @@ def test_write_serializer_update(
     updated_transaction = serializer.save()
     assert updated_transaction.user == original_user
     assert updated_transaction.description == data["description"]
-    assert str(updated_transaction.transaction_type) == data["transaction_type"]
     assert str(updated_transaction.category.pk) == data["category"]
     assert updated_transaction.date == data["date"]
     assert updated_transaction.amount == data["amount"]

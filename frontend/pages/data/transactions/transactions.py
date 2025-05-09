@@ -46,7 +46,6 @@ def transactions_page():
                 "📆 Date": pd.to_datetime(transaction["date"]),
                 "✍️ Description": transaction["description"],
                 "🔢 Amount": pd.to_numeric(transaction["amount"]),
-                "📈 Type": transaction["transaction_type"],
                 "🔖 Category": transaction["category"]["name"],
                 "🪙 Bucket": transaction["bucket"]["name"],
                 "🏦 Location": transaction["location"]["name"],
@@ -57,11 +56,11 @@ def transactions_page():
     data = pd.DataFrame(data)
     show_column_order = (
         "📆 Date", "✍️ Description", "🔢 Amount",
-        "📈 Type","🔖 Category", "🪙 Bucket", "🏦 Location"
+        "🔖 Category", "🪙 Bucket", "🏦 Location"
     )
     edit_column_order = (
         "🗑️ Delete", "📆 Date", "✍️ Description", "🔢 Amount",
-        "📈 Type","🔖 Category", "🪙 Bucket", "🏦 Location",
+        "🔖 Category", "🪙 Bucket", "🏦 Location",
     )
 
     column_config = {
@@ -80,7 +79,6 @@ def transactions_page():
             "🔢 Amount",
             required=True,
         ),
-        "📈 Type": st.column_config.TextColumn("📈 Type", disabled=True),
         "🔖 Category": st.column_config.SelectboxColumn(
             "🔖 Category",
             options=st.session_state["api_categories"]["cache"]["names"],

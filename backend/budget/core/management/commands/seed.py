@@ -6,17 +6,15 @@ from datetime import datetime
 from django.utils.timezone import make_aware
 
 from accounts.models import User
+from transactions.models import Category
 
 user_recipe = "accounts.tests.user_recipe"
 location_recipe = "core.tests.location_recipe"
 bucket_recipe = "core.tests.bucket_recipe"
-positive_transaction_type_recipe = "transactions.tests.positive_transaction_type_recipe"
 positive_category_recipe = "transactions.tests.positive_category_recipe"
 positive_transaction_recipe = "transactions.tests.positive_transaction_recipe"
-negative_transaction_type_recipe = "transactions.tests.negative_transaction_type_recipe"
 negative_category_recipe = "transactions.tests.negative_category_recipe"
 negative_transaction_recipe = "transactions.tests.negative_transaction_recipe"
-neutral_transaction_type_recipe = "transactions.tests.neutral_transaction_type_recipe"
 neutral_category_recipe = "transactions.tests.neutral_category_recipe"
 neutral_transaction_recipe = "transactions.tests.neutral_transaction_recipe"
 
@@ -33,7 +31,7 @@ NO_OF_NEGATIVE_TRANSACTIONS = 100
 NO_OF_NEUTRAL_TRANSACTIONS = 5
 
 TOTAL_ENTRIES_CREATED = (
-    4 + NO_OF_LOCATIONS + NO_OF_BUCKETS +
+    1 + NO_OF_LOCATIONS + NO_OF_BUCKETS +
     NO_OF_POSITIVE_CATEGORIES + NO_OF_POSITIVE_TRANSACTIONS +
     NO_OF_NEGATIVE_CATEGORIES + NO_OF_NEGATIVE_TRANSACTIONS +
     NO_OF_NEUTRAL_CATEGORIES + NO_OF_NEUTRAL_TRANSACTIONS
@@ -78,27 +76,6 @@ class Command(BaseCommand):
             self.stdout.write(f"Created bucket: {bucket}")
         buckets = cycle(buckets)
 
-        # Create transaction types
-        self.stdout.write(self.style.NOTICE("\nCreating transaction types..."))
-        positive_transaction_type = baker.make_recipe(
-            positive_transaction_type_recipe,
-            name="Income",
-            user=user,
-        )
-        self.stdout.write(f"Created positive transaction type: {positive_transaction_type}")
-        negative_transaction_type = baker.make_recipe(
-            negative_transaction_type_recipe,
-            name="Expense",
-            user=user,
-        )
-        self.stdout.write(f"Created positive transaction type: {negative_transaction_type}")
-        self.stdout.write(self.style.NOTICE("\nCreating neutral transaction types..."))
-        neutral_transaction_type = baker.make_recipe(
-            neutral_transaction_type_recipe,
-            name="Transfer",
-            user=user,
-        )
-
         # Create categories
         self.stdout.write(self.style.NOTICE("\nCreating categories..."))
         positive_categories = []
@@ -106,8 +83,8 @@ class Command(BaseCommand):
             category = baker.make_recipe(
                 positive_category_recipe,
                 name=f"Positive Category {_+1}",
+                sign=Category.Sign.POSITIVE,
                 user=user,
-                transaction_type=positive_transaction_type,
             )
             positive_categories.append(category)
             self.stdout.write(f"Created positive category: {category}")
@@ -118,8 +95,8 @@ class Command(BaseCommand):
             category = baker.make_recipe(
                 negative_category_recipe,
                 name=f"Negative Category {_+1}",
+                sign=Category.Sign.NEGATIVE,
                 user=user,
-                transaction_type=negative_transaction_type,
             )
             negative_categories.append(category)
             self.stdout.write(f"Created negative category: {category}")
@@ -130,8 +107,8 @@ class Command(BaseCommand):
             category = baker.make_recipe(
                 neutral_category_recipe,
                 name=f"Neutral Category {_+1}",
+                sign=Category.Sign.NEUTRAL,
                 user=user,
-                transaction_type=neutral_transaction_type,
             )
             neutral_categories.append(category)
             self.stdout.write(f"Created neutral category: {category}")
@@ -192,11 +169,9 @@ Created:
 - 1 user
 - {NO_OF_LOCATIONS} locations
 - {NO_OF_BUCKETS} buckets
-- 1 positive transaction type
-- 1 negative transaction type
-- 1 neutral transaction type
-- {NO_OF_POSITIVE_CATEGORIES} positive categories (linked to positive transaction type)
-- {NO_OF_NEGATIVE_CATEGORIES} negative categories (linked to negative transaction type)
+- {NO_OF_POSITIVE_CATEGORIES} positive categories
+- {NO_OF_NEGATIVE_CATEGORIES} negative categories
+- {NO_OF_NEUTRAL_CATEGORIES} neutral categories
 - {NO_OF_POSITIVE_TRANSACTIONS} positive transactions (linked to positive categories, locations and buckets)
 - {NO_OF_NEGATIVE_TRANSACTIONS} negative transactions (linked to negative categories, locations and buckets)
 - {NO_OF_NEUTRAL_TRANSACTIONS} neutral transactions (linked to neutral categories, locations and buckets)

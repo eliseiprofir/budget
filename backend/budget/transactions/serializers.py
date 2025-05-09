@@ -7,64 +7,12 @@ from core.serializers import LocationSerializer
 from core.serializers import LocationSerializerSummary
 from core.serializers import BucketSerializer
 from core.serializers import BucketSerializerSummary
-from transactions.models import TransactionType
 from transactions.models import Category
 from .models import Transaction
 
 
-class TransactionTypeSerializer(serializers.ModelSerializer):
-    """Serializer for the TransactionType model"""
-    user = serializers.HyperlinkedRelatedField(
-        view_name="api:user-detail",
-        read_only=True,
-    )
-
-    class Meta:
-        model = TransactionType
-        fields = ("id", "name", "sign", "is_removed", "user")
-        read_only_fields = fields
-
-    def validate_name(self, name):
-        """Validate transaction type name is unique to current user."""
-        user = self.context["request"].user
-        current_query = TransactionType.available_objects.filter(user=user, name=name)
-        if self.instance:
-            current_query = current_query.exclude(pk=self.instance.pk)
-        if current_query.exists():
-            raise serializers.ValidationError({"name": "You already have a transaction type with this name."})
-        return name
-
-
-class TransactionTypeSerializerSummary(serializers.ModelSerializer):
-    """Serializer for the TransactionType model"""
-
-    class Meta:
-        model = TransactionType
-        fields = ("id", "name", "sign")
-        read_only_fields = fields
-
-
-class TransactionTypeWriteSerializer(serializers.ModelSerializer):
-    """Serializer used for create operations"""
-
-    class Meta:
-        model = TransactionType
-        fields = ("name", "sign", "is_removed")
-        read_only_fields = ("id", "user")
-
-    def validate_name(self, value):
-        user = self.context["request"].user
-        current_query = TransactionType.available_objects.filter(user=user, name=value)
-        if self.instance:
-            current_query = current_query.exclude(pk=self.instance.pk)
-        if current_query.exists():
-            raise serializers.ValidationError({"name": "You already have a transaction type with this name."})
-        return value
-
-
 class CategorySerializer(serializers.ModelSerializer):
     """Serializer for the Category model"""
-    transaction_type = TransactionTypeSerializerSummary(read_only=True)
     user = serializers.HyperlinkedRelatedField(
         view_name="api:user-detail",
         read_only=True,
@@ -72,7 +20,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ("id", "name", "transaction_type", "is_removed", "user")
+        fields = ("id", "name", "sign", "is_removed", "user")
         read_only_fields = fields
 
 
@@ -81,30 +29,17 @@ class CategorySerializerSummary(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ("id", "name")
+        fields = ("id", "name", "sign")
         read_only_fields = fields
 
 
 class CategoryWriteSerializer(serializers.ModelSerializer):
     """Serializer used for create operations"""
-    transaction_type = serializers.PrimaryKeyRelatedField(
-        queryset=TransactionType.available_objects.all(),
-        required=True,
-    )
 
     class Meta:
         model = Category
-        fields = ("name", "transaction_type", "is_removed")
+        fields = ("name", "sign", "is_removed")
         read_only_fields = ("id", "user")
-
-    def __init__(self, *args, **kwargs):
-        """Override get_queryset to filter transaction types by user."""
-        super().__init__(*args, **kwargs)
-
-        if "request" in self.context:
-            user = self.context["request"].user
-            filtered_queryset = self.fields["transaction_type"].queryset.filter_by_user(user)
-            self.fields["transaction_type"].queryset = filtered_queryset
 
     def validate_name(self, value):
         user = self.context["request"].user
@@ -128,7 +63,7 @@ class TransactionListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ("id", "description", "transaction_type", "category", "date", "amount", "location", "bucket", "split_income", "user")
+        fields = ("id", "description", "category", "date", "amount", "location", "bucket", "split_income", "user")
         read_only_fields = fields
 
 
@@ -162,7 +97,7 @@ class TransactionWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ("description", "transaction_type", "category", "date", "amount", "location", "bucket", "split_income",)
+        fields = ("description", "category", "date", "amount", "location", "bucket", "split_income",)
         read_only_fields = ("id", "parent_transaction", "user")
 
     def __init__(self, *args, **kwargs):
@@ -191,13 +126,13 @@ class TransactionWriteSerializer(serializers.ModelSerializer):
         errors = {}
 
         # Validate bucket requirements
-        if category.transaction_type.sign == TransactionType.Sign.POSITIVE and not split_income and not bucket:
+        if category.sign == Category.Sign.POSITIVE and not split_income and not bucket:
             errors['bucket'] = "Bucket is required on positive non-split transactions."
-        if category.transaction_type.sign == TransactionType.Sign.NEGATIVE and not bucket:
+        if category.sign == Category.Sign.NEGATIVE and not bucket:
             errors['bucket'] = "Bucket is required on negative transactions."
 
         # Validate split_income rules
-        if category.transaction_type.sign == TransactionType.Sign.POSITIVE:
+        if category.sign == Category.Sign.POSITIVE:
             if split_income and not Bucket.is_allocation_complete(user):
                 errors['split_income'] = "Cannot create a positive transaction and split it, until bucket allocations sum to 100%. Please complete your bucket allocations first."
         else:

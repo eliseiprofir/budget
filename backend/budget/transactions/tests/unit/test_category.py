@@ -10,9 +10,26 @@ def test_category_creation(category_recipe: str):
     category = baker.make_recipe(category_recipe)
     assert category.pk is not None
     assert category.name != ""
-    assert category.transaction_type != ""
+    assert category.sign != ""
     assert category.is_removed in [True, False]
     assert category.user.pk is not None
+
+
+@pytest.mark.django_db
+def test_sign_validation(category_recipe: str):
+    """Test creating a Category instance with valid sign"""
+    category = baker.make_recipe(category_recipe)
+    assert category.sign in (
+        Category.Sign.POSITIVE,
+        Category.Sign.NEGATIVE,
+        Category.Sign.NEUTRAL,
+    )
+    category = baker.prepare_recipe(
+        category_recipe,
+        sign="Not available",
+    )
+    with pytest.raises(ValidationError):
+        category.full_clean()
 
 
 @pytest.mark.django_db

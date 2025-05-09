@@ -1,14 +1,7 @@
 import pytest
 from model_bakery import baker
-from transactions.models import TransactionType
 from transactions.models import Category
 from transactions.models import Transaction
-
-
-@pytest.fixture
-def transaction_type(transaction_type_recipe) -> TransactionType:
-    """Fixture for creating a TransactionType instance."""
-    return baker.make_recipe(transaction_type_recipe)
 
 
 @pytest.fixture

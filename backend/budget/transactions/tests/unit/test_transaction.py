@@ -6,7 +6,7 @@ from django.utils.timezone import now
 from model_bakery import baker
 from core.models import Bucket
 from transactions.models import Transaction
-from transactions.models import TransactionType
+from transactions.models import Category
 from utils.strings import truncate
 
 
@@ -16,7 +16,6 @@ def test_transaction_creation(transaction_recipe: str):
     transaction = baker.make_recipe(transaction_recipe)
     assert transaction.pk is not None
     assert transaction.description != ""
-    assert transaction.transaction_type != ""
     assert transaction.category.pk is not None
     assert transaction.date != ""
     assert transaction.amount != ""
@@ -30,7 +29,6 @@ def test_transaction_creation(transaction_recipe: str):
 def test_crud_transaction(
     transaction_recipe: str,
     category_recipe: str,
-    transaction_type_recipe: str
 ):
     """Test the CRUD operations for positive transactions"""
 
@@ -62,17 +60,16 @@ def test_crud_transaction(
     assert updated_transaction.amount == 200
 
     # Update category
-    new_transaction_type = baker.make_recipe(transaction_type_recipe, sign=TransactionType.Sign.POSITIVE)
     new_category = baker.make_recipe(
         category_recipe,
         name="New Income Category",
-        transaction_type=new_transaction_type
+        sign=Category.Sign.POSITIVE
     )
     transaction.category = new_category
     transaction.save()
     updated_transaction = Transaction.objects.get(pk=transaction.pk)
     assert str(updated_transaction.category) == str(new_category)
-    assert updated_transaction.category.transaction_type.sign == TransactionType.Sign.POSITIVE
+    assert updated_transaction.category.sign == Category.Sign.POSITIVE
 
     # Delete
     transaction.delete()
@@ -88,7 +85,7 @@ def test_str_method(transaction: Transaction):
 @pytest.mark.django_db
 def test_full_info_method(transaction: Transaction):
     """Test the full info method of the model"""
-    assert transaction.get_full_info() == f"{transaction.date}, {transaction.transaction_type}, {transaction.category.name}, {truncate(str(transaction.description), 10)}, {transaction.location}, {transaction.bucket}"
+    assert transaction.get_full_info() == f"{transaction.date}, {transaction.category.name}, {truncate(str(transaction.description), 10)}, {transaction.location}, {transaction.bucket}"
 
 
 @pytest.mark.django_db
@@ -96,7 +93,6 @@ def test_split_income(
     user_recipe: str,
     location_recipe: str,
     bucket_recipe: str,
-    transaction_type_recipe: str,
     category_recipe: str,
     transaction_recipe: str,
 ):
@@ -106,8 +102,7 @@ def test_split_income(
     location = baker.make_recipe(location_recipe, user=user)
     baker.make_recipe(bucket_recipe, user=user, name="Bucket1", allocation_percentage=60)
     baker.make_recipe(bucket_recipe, user=user, name="Bucket2", allocation_percentage=40)
-    transaction_type = baker.make_recipe(transaction_type_recipe, sign=TransactionType.Sign.POSITIVE)
-    category = baker.make_recipe(category_recipe, transaction_type=transaction_type)
+    category = baker.make_recipe(category_recipe, sign=Category.Sign.POSITIVE)
     amount = Decimal("100.00")
     parent_transaction = baker.make_recipe(
         transaction_recipe,
@@ -160,7 +155,6 @@ def test_validate_user(transaction_recipe: str, user_recipe: str):
 @pytest.mark.django_db
 def test_validate_bucket(
     user_recipe: str,
-    transaction_type_recipe: str,
     category_recipe: str,
     bucket_recipe: str,
     transaction_recipe: str,
@@ -169,10 +163,8 @@ def test_validate_bucket(
     user = baker.make_recipe(user_recipe)
     bucket = baker.make_recipe(bucket_recipe, user=user, allocation_percentage=100)
 
-    positive_transaction_type = baker.make_recipe(transaction_type_recipe, sign=TransactionType.Sign.POSITIVE)
-    negative_transaction_type = baker.make_recipe(transaction_type_recipe, sign=TransactionType.Sign.NEGATIVE)
-    positive_category = baker.make_recipe(category_recipe, transaction_type=positive_transaction_type)
-    negative_category = baker.make_recipe(category_recipe, transaction_type=negative_transaction_type)
+    positive_category = baker.make_recipe(category_recipe, sign=Category.Sign.POSITIVE)
+    negative_category = baker.make_recipe(category_recipe, sign=Category.Sign.NEGATIVE)
 
     positive_transaction = baker.prepare_recipe(
         transaction_recipe,
@@ -213,7 +205,6 @@ def test_validate_bucket(
 @pytest.mark.django_db
 def test_validate_split_income(
     user_recipe: str,
-    transaction_type_recipe: str,
     category_recipe: str,
     bucket_recipe: str,
     transaction_recipe: str,
@@ -222,13 +213,9 @@ def test_validate_split_income(
 
     user = baker.make_recipe(user_recipe)
 
-    positive_type_transaction = baker.make_recipe(transaction_type_recipe, sign=TransactionType.Sign.POSITIVE)
-    negative_type_transaction = baker.make_recipe(transaction_type_recipe, sign=TransactionType.Sign.NEGATIVE)
-    neutral_type_transaction = baker.make_recipe(transaction_type_recipe, sign=TransactionType.Sign.NEUTRAL)
-
-    positive_category = baker.make_recipe(category_recipe, transaction_type=positive_type_transaction)
-    negative_category = baker.make_recipe(category_recipe, transaction_type=negative_type_transaction)
-    neutral_category = baker.make_recipe(category_recipe, transaction_type=neutral_type_transaction)
+    positive_category = baker.make_recipe(category_recipe, sign=Category.Sign.POSITIVE)
+    negative_category = baker.make_recipe(category_recipe, sign=Category.Sign.NEGATIVE)
+    neutral_category = baker.make_recipe(category_recipe, sign=Category.Sign.NEUTRAL)
 
     # Test 1: Positive transaction with split but incomplete allocation
     baker.make_recipe(bucket_recipe, user=user, allocation_percentage=60)

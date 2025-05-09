@@ -3,7 +3,6 @@ import streamlit as st
 from services.auth import AuthAPIService
 from services.locations import LocationsAPIService
 from services.buckets import BucketsAPIService
-from services.transaction_types import TransactionTypesAPIService
 from services.categories import CategoriesAPIService
 from services.transactions import TransactionAPIService
 from services.analytics import AnalyticsAPIService
@@ -58,15 +57,6 @@ if "api_buckets" not in st.session_state:
         "cache": {},
     }
     st.session_state["api_buckets"]["service"] = BucketsAPIService()
-
-if "api_transaction_types" not in st.session_state:
-    st.session_state["api_transaction_types"] = {
-        "service": None,
-        "edit_ttype_name": None,
-        "delete_ttype_name": None,
-        "cache": {},
-    }
-    st.session_state["api_transaction_types"]["service"] = TransactionTypesAPIService()
 
 if "api_categories" not in st.session_state:
     st.session_state["api_categories"] = {

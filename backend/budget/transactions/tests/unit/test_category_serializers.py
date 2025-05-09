@@ -15,7 +15,7 @@ def test_serializer_create(category_recipe: str):
     serializer = CategorySerializer(category, context={"request": request})
     assert serializer.data["id"] == str(category.id)
     assert serializer.data["name"] == category.name
-    assert serializer.data["transaction_type"] is not None
+    assert serializer.data["sign"] == category.sign
     assert serializer.data["is_removed"] in [True, False]
     assert serializer.data["user"] is not None
     assert "/api/users/" in serializer.data["user"]
@@ -23,18 +23,16 @@ def test_serializer_create(category_recipe: str):
 
 
 @pytest.mark.django_db
-def test_write_serializer_create(category_recipe: str, transaction_type_recipe: str, user_recipe: str):
+def test_write_serializer_create(category_recipe: str, user_recipe: str):
     """Test the CategoryWriteSerializer create method"""
     user = baker.make_recipe(user_recipe)
-    transaction_type = baker.make_recipe(transaction_type_recipe, user=user)
     category = baker.prepare_recipe(
         category_recipe,
-        transaction_type=transaction_type,
         user=user,
     )
     data = {
         "name": category.name,
-        "transaction_type": category.transaction_type.pk,
+        "sign": category.sign,
         "user": category.user.pk,
     }
     mock_request = type("Request", (), {"user": user})()
@@ -42,23 +40,21 @@ def test_write_serializer_create(category_recipe: str, transaction_type_recipe: 
     assert serializer.is_valid(), serializer.errors
     serialized_data = serializer.save(user=user)
     assert serialized_data.name == category.name
-    assert serialized_data.transaction_type.pk == transaction_type.pk
+    assert serialized_data.sign == category.sign
     assert serialized_data.user.pk == user.pk
 
 
 @pytest.mark.django_db
-def test_write_serializer_update(category_recipe: str, transaction_type_recipe: str, user_recipe: str):
+def test_write_serializer_update(category_recipe: str, user_recipe: str):
     """Test the CategoryWriteSerializer update method"""
     user = baker.make_recipe(user_recipe)
-    transaction_type = baker.make_recipe(transaction_type_recipe, user=user)
     category=baker.prepare_recipe(
         category_recipe,
-        transaction_type=transaction_type,
         user=user,
     )
     data = {
         "name": f"{category.name}",
-        "transaction_type": category.transaction_type.pk,
+        "sign": f"{category.sign}",
         "user": category.user.pk,
     }
     mock_request = type("Request", (), {"user": user})()
@@ -66,5 +62,5 @@ def test_write_serializer_update(category_recipe: str, transaction_type_recipe: 
     assert serializer.is_valid(), serializer.errors
     updated_category = serializer.save()
     assert updated_category.name == data["name"]
-    assert updated_category.transaction_type.pk == category.transaction_type.pk
+    assert updated_category.sign == data["sign"]
     assert updated_category.user.pk == category.user.pk

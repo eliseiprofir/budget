@@ -30,7 +30,7 @@ class CategoriesAPIService(AuthAPIService):
         categories_data = self.get_categories()
         category_list = []
         for category in categories_data:
-            category_list.append([category["name"], category["transaction_type"]["name"]])
+            category_list.append([category["name"], category["sign"]])
         return category_list
 
     def get_categories_names(self):
@@ -46,12 +46,12 @@ class CategoriesAPIService(AuthAPIService):
                 return category["id"]
         return None
 
-    def get_category_type_sign(self, category_id: str):
-        """Get transaction type of a category by its ID."""
+    def get_category_sign(self, category_id: str):
+        """Get sign of a category by its ID."""
         categories_data = self.get_categories()
         for category in categories_data:
             if category["id"] == category_id:
-                return category["transaction_type"]["sign"]
+                return category["sign"]
         return None
 
     def _clear_cache(self):
@@ -72,7 +72,7 @@ class CategoriesAPIService(AuthAPIService):
         except requests.exceptions.RequestException as e:
             return f"Error: {str(e)}. Response: {response.text}"
 
-    def add_category(self, name: str, transaction_type_id: str):
+    def add_category(self, name: str, sign: str):
         """Add a new category for the current user."""
         self._clear_cache()
         try:
@@ -81,7 +81,7 @@ class CategoriesAPIService(AuthAPIService):
                 headers=self.headers,
                 json={
                     "name": name,
-                    "transaction_type": transaction_type_id,
+                    "sign": sign,
                 }
             )
             response.raise_for_status()
@@ -89,7 +89,7 @@ class CategoriesAPIService(AuthAPIService):
         except requests.exceptions.RequestException as e:
             return f"Error: {str(e)}. Response: {response.text}"
 
-    def update_category(self, old_name: str, new_name: str, new_transaction_type_id: str):
+    def update_category(self, old_name: str, new_name: str, new_sign: str):
         """Update a category's name and transaction type."""
         category_id = self.get_category_id(old_name)
         if category_id is None:
@@ -101,7 +101,7 @@ class CategoriesAPIService(AuthAPIService):
                 headers=self.headers,
                 json={
                     "name": new_name,
-                    "transaction_type": new_transaction_type_id}
+                    "sign": new_sign}
             )
             response.raise_for_status()
             return response.json()

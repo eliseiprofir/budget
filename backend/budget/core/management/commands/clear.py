@@ -4,7 +4,6 @@ from model_bakery import baker  #noqa F401
 from accounts.models import User
 from core.models import Location
 from core.models import Bucket
-from transactions.models import TransactionType
 from transactions.models import Category
 from transactions.models import Transaction
 
@@ -25,13 +24,12 @@ class Command(BaseCommand):
         user_count = User.all_objects.filter(is_superuser=False).count()
         location_count = Location.all_objects.count()
         bucket_count = Bucket.all_objects.count()
-        transaction_type_count = TransactionType.all_objects.count()
         category_count = Category.all_objects.count()
         transaction_count = Transaction.objects.count()
 
         total_count = (
-            user_count + location_count +
-            bucket_count + transaction_type_count +
+            user_count +
+            location_count + bucket_count +
             category_count + transaction_count
         )
 
@@ -41,7 +39,6 @@ You are about to delete the following records from the database:
 - {user_count} users
 - {location_count} locations
 - {bucket_count} buckets
-- {transaction_type_count} transaction types
 - {category_count} categories
 - {transaction_count} transactions
 - TOTAL records to be deleted: {total_count}
@@ -67,9 +64,6 @@ You are about to delete the following records from the database:
 
         Bucket.all_objects.all().delete()
         self.stdout.write(self.style.NOTICE("✓ Buckets deleted"))
-
-        TransactionType.all_objects.all().delete()
-        self.stdout.write(self.style.NOTICE("✓ Transaction Types deleted"))
 
         Category.all_objects.all().delete()
         self.stdout.write(self.style.NOTICE("✓ Categories deleted"))

@@ -4,7 +4,6 @@ from rest_framework.routers import DefaultRouter, SimpleRouter
 from accounts.views import UserViewSet
 from core.views import BucketViewSet
 from core.views import LocationViewSet
-from transactions.views import TransactionTypeViewSet
 from transactions.views import CategoryViewSet
 from transactions.views import TransactionViewSet
 from analytics.views.current import AnalyticsCurrentViewSet
@@ -23,7 +22,6 @@ router.register(r"buckets", BucketViewSet, basename="bucket")
 router.register(r"locations", LocationViewSet, basename="location")
 
 # Transactions
-router.register(r"transaction-types", TransactionTypeViewSet, basename="transaction-type")
 router.register(r"categories", CategoryViewSet, basename="category")
 router.register(r"transactions", TransactionViewSet, basename="transaction")
 

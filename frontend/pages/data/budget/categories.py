@@ -2,6 +2,8 @@ import time
 import streamlit as st
 from utils.cache_utils import update_cache
 
+OPTIONS = ("POSITIVE", "NEGATIVE", "NEUTRAL")
+
 COL1 = 4
 COL2 = 4
 COL3 = 3
@@ -19,14 +21,10 @@ def categories_config():
     categories = cache["list"]
     categories_names = cache["names"]
 
-    # Transaction Types API
-    transaction_types_api = st.session_state["api_transaction_types"]["service"]
-    transaction_types_names = st.session_state["api_transaction_types"]["cache"]["names"]
-
     # Form for adding a new category
     with st.form("add_category"):
         new_name = st.text_input("Name of the category *")
-        new_transaction_type = st.selectbox(options=transaction_types_names, label="Transaction type *")
+        new_sign = st.selectbox(options=OPTIONS, label="Sign *")
         st.info("Specifies the category of the transactions. (e.g. for Income (positive) transactions: Salary, Bonuses; for Expense (negative) transactions: Utilities, Food, Courses, Books, Gas).")
         
         submitted = st.form_submit_button("Add new category")
@@ -36,8 +34,7 @@ def categories_config():
             elif new_name in categories_names:
                 st.error("This category already exists.")
             else:
-                new_transaction_type_id = transaction_types_api.get_transaction_type_id(new_transaction_type)
-                response = categories_api.add_category(name=new_name, transaction_type_id=new_transaction_type_id)
+                response = categories_api.add_category(name=new_name, sign=new_sign)
                 if isinstance(response, dict):
                     st.session_state["api_categories"]["edit_cat_name"] = None
                     st.success("category added!")
@@ -50,7 +47,7 @@ def categories_config():
     # Show head of the table
     col1, col2, col3, col4 = st.columns([COL1, COL2, COL3, COL4])
     col1.markdown("**Name**")
-    col2.markdown("**Transaction Type**")
+    col2.markdown("**Sign**")
     col3.markdown("**Edit**")
     col4.markdown("**Delete**")
 
@@ -62,11 +59,11 @@ def categories_config():
         if st.session_state["api_categories"]["edit_cat_name"] == name:
             categories_names = [cat for cat in categories_names if cat != name]
             new_name = col1.text_input("Edit category name", value=name, key=f"edit_cat_{name}")
-            new_transaction_type = col2.selectbox(
-                options=transaction_types_names,
-                label="Transaction type *",
+            new_sign = col2.selectbox(
+                options=OPTIONS,
+                label="Sign *",
                 key=f"edit_{name}",
-                index=transaction_types_names.index(transaction_type)
+                index=OPTIONS.index(transaction_type)
             )
             
             if col3.button("💾 Save", key=f"save_cat_{name}"):
@@ -75,8 +72,7 @@ def categories_config():
                 elif new_name in categories_names:
                     st.error("This name already exists.")
                 else:
-                    new_transaction_type_id = transaction_types_api.get_transaction_type_id(new_transaction_type)
-                    response = categories_api.update_category(old_name=name, new_name=new_name, new_transaction_type_id=new_transaction_type_id)
+                    response = categories_api.update_category(old_name=name, new_name=new_name, new_sign=new_sign)
                     if isinstance(response, dict):
                         categories_names += [new_name]
                         st.session_state["api_categories"]["edit_cat_name"] = None
