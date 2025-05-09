@@ -1,6 +1,3 @@
-import time
-import matplotlib.pyplot as plt
-import random
 import altair as alt
 import streamlit as st
 import pandas as pd
@@ -32,10 +29,10 @@ def current_report():
     buckets_total = buckets_data["_total"]
     
     balance_data = {
-        "Income": data["balance"]["positive"],
-        "Expense": data["balance"]["negative"],
-        "neutral": data["balance"]["neutral"],
-        "balance": data["balance"]["_total"]
+        "_total": data["balance"]["_total"],
+        "Positive": data["balance"]["positive"],
+        "Negative": data["balance"]["negative"],
+        "Neutral": data["balance"]["neutral"],
     }
     balance_df = pd.DataFrame.from_dict(balance_data, orient="index", columns=["Amount"])
     balance_df.index.name = "Balance"
@@ -44,7 +41,7 @@ def current_report():
     only_balance_df.columns = ["Balance", "Amount"]
     balance_total = balance_data["_total"]
 
-    # TOTAL
+    # CHECKINT TOTALS MATCHING
     if locations_total == buckets_total == balance_total:
         st.subheader(f"💰 Money available: {locations_total}")
     else:
@@ -99,8 +96,8 @@ def current_report():
     graph, table = st.columns([8, 2])
 
     color_scale = alt.Scale(
-        domain=["Income", "Expense"],
-        range=["#4CAF50", "#FF7F7F"]
+        domain=["Positive", "Negative", "Neutral"],
+        range=["#4CAF50", "#FF7F7F", "#898989"]
     )
 
     balance_chart = alt.Chart(balance_df.reset_index()).mark_bar().encode(
@@ -114,8 +111,10 @@ def current_report():
     ).configure_title(
         fontSize=25
     ).transform_filter(
-        alt.datum.Balance != "balance"
+        alt.datum.Balance != "_total"
     )
     
     table.dataframe(only_balance_df.set_index("Balance"))
     graph.altair_chart(balance_chart, use_container_width=True)
+
+    st.info("POSITIVEV: money coming in (e.g. Income). NEGATIVE: money going out (e.g. Expense). NEUTRAL: moving between locations/buckets or temporary transactions (e.g. Transfer, Loans).")
