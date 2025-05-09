@@ -25,7 +25,7 @@ def transaction_types_config():
     with st.form("add_transaction_type"):
         new_name = st.text_input("Name of the transaction type *")
         new_sign = st.selectbox(options=OPTIONS, label="Sign *")
-        st.info("Specifies the nature of the transactions. POSITIVE: money coming in, NEGATIVE: money going out, or NEUTRAL: moving between locations/transaction_types (e.g. Income, Expense, Transfer).")
+        st.info("Specifies the nature of the transactions. POSITIVE: money coming in, NEGATIVE: money going out, or NEUTRAL: moving between locations/buckets or temporary transactions (e.g. Income, Expense, Transfer, Loans).")
         st.warning("IMPORTANT: Sign cannot be changed after transaction type creation!")
         
         submitted = st.form_submit_button("Add new transaction type")
