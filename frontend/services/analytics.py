@@ -17,21 +17,26 @@ class AnalyticsAPIService(AuthAPIService):
         except requests.exceptions.RequestException as e:
             return f"Error: {str(e)}"
 
-    # def _get_cached_transactions(self):
-    #     """Get or fetch transaction types data."""
-    #     if not hasattr(self, "_transactions_data") or self._transactions_data is None:
-    #         try:
-    #             response = requests.get(
-    #                 f"{self.base_url}/transactions/",
-    #                 headers=self.headers,
-    #             )
-    #             response.raise_for_status()
-    #             self._transactions_data = response.json()
-    #         except requests.exceptions.RequestException as e:
-    #             return f"Error: {str(e)}. Response: {response.text}"
-    #     return self._transactions_data
-
-    # def get_transactions(self):
-    #     """Get all transactions data for the current user."""
-    #     self._update()
-    #     return self._get_cached_transactions()
+    def get_monthly_analytics(self, year: int, month: int):
+        """Get monthly analytics."""
+        try:
+            response = requests.get(
+                f"{self.base_url}/analytics-monthly/{year}-{month}/",
+                headers=self.headers,
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            return f"Error: {str(e)}"
+    
+    def get_years(self):
+        """Get years."""
+        try:
+            response = requests.get(
+                f"{self.base_url}/analytics-historical/",
+                headers=self.headers,
+            )
+            response.raise_for_status()
+            return response.json()["yearly"].keys()
+        except requests.exceptions.RequestException as e:
+            return f"Error: {str(e)}"

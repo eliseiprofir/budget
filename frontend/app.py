@@ -17,7 +17,8 @@ from pages.data.budget.config import budget_config_page
 from pages.data.transactions.add_transactions import add_transactions_form
 from pages.data.transactions.transactions import transactions_page
 
-from pages.reports.current import current_report
+from pages.reports.current import current_analytics
+from pages.reports.monthly import monthly_analytics
 
 st.set_page_config(
     page_title="Budget Management System",
@@ -109,8 +110,8 @@ add_transactions = st.Page(add_transactions_form, title="Add Transactions", icon
 transactions = st.Page(transactions_page, title="Transactions", icon="💸")
 budget_settings = st.Page(budget_config_page, title="Budget Configuration", icon="💰")
 
-current_status = st.Page(current_report, title="Current status", icon="📊")
-
+current_status = st.Page(current_analytics, title="Current status", icon="📊")
+monthly_report = st.Page(monthly_analytics, title="Monthly report", icon="📅")
 account_settings = st.Page(account_settings_page, title="Edit Account", icon="👤")
 signout = st.Page(signout_page, title="Sign Out", icon="🚪")
 
@@ -118,7 +119,7 @@ signout = st.Page(signout_page, title="Sign Out", icon="🚪")
 if st.session_state["api_auth"]["authenticated"]:
     pg = st.navigation({
         "Data management": [add_transactions, transactions, budget_settings],
-        "Reports": [current_status],
+        "Reports": [current_status, monthly_report],
         "Account settings": [account_settings, signout],
     })
 else:

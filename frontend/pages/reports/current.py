@@ -2,7 +2,7 @@ import altair as alt
 import streamlit as st
 import pandas as pd
 
-def current_report():
+def current_analytics():
     """Current report section."""
 
     st.title("📊 Current status report")
@@ -117,4 +117,4 @@ def current_report():
     table.dataframe(only_balance_df.set_index("Balance"))
     graph.altair_chart(balance_chart, use_container_width=True)
 
-    st.info("POSITIVEV: money coming in (e.g. Income). NEGATIVE: money going out (e.g. Expense). NEUTRAL: moving between locations/buckets or temporary transactions (e.g. Transfer, Loans).")
+    st.info("POSITIVE: money coming in (e.g. Income). NEGATIVE: money going out (e.g. Expense). NEUTRAL: moving between locations/buckets or temporary transactions (e.g. Transfer, Loans).")
