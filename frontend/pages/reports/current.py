@@ -105,7 +105,7 @@ def current_analytics():
     )
     
     locations_table = locations_table.set_index("Location")
-    table.dataframe(locations_table)
+    table.dataframe(locations_table, use_container_width=True)
     graph.altair_chart(locations_chart, use_container_width=True)
 
     # BUCKETS SECTION
@@ -127,7 +127,7 @@ def current_analytics():
     )
     
     buckets_table = buckets_table.set_index("Bucket")
-    table.dataframe(buckets_table)
+    table.dataframe(buckets_table, use_container_width=True)
     graph.altair_chart(buckets_chart, use_container_width=True)
 
     # BALANCE SECTION
@@ -154,7 +154,7 @@ def current_analytics():
     )
     
     balance_table = balance_table.set_index("Balance")
-    table.dataframe(balance_table)
+    table.dataframe(balance_table, use_container_width=True)
     graph.altair_chart(balance_chart, use_container_width=True)
 
     st.info("POSITIVE: money coming in (e.g. Income). NEGATIVE: money going out (e.g. Expense). NEUTRAL: moving between locations/buckets or temporary transactions (e.g. Transfer, Loans).")
