@@ -77,22 +77,9 @@ def current_analytics():
     buckets_table = processed_data["buckets"]["for_table"]
     buckets_total = processed_data["buckets"]["total"]
     
-    balance_chart = processed_data["balance"]["for_chart"]
-    balance_table = processed_data["balance"]["for_table"]
-    balance_total = processed_data["balance"]["total"]
-
-
-    # CHECKINT TOTALS MATCHING
-    if locations_total == buckets_total == balance_total:
-        st.subheader(f"💰 Money available: {locations_total}")
-    else:
-        st.warning("The total amounts do not match. Please check your data.")
-        st.stop()
-    st.markdown("---")
-    
     # LOCATIONS SECTION
     st.subheader(f"🏦 Locations ({locations_total})")
-    graph, table = st.columns([8, 2])
+    col1, col2 = st.columns([8, 2])
     
     locations_chart = alt.Chart(locations_chart.reset_index()).mark_bar().encode(
         x=alt.X("Location:N", title=None, sort=None, axis=alt.Axis(labelAngle=0)),
@@ -109,12 +96,12 @@ def current_analytics():
     )
     
     locations_table = locations_table.set_index("Location")
-    table.dataframe(locations_table, use_container_width=True)
-    graph.altair_chart(locations_chart, use_container_width=True)
+    col1.altair_chart(locations_chart, use_container_width=True)
+    col2.dataframe(locations_table, use_container_width=True)
 
     # BUCKETS SECTION
     st.subheader(f"🪙 Buckets ({buckets_total})")
-    graph, table = st.columns([8, 2])
+    col1, col2 = st.columns([8, 2])
 
     buckets_chart = alt.Chart(buckets_chart.reset_index()).mark_bar().encode(
         x=alt.X("Bucket:N", title=None, sort=None, axis=alt.Axis(labelAngle=0)),
@@ -131,34 +118,5 @@ def current_analytics():
     )
     
     buckets_table = buckets_table.set_index("Bucket")
-    table.dataframe(buckets_table, use_container_width=True)
-    graph.altair_chart(buckets_chart, use_container_width=True)
-
-    # BALANCE SECTION
-    st.subheader(f"⚖️ Balance ({balance_total})")
-    graph, table = st.columns([8, 2])
-
-    color_scale = alt.Scale(
-        domain=["Positive", "Negative", "Neutral"],
-        range=["#4CAF50", "#FF7F7F", "#898989"]
-    )
-
-    balance_chart = alt.Chart(balance_chart.reset_index()).mark_bar().encode(
-        x=alt.X("Balance:N", title=None, sort=None, axis=alt.Axis(labelAngle=0)),
-        y=alt.Y("Amount:Q", title=None),
-        color=alt.Color("Balance:N", legend=None, scale=color_scale),
-        tooltip=["Balance", "Amount"]
-    ).configure_axis(
-        labelFontSize=16,
-        titleFontSize=16
-    ).configure_title(
-        fontSize=25
-    ).transform_filter(
-        alt.datum.Balance != "_total"
-    )
-    
-    balance_table = balance_table.set_index("Balance")
-    table.dataframe(balance_table, use_container_width=True)
-    graph.altair_chart(balance_chart, use_container_width=True)
-
-    st.info("POSITIVE: money coming in (e.g. Income). NEGATIVE: money going out (e.g. Expense). NEUTRAL: moving between locations/buckets or temporary transactions (e.g. Transfer, Loans).")
+    col1.altair_chart(buckets_chart, use_container_width=True)
+    col2.dataframe(buckets_table, use_container_width=True)

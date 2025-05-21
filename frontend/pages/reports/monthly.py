@@ -1,6 +1,7 @@
 import altair as alt
 import streamlit as st
 import pandas as pd
+import calendar
 
 def monthly_analytics():
     """Monthly report section."""
@@ -8,30 +9,22 @@ def monthly_analytics():
     st.title("📅 Monthly report")
     st.write("Here you can see monthly reports.")
 
+    if not st.session_state["api_transactions"]["cache"]["list"]:
+        st.warning("No transactions yet. Come back here when you add some transactions.")
+        return
+
     # Analytics API and unpacking data
     analytics_api = st.session_state["api_analytics"]["service"]
     
     years = st.session_state["api_analytics"]["cache"]["years"]
-    months = {
-        "January": 1,
-        "February": 2,
-        "March": 3,
-        "April": 4,
-        "May": 5,
-        "June": 6,
-        "July": 7,
-        "August": 8,
-        "September": 9,
-        "October": 10,
-        "November": 11,
-        "December": 12
-    }
+    month_names = list(calendar.month_name)[1:]
 
     col1, col2 = st.columns(2)
     year = col1.selectbox("Year:", options=years, index=len(years)-1)
-    month = col2.selectbox("Month:", options=months)
+    month = col2.selectbox("Month:", options=month_names)
+    month_index = month_names.index(month) + 1
     
-    data = analytics_api.get_monthly_analytics(year=year, month=months.get(month))
+    data = analytics_api.get_monthly_analytics(year=year, month=month_index)
 
     positive_categories_df = pd.DataFrame.from_dict(data["positive_categories"], orient="index", columns=["Amount"])
     positive_categories_df.index.name = "Positive Categories"
@@ -59,6 +52,7 @@ def monthly_analytics():
     balance_total = balance_data["_total"]
 
     # BALANCE SECTION
+    st.markdown("---")
     st.subheader(f"⚖️ Balance ({balance_total})")
     col1, col2 = st.columns([8, 2])
 
@@ -87,6 +81,7 @@ def monthly_analytics():
     st.info("POSITIVE: money coming in (e.g. Income). NEGATIVE: money going out (e.g. Expense). NEUTRAL: moving between locations/buckets or temporary transactions (e.g. Transfer, Loans).")
 
     # POSITIVE CATEGORIES SECTION
+    st.markdown("---")
     st.subheader(f"🟢 Positive categories ({positive_categories_total})")
     col1, col2 = st.columns([8, 2])
     
@@ -106,6 +101,7 @@ def monthly_analytics():
     col2.dataframe(positive_categories_df, use_container_width=True)
 
     # NEGATIVE CATEGORIES SECTION
+    st.markdown("---")
     st.subheader(f"🔴 Negative categories ({negative_categories_total})")
     col1, col2 = st.columns([8, 2])
     
@@ -125,6 +121,7 @@ def monthly_analytics():
     col2.dataframe(negative_categories_df, use_container_width=True)
 
     # NEUTRAL CATEGORIES SECTION
+    st.markdown("---")
     st.subheader(f"⚪ Neutral categories ({neutral_categories_total})")
     col1, col2 = st.columns([8, 2])
     

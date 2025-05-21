@@ -98,11 +98,11 @@ if "current_page" not in st.session_state:
 login = st.Page(login_page, title="Login", icon="🔑")
 signup = st.Page(signup_page, title="Sign Up", icon="👤")
 
-add_transactions = st.Page(add_transactions_form, title="Add Transactions", icon="✍️")
+add_transactions = st.Page(add_transactions_form, title="Add Transaction", icon="✍️")
 transactions = st.Page(transactions_page, title="Transactions", icon="💸")
-budget_settings = st.Page(budget_config_page, title="Budget Configuration", icon="💰")
+budget_settings = st.Page(budget_config_page, title="Budget Configuration", icon="⚙️")
 
-current_status = st.Page(current_analytics, title="Current status report", icon="📊")
+current_status = st.Page(current_analytics, title="Available money", icon="💰")
 monthly_report = st.Page(monthly_analytics, title="Monthly report", icon="📅")
 yearly_report = st.Page(yearly_analytics, title="Yearly report", icon="🗓️")
 historical_report = st.Page(historical_analytics, title="Historical report", icon="📊")

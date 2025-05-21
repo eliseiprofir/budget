@@ -59,6 +59,7 @@ def yearly_analytics():
     years = st.session_state["api_analytics"]["cache"]["years"]
     year = st.selectbox("Year:", options=years, index=len(years)-1)
     data = analytics_api.get_yearly_analytics(year=year)
+
     monthly_data = data["monthly"]
 
     positive_categories_df = pd.DataFrame.from_dict(data["summary"]["positive_categories"], orient="index", columns=["Amount"])
@@ -88,6 +89,7 @@ def yearly_analytics():
     balance_total = balance_data["_total"]
 
     # BALANCE DATA
+    st.markdown("---")
     st.subheader(f"⚖️ Balance ({balance_total})")
 
     color_scale = alt.Scale(
@@ -137,6 +139,7 @@ def yearly_analytics():
     col2.dataframe(monthly_balance_chart.set_index("Month"), use_container_width=True, height=300)
 
     # POSITIVE DATA
+    st.markdown("---")
     st.subheader(f"🟢 Positive categories ({positive_categories_total})")
     
     container = st.container(border=False)
@@ -180,6 +183,7 @@ def yearly_analytics():
     col2.dataframe(positive_data.set_index("Month"), use_container_width=True, height=300)
 
     # NEGATIVE DATA
+    st.markdown("---")
     st.subheader(f"🔴 Negative categories ({negative_categories_total})")
 
     container = st.container(border=False)
@@ -223,6 +227,7 @@ def yearly_analytics():
     col2.dataframe(monthly_negative_chart.set_index("Month"), use_container_width=True, height=300)
 
     # NEUTRAL DATA
+    st.markdown("---")
     st.subheader(f"⚪ Neutral categories ({neutral_categories_total})")
 
     container = st.container(border=False)

@@ -52,6 +52,7 @@ def historical_analytics():
     # Analytics API and preparing data
     analytics_api = st.session_state["api_analytics"]["service"]
     data = analytics_api.get_historical_analytics()
+    
     yearly_data = data["yearly"]
 
     positive_categories_df = pd.DataFrame.from_dict(data["summary"]["positive_categories"], orient="index", columns=["Amount"])
@@ -81,6 +82,7 @@ def historical_analytics():
     balance_total = balance_data["_total"]
 
     # BALANCE DATA
+    st.markdown("---")
     st.subheader(f"⚖️ Balance ({balance_total})")
 
     color_scale = alt.Scale(
@@ -130,6 +132,7 @@ def historical_analytics():
     col2.dataframe(yearly_balance_chart.set_index("Year"), use_container_width=True)
 
     # POSITIVE DATA
+    st.markdown("---")
     st.subheader(f"🟢 Positive categories ({positive_categories_total})")
     
     container = st.container(border=False)
@@ -173,6 +176,7 @@ def historical_analytics():
     col2.dataframe(positive_data.set_index("Year"), use_container_width=True)
 
     # NEGATIVE DATA
+    st.markdown("---")
     st.subheader(f"🔴 Negative categories ({negative_categories_total})")
 
     container = st.container(border=False)
@@ -216,6 +220,7 @@ def historical_analytics():
     col2.dataframe(yearly_negative_chart.set_index("Year"), use_container_width=True)
 
     # NEUTRAL DATA
+    st.markdown("---")
     st.subheader(f"⚪ Neutral categories ({neutral_categories_total})")
 
     container = st.container(border=False)
