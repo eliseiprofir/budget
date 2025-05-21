@@ -50,6 +50,10 @@ def yearly_analytics():
     st.title("🗓️ Yearly report")
     st.write("Here you can see yearly reports.")
 
+    if not st.session_state["api_transactions"]["cache"]["list"]:
+        st.warning("No transactions yet. Come back here when you add some transactions.")
+        return
+
     # Analytics API and preparing data
     analytics_api = st.session_state["api_analytics"]["service"]
     years = st.session_state["api_analytics"]["cache"]["years"]
