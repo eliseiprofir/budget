@@ -9,7 +9,7 @@ from utils.cache_utils import clear_all_cache
 def budget_config_page():
     """Settings page for budget application."""
 
-    st.title("💰 Budget Configuration")
+    st.title("⚙️ Budget Configuration")
     st.write("Here you can configure your budget application.")
     
     if st.button("🔄 Refresh data"):
