@@ -43,7 +43,11 @@ def historical_analytics():
     """Yearly report section."""
 
     st.title("📊 Historical report")
-    st.write("Here you can see historical analytics of your budget.")
+    st.write("Here you can see historical analytics of your budget across all years.")
+
+    if not st.session_state["api_transactions"]["cache"]["list"]:
+        st.warning("No transactions yet. Come back here when you add some transactions.")
+        return
 
     # Analytics API and preparing data
     analytics_api = st.session_state["api_analytics"]["service"]
