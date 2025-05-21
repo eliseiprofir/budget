@@ -59,9 +59,13 @@ def process_current_status_data():
 def current_analytics():
     """Current report section."""
 
-    st.title("📊 Current status report")
-    st.write("Here you can see the current status of your budget.")
-
+    st.title("💰 Available money")
+    st.write("Here you can see the current distribution of your money across different locations and buckets..")
+    
+    if not st.session_state["api_transactions"]["cache"]["list"]:
+        st.warning("No transactions yet. Come back here when you add some transactions.")
+        return
+    
     # Analytics API and unpacking data
     processed_data = process_current_status_data()
     
