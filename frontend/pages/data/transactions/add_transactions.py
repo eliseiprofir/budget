@@ -16,6 +16,20 @@ def add_transactions_form():
     buckets_api = st.session_state["api_buckets"]["service"]
 
     fetch_and_cache_data()
+    
+    categories = st.session_state["api_categories"]["cache"]["names"]
+    buckets = st.session_state["api_buckets"]["cache"]["names"]
+    locations = st.session_state["api_locations"]["cache"]["names"]
+
+    if len(locations) < 1:
+        st.warning("No locations found. Please create some locations before adding transactions.")
+        return
+    elif len(buckets) < 1:
+        st.warning("No buckets found. Please create some buckets before adding transactions.")
+        return
+    elif len(categories) < 1:
+        st.warning("No categories found. Please create some categories before adding transactions.")
+        return
 
     # Form for adding a new transaction
     st.subheader("✍️ Add transaction")
@@ -25,17 +39,17 @@ def add_transactions_form():
         
         description = col1.text_input("✍️ Description", key="description")
         
-        category = col2.selectbox("🔖 Category", key="category", options=st.session_state["api_categories"]["cache"]["names"])
+        category = col2.selectbox("🔖 Category", key="category", options=categories)
         category = categories_api.get_category_id(category_name=category)
         transaction_type = categories_api.get_category_sign(category_id=category)
 
         date = col3.date_input("📆 Date", key="date")
         amount = col3.number_input("🔢 Amount", key="amount")
         
-        bucket = col4.selectbox("🪙Bucket", key="bucket", options=st.session_state["api_buckets"]["cache"]["names"])
+        bucket = col4.selectbox("🪙Bucket", key="bucket", options=buckets)
         bucket = buckets_api.get_bucket_id(bucket_name=bucket)
         
-        location = col4.selectbox("🏦 Location", key="location", options=st.session_state["api_locations"]["cache"]["names"])
+        location = col4.selectbox("🏦 Location", key="location", options=locations)
         location = locations_api.get_location_id(location_name=location)
         
         split_income = col2.checkbox("Split income", key="split_income", value=False)
