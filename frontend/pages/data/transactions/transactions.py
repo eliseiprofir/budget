@@ -355,6 +355,7 @@ def transactions_page():
             st.dataframe(**show_data_config)
 
     # SUMMARY SECTION
+    st.markdown("---")
     st.subheader("📊 Short summary")
     current_status = process_current_status_data()
     
@@ -397,7 +398,7 @@ def transactions_page():
     )
     col1.subheader("🏦 Locations")
     col1.altair_chart(locations_chart, use_container_width=True)
-    col1.dataframe(locations_table.set_index("Location"))
+    col1.dataframe(locations_table.set_index("Location"), use_container_width=True)
 
     # Buckets section
     buckets_chart = alt.Chart(buckets_chart.reset_index(), height=chart_height).mark_bar(size=chart_size).encode(
@@ -415,7 +416,7 @@ def transactions_page():
     )
     col2.subheader("🪙 Buckets")
     col2.altair_chart(buckets_chart, use_container_width=True)
-    col2.dataframe(buckets_table.set_index("Bucket"))
+    col2.dataframe(buckets_table.set_index("Bucket"), use_container_width=True)
 
     # Balance section
     color_scale = alt.Scale(
@@ -437,4 +438,4 @@ def transactions_page():
     )
     col3.subheader("⚖️ Balance")
     col3.altair_chart(balance_chart, use_container_width=True)
-    col3.dataframe(balance_table.set_index("Balance"))
+    col3.dataframe(balance_table.set_index("Balance"), use_container_width=True)
