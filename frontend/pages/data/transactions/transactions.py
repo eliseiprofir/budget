@@ -1,4 +1,5 @@
 import time
+import altair as alt
 import streamlit as st
 import pandas as pd
 
@@ -7,6 +8,8 @@ from .add_transactions import add_transactions_form
 from utils.cache_utils import update_cache
 from utils.cache_utils import clear_all_cache
 from utils.cache_utils import fetch_and_cache_data
+
+from pages.reports.current import process_current_status_data
 
 
 def transactions_page():
@@ -350,3 +353,88 @@ def transactions_page():
         # SHOW MODE
         else:
             st.dataframe(**show_data_config)
+
+    # SUMMARY SECTION
+    st.subheader("📊 Short summary")
+    current_status = process_current_status_data()
+    
+    locations_chart = current_status["locations"]["for_chart"]
+    locations_table = current_status["locations"]["for_table"]
+    locations_total = current_status["locations"]["total"]
+    
+    buckets_chart = current_status["buckets"]["for_chart"]
+    buckets_table = current_status["buckets"]["for_table"]
+    buckets_total = current_status["buckets"]["total"]
+    
+    balance_chart = current_status["balance"]["for_chart"]
+    balance_table = current_status["balance"]["for_table"]
+    balance_total = current_status["balance"]["total"]
+    
+    max_length = max(len(locations_chart), len(buckets_chart), len(balance_chart))
+    chart_size = 20
+    chart_height = 30
+
+    if locations_total == buckets_total == balance_total:
+        st.metric(label="💰 Money available", value=balance_total)
+    else:
+        st.error("Totals are not equal")
+
+    col1, col2, col3 = st.columns(3)
+
+    # Locations section
+    locations_chart = alt.Chart(locations_chart.reset_index(), height=chart_height*max_length).mark_bar(size=chart_size).encode(
+        x=alt.X("Amount:Q", title=None),
+        y=alt.Y("Location:N", title=None, sort=None, axis=alt.Axis(labelAngle=0)),
+        color=alt.Color("Location:N", legend=None),
+        tooltip=["Location", "Amount"]
+    ).configure_axis(
+        labelFontSize=16,
+        titleFontSize=16
+    ).configure_title(
+        fontSize=25
+    ).transform_filter(
+        alt.datum.Location != "_total"
+    )
+    col1.subheader("🏦 Locations")
+    col1.altair_chart(locations_chart, use_container_width=True)
+    col1.dataframe(locations_table.set_index("Location"))
+
+    # Buckets section
+    buckets_chart = alt.Chart(buckets_chart.reset_index(), height=chart_height*max_length).mark_bar(size=chart_size).encode(
+        x=alt.X("Amount:Q", title=None),
+        y=alt.Y("Bucket:N", title=None, sort=None, axis=alt.Axis(labelAngle=0)),
+        color=alt.Color("Bucket:N", legend=None),
+        tooltip=["Bucket", "Amount"]
+    ).configure_axis(
+        labelFontSize=16,
+        titleFontSize=16
+    ).configure_title(
+        fontSize=25
+    ).transform_filter(
+        alt.datum.Bucket != "_total"
+    )
+    col2.subheader("🪙 Buckets")
+    col2.altair_chart(buckets_chart, use_container_width=True)
+    col2.dataframe(buckets_table.set_index("Bucket"))
+
+    # Balance section
+    color_scale = alt.Scale(
+        domain=["Positive", "Negative", "Neutral"],
+        range=["#4CAF50", "#FF7F7F", "#898989"]
+    )
+    balance_chart = alt.Chart(balance_chart.reset_index(), height=chart_height*max_length).mark_bar(size=chart_size).encode(
+        x=alt.X("Amount:Q", title=None),
+        y=alt.Y("Balance:N", title=None, sort=None, axis=alt.Axis(labelAngle=0)),
+        color=alt.Color("Balance:N", legend=None, scale=color_scale),
+        tooltip=["Balance", "Amount"]
+    ).configure_axis(
+        labelFontSize=16,
+        titleFontSize=16
+    ).configure_title(
+        fontSize=25
+    ).transform_filter(
+        alt.datum.Balance != "_total"
+    )
+    col3.subheader("⚖️ Balance")
+    col3.altair_chart(balance_chart, use_container_width=True)
+    col3.dataframe(balance_table.set_index("Balance"))
