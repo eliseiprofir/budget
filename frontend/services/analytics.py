@@ -41,6 +41,18 @@ class AnalyticsAPIService(AuthAPIService):
         except requests.exceptions.RequestException as e:
             return f"Error: {str(e)}"
     
+    def get_historical_analytics(self):
+        """Get historical analytics."""
+        try:
+            response = requests.get(
+                f"{self.base_url}/analytics-historical/",
+                headers=self.headers,
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            return f"Error: {str(e)}"
+    
     def get_years(self):
         """Get years."""
         try:
