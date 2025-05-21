@@ -60,7 +60,7 @@ def monthly_analytics():
 
     # BALANCE SECTION
     st.subheader(f"⚖️ Balance ({balance_total})")
-    graph, table = st.columns([8, 2])
+    col1, col2 = st.columns([8, 2])
 
     color_scale = alt.Scale(
         domain=["Positive", "Negative", "Neutral"],
@@ -81,14 +81,14 @@ def monthly_analytics():
         alt.datum.Balance != "_total"
     )
     
-    table.dataframe(only_balance_df.set_index("Balance"), use_container_width=True)
-    graph.altair_chart(balance_chart, use_container_width=True)
+    col1.altair_chart(balance_chart, use_container_width=True)
+    col2.dataframe(only_balance_df.set_index("Balance"), use_container_width=True)
 
     st.info("POSITIVE: money coming in (e.g. Income). NEGATIVE: money going out (e.g. Expense). NEUTRAL: moving between locations/buckets or temporary transactions (e.g. Transfer, Loans).")
 
     # POSITIVE CATEGORIES SECTION
     st.subheader(f"🟢 Positive categories ({positive_categories_total})")
-    graph, table = st.columns([8, 2])
+    col1, col2 = st.columns([8, 2])
     
     positive_categories_chart = alt.Chart(positive_categories_df.reset_index()).mark_bar().encode(
         x=alt.X("Positive Categories:N", title=None, sort=None, axis=alt.Axis(labelAngle=0)),
@@ -102,12 +102,12 @@ def monthly_analytics():
         fontSize=25
     )
     
-    table.dataframe(positive_categories_df, use_container_width=True)
-    graph.altair_chart(positive_categories_chart, use_container_width=True)
+    col1.altair_chart(positive_categories_chart, use_container_width=True)
+    col2.dataframe(positive_categories_df, use_container_width=True)
 
     # NEGATIVE CATEGORIES SECTION
     st.subheader(f"🔴 Negative categories ({negative_categories_total})")
-    graph, table = st.columns([8, 2])
+    col1, col2 = st.columns([8, 2])
     
     negative_categories_chart = alt.Chart(negative_categories_df.reset_index()).mark_bar().encode(
         x=alt.X("Negative Categories:N", title=None, sort=None, axis=alt.Axis(labelAngle=0)),
@@ -121,12 +121,12 @@ def monthly_analytics():
         fontSize=25
     )
 
-    table.dataframe(negative_categories_df, use_container_width=True)
-    graph.altair_chart(negative_categories_chart, use_container_width=True)
+    col1.altair_chart(negative_categories_chart, use_container_width=True)
+    col2.dataframe(negative_categories_df, use_container_width=True)
 
     # NEUTRAL CATEGORIES SECTION
     st.subheader(f"⚪ Neutral categories ({neutral_categories_total})")
-    graph, table = st.columns([8, 2])
+    col1, col2 = st.columns([8, 2])
     
     neutral_categories_chart = alt.Chart(neutral_categories_df.reset_index()).mark_bar().encode(
         x=alt.X("Neutral Categories:N", title=None, sort=None, axis=alt.Axis(labelAngle=0)),
@@ -140,5 +140,5 @@ def monthly_analytics():
         fontSize=25
     )
 
-    table.dataframe(neutral_categories_df, use_container_width=True)
-    graph.altair_chart(neutral_categories_chart, use_container_width=True)
+    col1.altair_chart(neutral_categories_chart, use_container_width=True)
+    col2.dataframe(neutral_categories_df, use_container_width=True)
