@@ -1,12 +1,5 @@
 import streamlit as st
 
-def fetch_and_cache_data():
-    """Fetch all data and cache it in session state."""
-    update_cache("locations")
-    update_cache("buckets")
-    update_cache("categories")
-    update_cache("transactions")
-    update_cache("analytics")
 
 def update_cache(entity_type: str):
     """Update specific entity data in cache after change."""
@@ -33,6 +26,7 @@ def update_cache(entity_type: str):
     else:
         raise ValueError(f"Invalid entity type: {entity_type}")
 
+
 def clear_cache(entity_type: str):
     """Clear cached data for a specific entity type."""
     
@@ -58,14 +52,20 @@ def clear_cache(entity_type: str):
     else:
         raise ValueError(f"Invalid entity type: {entity_type}")
 
+
+def fetch_and_cache_data():
+    """Fetch all data and cache it in session state."""
+    update_cache("locations")
+    update_cache("buckets")
+    update_cache("categories")
+    update_cache("transactions")
+    update_cache("analytics")
+
+
 def clear_all_cache():
     """Clear all cached data."""
-    st.session_state["api_locations"]["service"]._clear_cache()
-    st.session_state["api_locations"]["cache"] = {}
-    st.session_state["api_buckets"]["service"]._clear_cache()
-    st.session_state["api_buckets"]["cache"] = {}
-    st.session_state["api_categories"]["service"]._clear_cache()
-    st.session_state["api_categories"]["cache"] = {}
-    st.session_state["api_transactions"]["service"]._clear_cache()
-    st.session_state["api_transactions"]["cache"] = {}
-    st.session_state["api_analytics"]["cache"] = {}
+    clear_cache("locations")
+    clear_cache("buckets")
+    clear_cache("categories")
+    clear_cache("transactions")
+    clear_cache("analytics")
