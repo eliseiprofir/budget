@@ -58,6 +58,34 @@ def monthly_analytics():
     only_balance_df.columns = ["Balance", "Amount"]
     balance_total = balance_data["_total"]
 
+    # BALANCE SECTION
+    st.subheader(f"⚖️ Balance ({balance_total})")
+    graph, table = st.columns([8, 2])
+
+    color_scale = alt.Scale(
+        domain=["Positive", "Negative", "Neutral"],
+        range=["#4CAF50", "#FF7F7F", "#898989"]
+    )
+
+    balance_chart = alt.Chart(balance_df.reset_index()).mark_bar().encode(
+        x=alt.X("Balance:N", title=None, sort=None, axis=alt.Axis(labelAngle=0)),
+        y=alt.Y("Amount:Q", title=None),
+        color=alt.Color("Balance:N", legend=None, scale=color_scale),
+        tooltip=["Balance", "Amount"]
+    ).configure_axis(
+        labelFontSize=16,
+        titleFontSize=16
+    ).configure_title(
+        fontSize=25
+    ).transform_filter(
+        alt.datum.Balance != "_total"
+    )
+    
+    table.dataframe(only_balance_df.set_index("Balance"), use_container_width=True)
+    graph.altair_chart(balance_chart, use_container_width=True)
+
+    st.info("POSITIVE: money coming in (e.g. Income). NEGATIVE: money going out (e.g. Expense). NEUTRAL: moving between locations/buckets or temporary transactions (e.g. Transfer, Loans).")
+
     # POSITIVE CATEGORIES SECTION
     st.subheader(f"🟢 Positive categories ({positive_categories_total})")
     graph, table = st.columns([8, 2])
@@ -114,31 +142,3 @@ def monthly_analytics():
 
     table.dataframe(neutral_categories_df, use_container_width=True)
     graph.altair_chart(neutral_categories_chart, use_container_width=True)
-
-    # BALANCE SECTION
-    st.subheader(f"⚖️ Balance ({balance_total})")
-    graph, table = st.columns([8, 2])
-
-    color_scale = alt.Scale(
-        domain=["Positive", "Negative", "Neutral"],
-        range=["#4CAF50", "#FF7F7F", "#898989"]
-    )
-
-    balance_chart = alt.Chart(balance_df.reset_index()).mark_bar().encode(
-        x=alt.X("Balance:N", title=None, sort=None, axis=alt.Axis(labelAngle=0)),
-        y=alt.Y("Amount:Q", title=None),
-        color=alt.Color("Balance:N", legend=None, scale=color_scale),
-        tooltip=["Balance", "Amount"]
-    ).configure_axis(
-        labelFontSize=16,
-        titleFontSize=16
-    ).configure_title(
-        fontSize=25
-    ).transform_filter(
-        alt.datum.Balance != "_total"
-    )
-    
-    table.dataframe(only_balance_df.set_index("Balance"), use_container_width=True)
-    graph.altair_chart(balance_chart, use_container_width=True)
-
-    st.info("POSITIVE: money coming in (e.g. Income). NEGATIVE: money going out (e.g. Expense). NEUTRAL: moving between locations/buckets or temporary transactions (e.g. Transfer, Loans).")
