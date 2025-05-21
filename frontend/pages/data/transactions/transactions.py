@@ -372,7 +372,7 @@ def transactions_page():
     
     max_length = max(len(locations_chart), len(buckets_chart), len(balance_chart))
     chart_size = 20
-    chart_height = 30
+    chart_height = 30 * max_length
 
     if locations_total == buckets_total == balance_total:
         st.metric(label="💰 Money available", value=balance_total)
@@ -382,7 +382,7 @@ def transactions_page():
     col1, col2, col3 = st.columns(3)
 
     # Locations section
-    locations_chart = alt.Chart(locations_chart.reset_index(), height=chart_height*max_length).mark_bar(size=chart_size).encode(
+    locations_chart = alt.Chart(locations_chart.reset_index(), height=chart_height).mark_bar(size=chart_size).encode(
         x=alt.X("Amount:Q", title=None),
         y=alt.Y("Location:N", title=None, sort=None, axis=alt.Axis(labelAngle=0)),
         color=alt.Color("Location:N", legend=None),
@@ -400,7 +400,7 @@ def transactions_page():
     col1.dataframe(locations_table.set_index("Location"))
 
     # Buckets section
-    buckets_chart = alt.Chart(buckets_chart.reset_index(), height=chart_height*max_length).mark_bar(size=chart_size).encode(
+    buckets_chart = alt.Chart(buckets_chart.reset_index(), height=chart_height).mark_bar(size=chart_size).encode(
         x=alt.X("Amount:Q", title=None),
         y=alt.Y("Bucket:N", title=None, sort=None, axis=alt.Axis(labelAngle=0)),
         color=alt.Color("Bucket:N", legend=None),
@@ -422,7 +422,7 @@ def transactions_page():
         domain=["Positive", "Negative", "Neutral"],
         range=["#4CAF50", "#FF7F7F", "#898989"]
     )
-    balance_chart = alt.Chart(balance_chart.reset_index(), height=chart_height*max_length).mark_bar(size=chart_size).encode(
+    balance_chart = alt.Chart(balance_chart.reset_index(), height=chart_height).mark_bar(size=chart_size).encode(
         x=alt.X("Amount:Q", title=None),
         y=alt.Y("Balance:N", title=None, sort=None, axis=alt.Axis(labelAngle=0)),
         color=alt.Color("Balance:N", legend=None, scale=color_scale),
