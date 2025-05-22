@@ -43,7 +43,7 @@ def historical_analytics():
     """Yearly report section."""
 
     st.title("📊 Historical report")
-    st.write("Here you can see historical analytics of your budget across all years.")
+    st.write("Here you can view a historical report of your transactions, broken down by category and year.")
 
     if not st.session_state["api_transactions"]["cache"]["list"]:
         st.warning("No transactions yet. Come back here when you add some transactions.")
@@ -133,7 +133,7 @@ def historical_analytics():
 
     # POSITIVE DATA
     st.markdown("---")
-    st.subheader(f"🟢 Positive categories ({positive_categories_total})")
+    st.subheader(f"🟢 Positive categories ({positive_categories_total:.2f})")
     
     if "POSITIVE" in st.session_state["api_categories"]["cache"]["signs"]:
         container = st.container(border=False)
@@ -181,7 +181,7 @@ def historical_analytics():
 
     # NEGATIVE DATA
     st.markdown("---")
-    st.subheader(f"🔴 Negative categories ({negative_categories_total})")
+    st.subheader(f"🔴 Negative categories ({negative_categories_total:.2f})")
 
     if "NEGATIVE" in st.session_state["api_categories"]["cache"]["signs"]:
         container = st.container(border=False)
@@ -229,7 +229,7 @@ def historical_analytics():
 
     # NEUTRAL DATA
     st.markdown("---")
-    st.subheader(f"⚪ Neutral categories ({neutral_categories_total})")
+    st.subheader(f"⚪ Neutral categories ({neutral_categories_total:.2f})")
 
     if "NEUTRAL" in st.session_state["api_categories"]["cache"]["signs"]:
         container = st.container(border=False)

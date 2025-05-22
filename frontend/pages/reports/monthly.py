@@ -2,12 +2,13 @@ import altair as alt
 import streamlit as st
 import pandas as pd
 import calendar
+from datetime import datetime
 
 def monthly_analytics():
     """Monthly report section."""
 
     st.title("📅 Monthly report")
-    st.write("Here you can see monthly reports.")
+    st.write("Here you can view monthly reports of your transactions, broken down by category.")
 
     if not st.session_state["api_transactions"]["cache"]["list"]:
         st.warning("No transactions yet. Come back here when you add some transactions.")
@@ -21,7 +22,7 @@ def monthly_analytics():
 
     col1, col2 = st.columns(2)
     year = col1.selectbox("Year:", options=years, index=len(years)-1)
-    month = col2.selectbox("Month:", options=month_names)
+    month = col2.selectbox("Month:", options=month_names, index=datetime.now().month-1)
     month_index = month_names.index(month) + 1
     
     data = analytics_api.get_monthly_analytics(year=year, month=month_index)
@@ -53,7 +54,7 @@ def monthly_analytics():
 
     # BALANCE SECTION
     st.markdown("---")
-    st.subheader(f"⚖️ Balance ({balance_total})")
+    st.subheader(f"⚖️ Balance ({balance_total:.2f})")
     col1, col2 = st.columns([8, 2])
 
     color_scale = alt.Scale(

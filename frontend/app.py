@@ -13,7 +13,6 @@ from pages.account.auth_signout import signout_page
 from pages.account.settings import account_settings_page
 
 from pages.data.budget.config import budget_config_page
-from pages.data.transactions.add_transactions import add_transactions_form
 from pages.data.transactions.transactions import transactions_page
 
 from pages.reports.current import current_analytics
@@ -100,11 +99,10 @@ if "current_page" not in st.session_state:
 login = st.Page(login_page, title="Login", icon="🔑")
 signup = st.Page(signup_page, title="Sign Up", icon="👤")
 
-add_transactions = st.Page(add_transactions_form, title="Add Transaction", icon="✍️")
-transactions = st.Page(transactions_page, title="Transactions", icon="💸")
+transactions = st.Page(transactions_page, title="Transaction Management", icon="💸")
 budget_settings = st.Page(budget_config_page, title="Budget Configuration", icon="⚙️")
 
-current_status = st.Page(current_analytics, title="Available money", icon="💰")
+current_status = st.Page(current_analytics, title="Money Distribution", icon="💰")
 monthly_report = st.Page(monthly_analytics, title="Monthly report", icon="📅")
 yearly_report = st.Page(yearly_analytics, title="Yearly report", icon="🗓️")
 historical_report = st.Page(historical_analytics, title="Historical report", icon="📊")
@@ -115,8 +113,8 @@ signout = st.Page(signout_page, title="Sign Out", icon="🚪")
 # Navigation logic
 if st.session_state["api_auth"]["authenticated"]:
     pg = st.navigation({
-        "Data management": [add_transactions, transactions, budget_settings],
-        "Reports": [current_status, monthly_report, yearly_report, historical_report],
+        "Data management": [transactions, budget_settings],
+        "Reports & Analytics": [current_status, monthly_report, yearly_report, historical_report],
         "Account settings": [account_settings, signout],
     })
 else:

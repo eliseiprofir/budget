@@ -59,8 +59,8 @@ def process_current_status_data():
 def current_analytics():
     """Current report section."""
 
-    st.title("💰 Available money")
-    st.write("Here you can see the current distribution of your money across different locations and buckets..")
+    st.title("💰 Money distribution")
+    st.write("Here you can see the current distribution of your available money across different locations and buckets.")
     
     if not st.session_state["api_transactions"]["cache"]["list"]:
         st.warning("No transactions yet. Come back here when you add some transactions.")
@@ -78,7 +78,7 @@ def current_analytics():
     buckets_total = processed_data["buckets"]["total"]
     
     # LOCATIONS SECTION
-    st.subheader(f"🏦 Locations ({locations_total})")
+    st.subheader(f"🏦 Locations ({locations_total:.2f})")
     col1, col2 = st.columns([8, 2])
     
     locations_chart = alt.Chart(locations_chart.reset_index()).mark_bar().encode(
@@ -100,7 +100,7 @@ def current_analytics():
     col2.dataframe(locations_table, use_container_width=True)
 
     # BUCKETS SECTION
-    st.subheader(f"🪙 Buckets ({buckets_total})")
+    st.subheader(f"🪙 Buckets ({buckets_total:.2f})")
     col1, col2 = st.columns([8, 2])
 
     buckets_chart = alt.Chart(buckets_chart.reset_index()).mark_bar().encode(

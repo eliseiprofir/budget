@@ -48,7 +48,7 @@ def yearly_analytics():
     """Yearly report section."""
 
     st.title("🗓️ Yearly report")
-    st.write("Here you can see yearly reports.")
+    st.write("Here you can view yearly reports of your transactions, broken down by category and month.")
 
     if not st.session_state["api_transactions"]["cache"]["list"]:
         st.warning("No transactions yet. Come back here when you add some transactions.")
@@ -90,7 +90,7 @@ def yearly_analytics():
 
     # BALANCE DATA
     st.markdown("---")
-    st.subheader(f"⚖️ Balance ({balance_total})")
+    st.subheader(f"⚖️ Balance ({balance_total:.2f})")
 
     color_scale = alt.Scale(
         domain=["Positive", "Negative", "Neutral"],
@@ -140,7 +140,7 @@ def yearly_analytics():
 
     # POSITIVE DATA
     st.markdown("---")
-    st.subheader(f"🟢 Positive categories ({positive_categories_total})")
+    st.subheader(f"🟢 Positive categories ({positive_categories_total:.2f})")
     
     if "POSITIVE" in st.session_state["api_categories"]["cache"]["signs"]:
         container = st.container(border=False)
@@ -183,9 +183,12 @@ def yearly_analytics():
         col1.altair_chart(positive_chart, use_container_width=True)
         col2.dataframe(positive_data.set_index("Month"), use_container_width=True, height=300)
 
+    else:
+        st.info("There are no positive categories.")
+    
     # NEGATIVE DATA
     st.markdown("---")
-    st.subheader(f"🔴 Negative categories ({negative_categories_total})")
+    st.subheader(f"🔴 Negative categories ({negative_categories_total:.2f})")
 
     if "NEGATIVE" in st.session_state["api_categories"]["cache"]["signs"]:
         container = st.container(border=False)
@@ -233,7 +236,7 @@ def yearly_analytics():
 
     # NEUTRAL DATA
     st.markdown("---")
-    st.subheader(f"⚪ Neutral categories ({neutral_categories_total})")
+    st.subheader(f"⚪ Neutral categories ({neutral_categories_total:.2f})")
 
     if "NEUTRAL" in st.session_state["api_categories"]["cache"]["signs"]:
         container = st.container(border=False)

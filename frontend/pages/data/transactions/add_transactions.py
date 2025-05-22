@@ -22,13 +22,13 @@ def add_transactions_form():
     locations = st.session_state["api_locations"]["cache"]["names"]
 
     if len(locations) < 1:
-        st.warning("No locations found. Please create some locations before adding transactions.")
+        st.warning("🏦 No locations found. 🧐 Please create at least one before adding transactions. You can do this on \"Budget Configuration\" page.")
         return
     elif len(buckets) < 1:
-        st.warning("No buckets found. Please create some buckets before adding transactions.")
+        st.warning("🪙 No buckets found. 🧐 Please create at least one before adding transactions. You can do this on \"Budget Configuration\" page.")
         return
     elif len(categories) < 1:
-        st.warning("No categories found. Please create some categories before adding transactions.")
+        st.warning("🔖 No categories found. 🧐 Please create at least one before adding transactions. You can do this on \"Budget Configuration\" page.")
         return
 
     # Form for adding a new transaction

@@ -16,8 +16,8 @@ from pages.reports.current import process_current_status_data
 def transactions_page():
     """Transactions page."""
     
-    st.header("💸 Transactions")
-    st.write("Here you can manage your transactions.")
+    st.header("💸 Transaction Management")
+    st.write("Here you can see, add and edit your transactions.")
     
     if st.button("🔄 Refresh data"):
         clear_all_cache()
@@ -44,12 +44,12 @@ def transactions_page():
         add_transactions_form()
 
     # Displaying all transactions
-    st.subheader("🔢 All transactions")
+    st.subheader("🔢 Transactions table")
 
     data = []
     for transaction in transactions:
-        data.append(
-            {   "🆔": transaction["id"],
+        data.append({
+                "🆔": transaction["id"],
                 "📆 Date": pd.to_datetime(transaction["date"]),
                 "✍️ Description": transaction["description"],
                 "🔢 Amount": pd.to_numeric(transaction["amount"]),
@@ -148,16 +148,16 @@ def transactions_page():
         )
         col2.write("See only transactions you are interested in.")
 
-        # EDIT / Delete MODE
+        # EDIT / DELETE MODE
         if st.session_state["api_transactions"]["edit_mode"]:
-            st.warning("Editing mode on. After changes, don't forget to save (button below the table) and toggle off editing mode.")
+            st.warning("Editing mode on. After changes, don't forget to save (button below the table) and toggle off editing mode. If you want to discard all changes, toggle off editing mode.")
             
             # Display editable table
             new_data = st.data_editor(**edit_data_config)
             
             # Find changes
             changes = new_data.compare(data)
-            deleted_indices = new_data[new_data["🗑️ Delete"] == True].index
+            deleted_indices = new_data[new_data["🗑️ Delete"] == True].index  # noqa
             modified_indices = changes.index.get_level_values(0).unique()
             modified_indices = [idx for idx in modified_indices if idx not in deleted_indices]
             
@@ -184,11 +184,11 @@ def transactions_page():
                             response = transactions_api.update_transaction(
                                 transaction_id=new_row["🆔"],
                                 description=new_row["✍️ Description"],
-                                category=new_category_id,
+                                category_id=new_category_id,
                                 date=str(new_row["📆 Date"]),
                                 amount=float(new_row["🔢 Amount"]),
-                                location=new_location_id,
-                                bucket=new_bucket_id,
+                                location_id=new_location_id,
+                                bucket_id=new_bucket_id,
                             )
                             if not isinstance(response, dict):
                                 st.error(response)
@@ -224,11 +224,11 @@ def transactions_page():
                             response = transactions_api.update_transaction(
                                 transaction_id=new_row["🆔"],
                                 description=new_row["✍️ Description"],
-                                category=new_category_id,
+                                category_id=new_category_id,
                                 date=str(new_row["📆 Date"]),
                                 amount=float(new_row["🔢 Amount"]),
-                                location=new_location_id,
-                                bucket=new_bucket_id,
+                                location_id=new_location_id,
+                                bucket_id=new_bucket_id,
                             )
                             if not isinstance(response, dict):
                                 st.error(response)

@@ -77,11 +77,11 @@ class TransactionAPIService(AuthAPIService):
         self,
         transaction_id: str,
         description: str,
-        category: str,
+        category_id: str,
         date: str,
         amount: str,
-        location: str,
-        bucket: str,
+        location_id: str,
+        bucket_id: str,
     ):
         """Update a transaction's name."""
         transaction = self.get_one_transaction(transaction_id)
@@ -94,11 +94,11 @@ class TransactionAPIService(AuthAPIService):
                 headers=self.headers,
                 json={
                     "description": description,
-                    "category": category,
+                    "category": category_id,
                     "date": date,
                     "amount": amount,
-                    "location": location,
-                    "bucket": bucket,
+                    "location": location_id,
+                    "bucket": bucket_id,
                 }
             )
             response.raise_for_status()
