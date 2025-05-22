@@ -5,7 +5,6 @@ from django.db.models.functions import Coalesce
 from core.models import Location
 from core.models import Bucket
 from transactions.models import Category
-from transactions.models import Category
 from transactions.models import Transaction
 
 
