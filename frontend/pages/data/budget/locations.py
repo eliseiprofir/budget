@@ -73,6 +73,8 @@ def locations_config():
                     else:
                         st.error(response)
             
+            update_cache("transactions")
+            
             if col3.button("✖️ Cancel", key=f"cancel_loc_{name}"):
                 st.session_state["api_locations"]["edit_loc_name"] = None
                 st.rerun()

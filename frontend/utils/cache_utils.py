@@ -16,6 +16,7 @@ def update_cache(entity_type: str):
     elif entity_type == "categories":
         st.session_state["api_categories"]["cache"]["list"] = st.session_state["api_categories"]["service"].get_categories_list()
         st.session_state["api_categories"]["cache"]["names"] = st.session_state["api_categories"]["service"].get_categories_names()
+        st.session_state["api_categories"]["cache"]["signs"] = st.session_state["api_categories"]["service"].get_categories_sings()
     
     elif entity_type == "transactions":
         st.session_state["api_transactions"]["cache"]["list"] = st.session_state["api_transactions"]["service"].get_transactions()
@@ -69,3 +70,14 @@ def clear_all_cache():
     clear_cache("categories")
     clear_cache("transactions")
     clear_cache("analytics")
+
+
+def cache_fetched() -> bool:
+    """Check if the cache has been fetched."""
+    return (
+        st.session_state["api_locations"]["cache"] != {}
+        and st.session_state["api_buckets"]["cache"] != {}
+        and st.session_state["api_categories"]["cache"] != {}
+        and st.session_state["api_transactions"]["cache"] != {}
+        and st.session_state["api_analytics"]["cache"] != {}
+    )

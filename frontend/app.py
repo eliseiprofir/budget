@@ -21,6 +21,8 @@ from pages.reports.monthly import monthly_analytics
 from pages.reports.yearly import yearly_analytics
 from pages.reports.historical import historical_analytics
 
+from utils.cache_utils import fetch_and_cache_data
+
 st.set_page_config(
     page_title="Budget Management System",
     page_icon="💰",

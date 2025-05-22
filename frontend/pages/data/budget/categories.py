@@ -82,6 +82,8 @@ def categories_config():
                         st.rerun()
                     else:
                         st.error(response)
+
+            update_cache("transactions")
             
             if col4.button("✖️ Cancel", key=f"cancel_cat_{name}"):
                 st.session_state["api_categories"]["edit_cat_name"] = None

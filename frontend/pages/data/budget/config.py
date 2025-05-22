@@ -1,10 +1,12 @@
 import streamlit as st
+
 from .locations import locations_config
 from .buckets import buckets_config
 from .categories import categories_config
+
 from utils.cache_utils import fetch_and_cache_data
-from utils.cache_utils import update_cache
 from utils.cache_utils import clear_all_cache
+from utils.cache_utils import cache_fetched
 
 def budget_config_page():
     """Settings page for budget application."""
@@ -17,12 +19,8 @@ def budget_config_page():
         fetch_and_cache_data()
         st.rerun()
 
-    if st.session_state["api_locations"]["cache"] == {}:
-        update_cache("locations")
-    if st.session_state["api_buckets"]["cache"] == {}:
-        update_cache("buckets")
-    if st.session_state["api_categories"]["cache"] == {}:
-        update_cache("categories")
+    if not cache_fetched():
+        fetch_and_cache_data()
 
     locations_config()
     st.markdown("---")

@@ -8,6 +8,7 @@ from .add_transactions import add_transactions_form
 from utils.cache_utils import update_cache
 from utils.cache_utils import clear_all_cache
 from utils.cache_utils import fetch_and_cache_data
+from utils.cache_utils import cache_fetched
 
 from pages.reports.current import process_current_status_data
 
@@ -22,6 +23,9 @@ def transactions_page():
         clear_all_cache()
         fetch_and_cache_data()
         st.rerun()
+
+    if not cache_fetched():
+        fetch_and_cache_data()
 
     # Transactions API and cache
     transactions_api = st.session_state["api_transactions"]["service"]
