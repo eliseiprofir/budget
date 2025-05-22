@@ -82,60 +82,75 @@ def monthly_analytics():
 
     # POSITIVE CATEGORIES SECTION
     st.markdown("---")
-    st.subheader(f"🟢 Positive categories ({positive_categories_total})")
-    col1, col2 = st.columns([8, 2])
+    st.subheader(f"🟢 Positive categories ({positive_categories_total:.2f})")
     
-    positive_categories_chart = alt.Chart(positive_categories_df.reset_index()).mark_bar().encode(
-        x=alt.X("Positive Categories:N", title=None, sort=None, axis=alt.Axis(labelAngle=0)),
-        y=alt.Y("Amount:Q", title=None),
-        color=alt.Color("Positive Categories:N", legend=None),
-        tooltip=["Positive Categories", "Amount"]
-    ).configure_axis(
-        labelFontSize=16,
-        titleFontSize=16
-    ).configure_title(
-        fontSize=25
-    )
+    if "POSITIVE" in st.session_state["api_categories"]["cache"]["signs"]:
+        col1, col2 = st.columns([8, 2])
+        
+        positive_categories_chart = alt.Chart(positive_categories_df.reset_index()).mark_bar().encode(
+            x=alt.X("Positive Categories:N", title=None, sort=None, axis=alt.Axis(labelAngle=0)),
+            y=alt.Y("Amount:Q", title=None),
+            color=alt.Color("Positive Categories:N", legend=None),
+            tooltip=["Positive Categories", "Amount"]
+        ).configure_axis(
+            labelFontSize=16,
+            titleFontSize=16
+        ).configure_title(
+            fontSize=25
+        )
+        
+        col1.altair_chart(positive_categories_chart, use_container_width=True)
+        col2.dataframe(positive_categories_df, use_container_width=True)
     
-    col1.altair_chart(positive_categories_chart, use_container_width=True)
-    col2.dataframe(positive_categories_df, use_container_width=True)
+    else:
+        st.info("There are no positive categories.")
 
     # NEGATIVE CATEGORIES SECTION
     st.markdown("---")
-    st.subheader(f"🔴 Negative categories ({negative_categories_total})")
-    col1, col2 = st.columns([8, 2])
-    
-    negative_categories_chart = alt.Chart(negative_categories_df.reset_index()).mark_bar().encode(
-        x=alt.X("Negative Categories:N", title=None, sort=None, axis=alt.Axis(labelAngle=0)),
-        y=alt.Y("Amount:Q", title=None),
-        color=alt.Color("Negative Categories:N", legend=None),
-        tooltip=["Negative Categories", "Amount"]
-    ).configure_axis(
-        labelFontSize=16,
-        titleFontSize=16
-    ).configure_title(
-        fontSize=25
-    )
+    st.subheader(f"🔴 Negative categories ({negative_categories_total:.2f})")
 
-    col1.altair_chart(negative_categories_chart, use_container_width=True)
-    col2.dataframe(negative_categories_df, use_container_width=True)
+    if "NEGATIVE" in st.session_state["api_categories"]["cache"]["signs"]:
+        col1, col2 = st.columns([8, 2])
+        
+        negative_categories_chart = alt.Chart(negative_categories_df.reset_index()).mark_bar().encode(
+            x=alt.X("Negative Categories:N", title=None, sort=None, axis=alt.Axis(labelAngle=0)),
+            y=alt.Y("Amount:Q", title=None),
+            color=alt.Color("Negative Categories:N", legend=None),
+            tooltip=["Negative Categories", "Amount"]
+        ).configure_axis(
+            labelFontSize=16,
+            titleFontSize=16
+        ).configure_title(
+            fontSize=25
+        )
+
+        col1.altair_chart(negative_categories_chart, use_container_width=True)
+        col2.dataframe(negative_categories_df, use_container_width=True)
+    
+    else:
+        st.info("There are no negative categories.")
 
     # NEUTRAL CATEGORIES SECTION
     st.markdown("---")
-    st.subheader(f"⚪ Neutral categories ({neutral_categories_total})")
-    col1, col2 = st.columns([8, 2])
+    st.subheader(f"⚪ Neutral categories ({neutral_categories_total:.2f})")
     
-    neutral_categories_chart = alt.Chart(neutral_categories_df.reset_index()).mark_bar().encode(
-        x=alt.X("Neutral Categories:N", title=None, sort=None, axis=alt.Axis(labelAngle=0)),
-        y=alt.Y("Amount:Q", title=None),
-        color=alt.Color("Neutral Categories:N", legend=None),
-        tooltip=["Neutral Categories", "Amount"]
-    ).configure_axis(
-        labelFontSize=16,
-        titleFontSize=16
-    ).configure_title(
-        fontSize=25
-    )
+    if "NEUTRAL" in st.session_state["api_categories"]["cache"]["signs"]:
+        col1, col2 = st.columns([8, 2])
+        
+        neutral_categories_chart = alt.Chart(neutral_categories_df.reset_index()).mark_bar().encode(
+            x=alt.X("Neutral Categories:N", title=None, sort=None, axis=alt.Axis(labelAngle=0)),
+            y=alt.Y("Amount:Q", title=None),
+            color=alt.Color("Neutral Categories:N", legend=None),
+            tooltip=["Neutral Categories", "Amount"]
+        ).configure_axis(
+            labelFontSize=16,
+            titleFontSize=16
+        ).configure_title(
+            fontSize=25
+        )
 
-    col1.altair_chart(neutral_categories_chart, use_container_width=True)
-    col2.dataframe(neutral_categories_df, use_container_width=True)
+        col1.altair_chart(neutral_categories_chart, use_container_width=True)
+        col2.dataframe(neutral_categories_df, use_container_width=True)
+
+    else:
+        st.info("There are no neutral categories.")
