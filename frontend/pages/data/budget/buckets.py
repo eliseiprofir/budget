@@ -89,6 +89,8 @@ def buckets_config():
                         st.rerun()
                     else:
                         st.error(response)
+
+            update_cache("transactions")
             
             if col4.button("✖️ Cancel", key=f"cancel_buc_{name}"):
                 st.session_state["api_buckets"]["edit_buc_name"] = None
