@@ -33,6 +33,10 @@ class CategoriesAPIService(AuthAPIService):
             category_list.append([category["name"], category["sign"]])
         return category_list
 
+    def get_categories_sings(self):
+        """Get all available signs."""
+        return list({category["sign"] for category in self.get_categories()})
+
     def get_categories_names(self):
         """Get names of all categories."""
         categories_data = self.get_categories()

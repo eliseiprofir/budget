@@ -65,6 +65,7 @@ def categories_config():
                 key=f"edit_{name}",
                 index=OPTIONS.index(transaction_type)
             )
+            st.warning("⚠️ Please note that if you change the sign, your totals for positive, negative or neutral transactions might become inaccurate. Make sure you understand the impact before proceeding.")
             
             if col3.button("💾 Save", key=f"save_cat_{name}"):
                 if not new_name:
@@ -93,22 +94,49 @@ def categories_config():
         elif st.session_state["api_categories"]["delete_cat_name"] == name:
             col1.write(name)
             col2.write(transaction_type)
-            st.warning(f"Are you sure you want to delete this category: {st.session_state['api_categories']['delete_cat_name']}?")
             
-            if col3.button("✔️ Confirm", key="confirm_cat_delete"):
-                response = categories_api.delete_category(st.session_state["api_categories"]["delete_cat_name"])
-                if isinstance(response, dict):
-                    st.success("Transaction type deleted!")
-                    update_cache("categories")
+            # If only one category and transactions exist - don't allow deleteing it
+            if len(st.session_state["api_categories"]["cache"]["names"]) == 1 and len(st.session_state["api_transactions"]["cache"]["list"]) > 0:
+                st.warning("You cannot delete the last category because there are still transactions associated with it. You can rename it or delete associated transactions first.")
+                
+                if col3.button("✖️ Cancel", key="cancel_cat_delete"):
                     st.session_state["api_categories"]["delete_cat_name"] = None
-                    time.sleep(1)
                     st.rerun()
-                else:
-                    st.error(response)
             
-            if col4.button("✖️ Cancel", key="cancel_cat_delete"):
-                st.session_state["api_categories"]["delete_cat_name"] = None
-                st.rerun()
+            else:
+                categories_names = [cat for cat in categories_names if cat != name]
+                new_category = st.selectbox(label="Select another category to move the transactions from this one to.", options=categories_names)
+                new_category_id = categories_api.get_category_id(new_category)
+                st.warning("⚠️ Please note that if the new category has a different sign (POSITIVE, NEGATIVE, or NEUTRAL), your totals for positive, negative or neutral transactions might become inaccurate. Make sure you understand the impact before proceeding.")
+                st.warning(f"Are you sure you want to delete this category: {st.session_state['api_categories']['delete_cat_name']}?")
+                
+                if col3.button("✔️ Confirm", key="confirm_cat_delete"):
+                    
+                    # Move transactions to new category
+                    st.info(f"Moving transactions to '{new_category}'...")
+                    transactions_api = st.session_state["api_transactions"]["service"]
+                    transactions = st.session_state["api_transactions"]["cache"]["list"]
+                    transactions_to_move = [transaction["id"] for transaction in transactions if transaction["category"]["name"] == name]
+                    for transaction_id in transactions_to_move:
+                        response = transactions_api.update_transaction_category(transaction_id, new_category_id)
+                        if not isinstance(response, dict):
+                            st.error(response)
+                    update_cache("transactions")
+
+                    # Delete category
+                    response = categories_api.delete_category(st.session_state["api_categories"]["delete_cat_name"])
+                    if isinstance(response, dict):
+                        st.success("Transaction type deleted!")
+                        update_cache("categories")
+                        st.session_state["api_categories"]["delete_cat_name"] = None
+                        time.sleep(1)
+                        st.rerun()
+                    else:
+                        st.error(response)
+                
+                if col4.button("✖️ Cancel", key="cancel_cat_delete"):
+                    st.session_state["api_categories"]["delete_cat_name"] = None
+                    st.rerun()
         
         # Show mode
         else:

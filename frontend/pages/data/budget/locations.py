@@ -82,22 +82,49 @@ def locations_config():
         # Delete mode
         elif st.session_state["api_locations"]["delete_loc_name"] == name:
             col1.write(name)
-            st.warning(f"Are you sure you want to delete this location: {st.session_state['api_locations']['delete_loc_name']}?")
-            
-            if col2.button("✔️ Confirm", key="confirm_loc_delete"):
-                response = locations_api.delete_location(st.session_state["api_locations"]["delete_loc_name"])
-                if isinstance(response, dict):
-                    st.success("Location deleted!")
-                    update_cache("locations")
+
+            # If only one location and transactions exist - don't allow deleting it
+            if len(st.session_state["api_locations"]["cache"]["names"]) == 1 and len(st.session_state["api_transactions"]["cache"]["list"]) > 0:
+                st.warning("You cannot delete the last location because there are still transactions associated with it. You can rename it or delete associated transactions first.")
+                
+                if col3.button("✖️ Cancel", key="cancel_loc_delete"):
                     st.session_state["api_locations"]["delete_loc_name"] = None
-                    time.sleep(1)
                     st.rerun()
-                else:
-                    st.error(response)
             
-            if col3.button("✖️ Cancel", key="cancel_loc_delete"):
-                st.session_state["api_locations"]["delete_loc_name"] = None
-                st.rerun()
+            else:
+                locations = [loc for loc in locations if loc != name]
+                new_location = st.selectbox(label="Select another location to move the transactions from this one to.", options=locations)
+                new_location_id = locations_api.get_location_id(new_location)
+
+                st.warning(f"Are you sure you want to delete this location: {st.session_state['api_locations']['delete_loc_name']}?")
+                
+                if col2.button("✔️ Confirm", key="confirm_loc_delete"):
+                    
+                    # Move transactions to new location
+                    st.info(f"Moving transactions to '{new_location}'...")
+                    transactions_api = st.session_state["api_transactions"]["service"]
+                    transactions = st.session_state["api_transactions"]["cache"]["list"]
+                    transactions_to_move = [transaction["id"] for transaction in transactions if transaction["location"]["name"] == name]
+                    for transaction_id in transactions_to_move:
+                        response = transactions_api.update_transaction_location(transaction_id, new_location_id)
+                        if not isinstance(response, dict):
+                            st.error(response)
+                    update_cache("transactions")
+
+                    # Delete location
+                    response = locations_api.delete_location(st.session_state["api_locations"]["delete_loc_name"])
+                    if isinstance(response, dict):
+                        st.success("Location deleted!")
+                        update_cache("locations")
+                        st.session_state["api_locations"]["delete_loc_name"] = None
+                        time.sleep(1)
+                        st.rerun()
+                    else:
+                        st.error(response)
+                
+                if col3.button("✖️ Cancel", key="cancel_loc_delete"):
+                    st.session_state["api_locations"]["delete_loc_name"] = None
+                    st.rerun()
 
         # Show mode
         else:

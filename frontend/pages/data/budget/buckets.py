@@ -100,22 +100,49 @@ def buckets_config():
         elif st.session_state["api_buckets"]["delete_buc_name"] == name:
             col1.write(name)
             col2.write(f"{percentage}%")
-            st.warning(f"Are you sure you want to delete this bucket: {st.session_state['api_buckets']['delete_buc_name']}?")
-            
-            if col3.button("✔️ Confirm", key="confirm_buc_delete"):
-                response = buckets_api.delete_bucket(st.session_state["api_buckets"]["delete_buc_name"])
-                if isinstance(response, dict):
-                    st.success("Bucket deleted!")
-                    update_cache("buckets")
+
+            # If only one bucket and transactions exist - don't allow deleting it
+            if len(st.session_state["api_buckets"]["cache"]["names"]) == 1 and len(st.session_state["api_transactions"]["cache"]["list"]) > 0:
+                st.warning("You cannot delete the last bucket because there are still transactions associated with it. You can rename it or delete associated transactions first.")
+                
+                if col3.button("✖️ Cancel", key="cancel_buc_delete"):
                     st.session_state["api_buckets"]["delete_buc_name"] = None
-                    time.sleep(1)
                     st.rerun()
-                else:
-                    st.error(response)
-        
-            if col4.button("✖️ Cancel", key="cancel_buc_delete"):
-                st.session_state["api_buckets"]["delete_buc_name"] = None
-                st.rerun()
+
+            else:
+                buckets_names = [buc for buc in buckets_names if buc != name]
+                new_bucket = st.selectbox(label="Select another bucket to move the transactions from this one to.", options=buckets_names)
+                new_bucket_id = buckets_api.get_bucket_id(new_bucket)
+
+                st.warning(f"Are you sure you want to delete this bucket: {st.session_state['api_buckets']['delete_buc_name']}?")
+                
+                if col3.button("✔️ Confirm", key="confirm_buc_delete"):
+
+                    # Move transactions to new bucket
+                    st.info(f"Moving transactions to '{new_bucket}'...")
+                    transactions_api = st.session_state["api_transactions"]["service"]
+                    transactions = st.session_state["api_transactions"]["cache"]["list"]
+                    transactions_to_move = [transaction["id"] for transaction in transactions if transaction["bucket"]["name"] == name]
+                    for transaction_id in transactions_to_move:
+                        response = transactions_api.update_transaction_bucket(transaction_id, new_bucket_id)
+                        if not isinstance(response, dict):
+                            st.error(response)
+                    update_cache("transactions")
+
+                    # Delete bucket
+                    response = buckets_api.delete_bucket(st.session_state["api_buckets"]["delete_buc_name"])
+                    if isinstance(response, dict):
+                        st.success("Bucket deleted!")
+                        update_cache("buckets")
+                        st.session_state["api_buckets"]["delete_buc_name"] = None
+                        time.sleep(1)
+                        st.rerun()
+                    else:
+                        st.error(response)
+            
+                if col4.button("✖️ Cancel", key="cancel_buc_delete"):
+                    st.session_state["api_buckets"]["delete_buc_name"] = None
+                    st.rerun()
 
         # Show mode
         else:
