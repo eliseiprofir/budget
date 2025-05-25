@@ -17,11 +17,17 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.urls import include
+from django.shortcuts import redirect
 from rest_framework_simplejwt.views import TokenRefreshView
 
 from accounts.serializers_jwt import CustomTokenObtainPairView
 
+def root_redirect(request):
+    return redirect('/api/')
+
 urlpatterns = [
+    # Root URL
+    path('', root_redirect, name='root'),
     # Django Admin
     path('admin/', admin.site.urls),
     # User management
