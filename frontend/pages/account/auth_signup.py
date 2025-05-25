@@ -4,8 +4,12 @@ import time
 def signup_page():
     col1, col2, col3 = st.columns([1, 2, 1])
 
+    if col2.button("Back"):
+        st.session_state.current_page = "welcome"
+        st.rerun()
+
     with col2:
-        st.title("Sign Up")
+        st.title("✍️ Sign Up")
         st.write("Enter your details below to create an account.")
         
         name = st.text_input("Full name *")

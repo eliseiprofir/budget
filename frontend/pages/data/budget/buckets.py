@@ -28,7 +28,7 @@ def buckets_config():
         new_bucket = col1.text_input("Name of the bucket")
         col1.info("Different purposes for your money (e.g. Economy, Education, Necessities, Donations).")
         new_percentage = col2.number_input("Allocation percentage", step=1)
-        col2.info("The percentage of your income that will be allocated to this bucket, if you choose 'split income' option.")
+        col2.info("The percentage of your income that will be allocated to this bucket, if you choose 'split income' feature.")
         
         submitted = st.form_submit_button("Add new bucket")
         if submitted:
@@ -105,7 +105,7 @@ def buckets_config():
             if len(st.session_state["api_buckets"]["cache"]["names"]) == 1 and len(st.session_state["api_transactions"]["cache"]["list"]) > 0:
                 st.warning("You cannot delete the last bucket because there are still transactions associated with it. You can rename it or delete associated transactions first.")
                 
-                if col3.button("✖️ Cancel", key="cancel_buc_delete"):
+                if col4.button("✖️ Cancel", key="cancel_buc_delete"):
                     st.session_state["api_buckets"]["delete_buc_name"] = None
                     st.rerun()
 
@@ -159,8 +159,8 @@ def buckets_config():
     
     # Warnings for different cases
     if allocation_status == "COMPLETE":
-        st.success("Your bucket allocations are complete (100%). You can add now income transactions with 'split income' option.")
+        st.success("Your bucket allocations are complete (100%). You can add now income transactions with 'split income' feature.")
     elif allocation_status == "INCOMPLETE":
-        st.warning(f"Your bucket allocations are incomplete ({total_allocation}%). It should be 100%. Add {100-total_allocation}% to one of your buckets if you want to use 'split income' option for income transactions.")
+        st.warning(f"Your bucket allocations are incomplete ({total_allocation}%). It should be 100%. Add {100-total_allocation}% to one of your buckets if you want to use 'split income' feature for income transactions.")
     else:
         st.warning("Add at least one bucket to be able to add new transactions.")

@@ -4,6 +4,10 @@ import time
 def login_page():
     col1, col2, col3 = st.columns([1, 2, 1])
 
+    if col2.button("Back"):
+        st.session_state.current_page = "welcome"
+        st.rerun()
+    
     with col2:
         st.title("🔐 Login")
         st.write("Please login to access the Budget Management System")

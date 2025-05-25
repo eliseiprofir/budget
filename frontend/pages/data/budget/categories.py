@@ -99,7 +99,7 @@ def categories_config():
             if len(st.session_state["api_categories"]["cache"]["names"]) == 1 and len(st.session_state["api_transactions"]["cache"]["list"]) > 0:
                 st.warning("You cannot delete the last category because there are still transactions associated with it. You can rename it or delete associated transactions first.")
                 
-                if col3.button("✖️ Cancel", key="cancel_cat_delete"):
+                if col4.button("✖️ Cancel", key="cancel_cat_delete"):
                     st.session_state["api_categories"]["delete_cat_name"] = None
                     st.rerun()
             
@@ -126,7 +126,7 @@ def categories_config():
                     # Delete category
                     response = categories_api.delete_category(st.session_state["api_categories"]["delete_cat_name"])
                     if isinstance(response, dict):
-                        st.success("Transaction type deleted!")
+                        st.success("Category deleted!")
                         update_cache("categories")
                         st.session_state["api_categories"]["delete_cat_name"] = None
                         time.sleep(1)

@@ -274,14 +274,9 @@ def transactions_page():
                 search_term = row1col1.text_input("Search:", )
                 conditions.append(data["✍️ Description"].str.contains(search_term))
             
-            filter_by_type = row2col1.toggle("📈 By Type", key="filter_type", value=False)
-            if filter_by_type:
-                selected_types = row2col1.multiselect("Select types", options=data["📈 Type"].unique())
-                conditions.append(data["📈 Type"].isin(selected_types))
-            
-            filter_by_category = row3col1.toggle("🔖 By Category", key="filter_category", value=False)
+            filter_by_category = row2col1.toggle("🔖 By Category", key="filter_category", value=False)
             if filter_by_category:
-                selected_categories = row3col1.multiselect("Select categories", options=data["🔖 Category"].unique())
+                selected_categories = row2col1.multiselect("Select categories", options=data["🔖 Category"].unique())
                 conditions.append(data["🔖 Category"].isin(selected_categories))
 
             filter_by_bucket = row1col2.toggle("🪙 By Bucket", key="filter_bucket", value=False)
@@ -316,19 +311,19 @@ def transactions_page():
                 )
                 conditions.append((data["🔢 Amount"] >= amount_range[0]) & (data["🔢 Amount"] <= amount_range[1]))
             
-            mode = row3col2.radio("Filter mode:", options=["AND", "OR"], horizontal=True)
+            mode = row3col1.radio("Filter mode:", options=["AND", "OR"], horizontal=True)
 
             # Filtering data
             if conditions:
                 # Every condition - intersection of data
                 if mode == "AND":
-                    row3col3.info("Filter mode \"AND\": Every condition must match.")
+                    row3col2.info("Filter mode \"AND\": Every condition must match.")
                     combined_conditions = conditions[0]
                     for cond in conditions[1:]:
                         combined_conditions &= cond
                 # Any condition - union of data
                 elif mode == "OR":
-                    row3col3.info("Filter mode \"OR\": At least one condition must match.")
+                    row3col2.info("Filter mode \"OR\": At least one condition must match.")
                     combined_conditions = conditions[0]
                     for cond in conditions[1:]:
                         combined_conditions |= cond
