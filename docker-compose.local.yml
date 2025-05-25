@@ -1,5 +1,8 @@
 services:
   backend:
+    build:
+      args:
+        - ENVIRONMENT=local
     environment:
       - DJANGO_SETTINGS_MODULE=config.settings.local
       - DEBUG=1
