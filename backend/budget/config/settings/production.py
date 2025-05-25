@@ -5,7 +5,7 @@ Production settings.
 from .base import *  # noqa
 from .base import env
 
-env.read_env(str(BASE_DIR / "config" / "env" / ".env.production"))  # noqa: F405
+# env.read_env(str(BASE_DIR / "config" / "env" / ".env.production"))  # noqa: F405
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY")
@@ -13,7 +13,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["budget-production-99c8.up.railway.app"])
+ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=[])
 
 # Database
 DATABASES = {
