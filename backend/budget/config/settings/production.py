@@ -65,13 +65,3 @@ CACHES = {
 # EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 # EMAIL_USE_TLS = True
 # DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
-
-# --- Linii temporare de DEBUGGING ---
-import logging
-logger = logging.getLogger(__name__)
-
-logger.warning(f"DEBUGGING: DJANGO_ALLOWED_HOSTS env var: '{os.environ.get('DJANGO_ALLOWED_HOSTS')}'")
-logger.warning(f"DEBUGGING: Final ALLOWED_HOSTS list: {ALLOWED_HOSTS}")
-logger.warning(f"DEBUGGING: DJANGO_CSRF_TRUSTED_ORIGINS env var: '{os.environ.get('DJANGO_CSRF_TRUSTED_ORIGINS')}'")
-logger.warning(f"DEBUGGING: Final CSRF_TRUSTED_ORIGINS list: {CSRF_TRUSTED_ORIGINS}")
-# --- Sfârșit linii temporare de DEBUGGING ---
