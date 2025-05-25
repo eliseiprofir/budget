@@ -20,7 +20,8 @@ from pages.reports.monthly import monthly_analytics
 from pages.reports.yearly import yearly_analytics
 from pages.reports.historical import historical_analytics
 
-from utils.cache_utils import fetch_and_cache_data
+from pages.welcome import welcome_page
+from pages.guide import guide_page
 
 st.set_page_config(
     page_title="Budget Management System",
@@ -93,11 +94,15 @@ if "api_analytics" not in st.session_state:
     st.session_state["api_analytics"]["service"] = AnalyticsAPIService()
 
 if "current_page" not in st.session_state:
-    st.session_state["current_page"] = "login"
+    st.session_state["current_page"] = "welcome"
 
 # Define pages
+welcome = st.Page(welcome_page, title="Welcome", icon="👋")
+
 login = st.Page(login_page, title="Login", icon="🔑")
-signup = st.Page(signup_page, title="Sign Up", icon="👤")
+signup = st.Page(signup_page, title="Sign Up", icon="✍️")
+
+guide = st.Page(guide_page, title="User Guide", icon="📖")
 
 transactions = st.Page(transactions_page, title="Transaction Management", icon="💸")
 budget_settings = st.Page(budget_config_page, title="Budget Configuration", icon="⚙️")
@@ -113,15 +118,18 @@ signout = st.Page(signout_page, title="Sign Out", icon="🚪")
 # Navigation logic
 if st.session_state["api_auth"]["authenticated"]:
     pg = st.navigation({
+        "Guide": [guide],
         "Data management": [transactions, budget_settings],
         "Reports & Analytics": [current_status, monthly_report, yearly_report, historical_report],
         "Account settings": [account_settings, signout],
     })
 else:
-    if st.session_state.current_page == "signup":
+    if st.session_state["current_page"] == "signup":
         pg = st.navigation([signup])
-    else:
+    elif st.session_state["current_page"] == "login":
         pg = st.navigation([login])
+    else:
+        pg = st.navigation([welcome])
 
 # Enjoy!
 pg.run()
