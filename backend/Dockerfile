@@ -22,4 +22,8 @@ COPY . .
 
 EXPOSE 8000
 
-CMD ["python", "budget/manage.py", "runserver", "0.0.0.0:8000"]
+CMD sh -c "if [ \"$ENVIRONMENT\" = \"local\" ]; then \
+             python budget/manage.py runserver 0.0.0.0:8000 ; \
+           else \
+             gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000} ; \
+           fi"
