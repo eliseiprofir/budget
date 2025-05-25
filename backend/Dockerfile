@@ -22,6 +22,4 @@ COPY . .
 
 EXPOSE 8000
 
-ENV PYTHONPATH=/app/backend/budget
-
 CMD ["python", "budget/manage.py", "runserver", "0.0.0.0:8000"]
