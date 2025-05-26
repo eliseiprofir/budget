@@ -23,11 +23,18 @@ COPY . .
 
 ENV PYTHONPATH=/app/budget:$PYTHONPATH
 
-# Collect static files, run migrations and create a superuser
+# Collect static files
 RUN if [ "$ENVIRONMENT" = "production" ]; then \
         python budget/manage.py collectstatic --noinput; \
-        python budget/manage.py makemigrations; \
+    fi
+
+# Run migrations
+RUN if [ "$ENVIRONMENT" = "production" ]; then \
         python budget/manage.py migrate; \
+    fi
+
+# Create default superuser
+RUN if [ "$ENVIRONMENT" = "production" ]; then \
         python budget/manage.py createdefaultsuperuser; \
     fi
 
