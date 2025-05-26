@@ -41,45 +41,21 @@ SECURE_HSTS_PRELOAD = True
 CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=["https://budget-app.streamlit.app"])
 CORS_ALLOW_CREDENTIALS = True
 
-# Redis/Cache config optimized for Upstash
+# Celery
+CELERY_BROKER_URL = env("REDIS_URL")
+CELERY_RESULT_BACKEND = env("REDIS_URL")
+
+# Cache
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": env("REDIS_URL"),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "CONNECTION_POOL_KWARGS": {
-                "retry_on_timeout": True,
-                "retry_on_error": [ConnectionError, TimeoutError],
-                "socket_keepalive": True,
-                "socket_keepalive_options": {},
-                "health_check_interval": 30,
-                "max_connections": 10,  # limits for Upstash
-            },
-            "IGNORE_EXCEPTIONS": True,
         },
         "KEY_PREFIX": "budget_prod",
-        "TIMEOUT": 300,
     }
 }
-
-# Celery config optimized for Upstash
-CELERY_BROKER_URL = env("REDIS_URL")
-CELERY_RESULT_BACKEND = env("REDIS_URL")
-
-CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
-CELERY_BROKER_CONNECTION_RETRY = True
-CELERY_RESULT_BACKEND_CONNECTION_RETRY = True
-
-# Pool settings specific for Upstash
-CELERY_REDIS_RETRY_ON_TIMEOUT = True
-CELERY_REDIS_SOCKET_KEEPALIVE = True
-CELERY_REDIS_HEALTH_CHECK_INTERVAL = 30
-CELERY_REDIS_MAX_CONNECTIONS = 5
-
-# Retry policy for tasks
-CELERY_TASK_ACKS_LATE = True
-CELERY_WORKER_PREFETCH_MULTIPLIER = 1
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
