@@ -3,6 +3,9 @@ import streamlit as st
 import pandas as pd
 import calendar
 
+from utils.cache_utils import cache_fetched
+from utils.cache_utils import fetch_and_cache_data
+
 def build_category_table(monthly_data, category_type):
     all_categories = set()
     
@@ -49,7 +52,10 @@ def yearly_analytics():
 
     st.title("🗓️ Yearly report")
     st.write("Here you can view yearly reports of your transactions, broken down by category and month.")
-
+    
+    if not cache_fetched():
+        fetch_and_cache_data()
+    
     if not st.session_state["api_transactions"]["cache"]["list"]:
         st.warning("No transactions yet. Come back here when you add some transactions.")
         return

@@ -2,6 +2,9 @@ import altair as alt
 import streamlit as st
 import pandas as pd
 
+from utils.cache_utils import cache_fetched
+from utils.cache_utils import fetch_and_cache_data
+
 def build_category_table(yearly_data, category_type):
     all_categories = set()
     
@@ -44,6 +47,9 @@ def historical_analytics():
 
     st.title("📊 Historical report")
     st.write("Here you can view a historical report of your transactions, broken down by category and year.")
+
+    if not cache_fetched():
+        fetch_and_cache_data()
 
     if not st.session_state["api_transactions"]["cache"]["list"]:
         st.warning("No transactions yet. Come back here when you add some transactions.")

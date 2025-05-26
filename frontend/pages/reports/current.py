@@ -2,9 +2,15 @@ import altair as alt
 import streamlit as st
 import pandas as pd
 
+from utils.cache_utils import cache_fetched
+from utils.cache_utils import fetch_and_cache_data
+
 def process_current_status_data():
     """Prepare data for charts."""
-
+    
+    if not cache_fetched():
+        fetch_and_cache_data()
+    
     # Analytics API and unpacking data
     analytics_api = st.session_state["api_analytics"]["service"]
     data = analytics_api.get_current_analytics()
