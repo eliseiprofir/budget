@@ -38,7 +38,6 @@ def invalidate_cache_on_category_delete(sender, instance, **kwargs):
     """Invalidate cache when a category is deleted."""
     invalidate_user_cache(instance.user)
 
-
 @receiver(post_save, sender=Transaction)
 def invalidate_cache_on_transaction_save(sender, instance, **kwargs):
     """Invalidate cache when a transaction is saved."""
