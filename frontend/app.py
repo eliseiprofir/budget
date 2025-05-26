@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 
 from services.auth import AuthAPIService
@@ -23,6 +24,13 @@ from pages.reports.historical import historical_analytics
 from pages.welcome import welcome_page
 from pages.guide import guide_page
 
+# Set BASE_URL
+ENVIRONMENT = os.environ.get("ENVIRONMENT", "local")
+if ENVIRONMENT == "production":
+    BACKEND_URL = "https://budget-production-99c8.up.railway.app/api"
+else:
+    BACKEND_URL = "http://backend:8000/api"
+
 st.set_page_config(
     page_title="Budget Management System",
     page_icon="💰",
@@ -33,7 +41,7 @@ st.set_page_config(
 if "api_auth" not in st.session_state:
     st.session_state["api_auth"] = {
         "service": None,
-        "base_url": "http://backend:8000/api",
+        "base_url": BACKEND_URL,
         "headers": {
             "Content-Type": "application/json",
             "Authorization": None,

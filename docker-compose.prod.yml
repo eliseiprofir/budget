@@ -12,7 +12,7 @@ services:
     ports:
       - "8501:8501"
     environment:
-      - BACKEND_URL=https://api.yourdomain.com
+      - ENVIRONMENT=production
     restart: always
 
   db:
