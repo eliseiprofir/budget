@@ -356,6 +356,11 @@ def transactions_page():
     # SUMMARY SECTION
     st.markdown("---")
     st.subheader("📊 Short summary")
+
+    if not st.session_state["api_transactions"]["cache"]["list"]:
+        st.warning("No transactions yet. Come back here when you add some transactions.")
+        return
+
     current_status = process_current_status_data()
     
     locations_chart = current_status["locations"]["for_chart"]

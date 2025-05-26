@@ -26,10 +26,7 @@ from pages.guide import guide_page
 
 # Set BASE_URL
 ENVIRONMENT = os.environ.get("ENVIRONMENT", "local")
-if ENVIRONMENT == "production":
-    BACKEND_URL = "https://budget-production-99c8.up.railway.app/api"
-else:
-    BACKEND_URL = "http://backend:8000/api"
+BACKEND_URL = os.environ.get("BACKEND_URL", "http://backend:8000/api")
 
 st.set_page_config(
     page_title="Budget Management System",
