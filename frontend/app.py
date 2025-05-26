@@ -34,9 +34,6 @@ st.set_page_config(
     layout="wide"
 )
 
-# Dezactivează avertismentul pentru st.navigation cu director pages/
-st._config.set_option("runner.fastReruns", False)
-
 # Initialize session state variables and services
 if "api_auth" not in st.session_state:
     st.session_state["api_auth"] = {
