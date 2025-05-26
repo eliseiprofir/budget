@@ -28,16 +28,10 @@ RUN if [ "$ENVIRONMENT" = "production" ]; then \
         python budget/manage.py collectstatic --noinput; \
     fi
 
-# Run migrations
-RUN if [ "$ENVIRONMENT" = "production" ]; then \
-        python budget/manage.py migrate; \
-    fi
-
-# Create default superuser
-RUN if [ "$ENVIRONMENT" = "production" ]; then \
-        python budget/manage.py createdefaultsuperuser; \
-    fi
+# Make script executable
+RUN chmod +x start.sh
 
 EXPOSE 8000
 
-CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000"]
+# Use script
+CMD ["./start.sh"]
