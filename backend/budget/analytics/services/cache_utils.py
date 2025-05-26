@@ -45,7 +45,7 @@ def get_or_generate_current_report(user):
     report_data = safe_cache_get(cache_key)
 
     if report_data is None:
-        # Celery: generate_current_report.delay(user.id)
+        generate_current_report.delay(user.id)
 
         service = AnalyticsCurrentService(user)
         report_data = service.get_summary()
@@ -61,7 +61,7 @@ def get_or_generate_monthly_report(user, year, month):
     report_data = safe_cache_get(cache_key)
 
     if report_data is None:
-        # Celery: generate_monthly_report.delay(user.id, year, month)
+        generate_monthly_report.delay(user.id, year, month)
 
         service = AnalyticsMonthlyService(user, year, month)
         report_data = service.get_summary()
@@ -77,7 +77,7 @@ def get_or_generate_yearly_report(user, year):
     report_data = safe_cache_get(cache_key)
 
     if report_data is None:
-        # Celery: generate_yearly_report.delay(user.id, year)
+        generate_yearly_report.delay(user.id, year)
 
         service = AnalyticsYearlyService(user, year)
         report_data = service.get_summary()
@@ -93,7 +93,7 @@ def get_or_generate_historical_report(user):
     report_data = safe_cache_get(cache_key)
 
     if report_data is None:
-        # Celery: generate_historical_report.delay(user.id)
+        generate_historical_report.delay(user.id)
 
         service = AnalyticsHistoricalService(user)
         report_data = service.get_summary()
