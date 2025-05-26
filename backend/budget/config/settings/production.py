@@ -48,17 +48,18 @@ CORS_ALLOW_CREDENTIALS = True
 # Django-Q configuration for production
 Q_CLUSTER = {
     'name': 'budget_prod',
-    'workers': 1,
-    'recycle': 500,
-    'timeout': 120,
-    'retry': 300,
-    'max_attempts': 3,
+    'workers': 2,
+    'recycle': 1000,
+    'timeout': 60,
+    'retry': 150,
+    'max_attempts': 2,
     'compress': True,
-    'save_limit': 250,
+    'save_limit': 100,
     'orm': 'default',
     'catch_up': False,
     'sync': False,  # async mode
-    'poll': 10,  # verify new tasks every 10 seconds
+    'poll': 20,  # verify new tasks every 20 seconds
+    'bulk': 5,  # process up to 5 tasks at once
 }
 
 # Cache
