@@ -12,7 +12,7 @@ from analytics.views.yearly import AnalyticsYearlyViewSet
 from analytics.views.historical import AnalyticsHistoricalViewSet
 
 
-router = DefaultRouter() if settings.DEBUG else SimpleRouter()
+router = DefaultRouter()  # if settings.DEBUG else SimpleRouter()
 
 # Accounts
 router.register(r"users", UserViewSet, basename="user")
