@@ -45,28 +45,17 @@ CORS_ALLOW_CREDENTIALS = True
 CELERY_BROKER_URL = env("CELERY_BROKER_URL")
 CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND")
 
-# Cache - configurație optimizată pentru Upstash Redis
+# Cache
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": env("REDIS_URL"),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "SOCKET_CONNECT_TIMEOUT": 5,  # Timeout for conection
-            "SOCKET_TIMEOUT": 5,  # Timeout for operations per second
-            "CONNECTION_POOL_KWARGS": {
-                "max_connections": 10,  # Limit conections
-                "retry_on_timeout": True,
-            },
-            "COMPRESSOR": "django_redis.compressors.zlib.ZlibCompressor",  # Reduce data dimenssions
-            "SERIALIZER": "django_redis.serializers.json.JSONSerializer",  # JSON Serializer
         },
         "KEY_PREFIX": "budget_prod",
     }
 }
-
-# Setează cache-ul ca opțional pentru a evita erorile fatale
-DJANGO_REDIS_IGNORE_EXCEPTIONS = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
