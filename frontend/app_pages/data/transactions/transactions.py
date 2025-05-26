@@ -10,7 +10,7 @@ from utils.cache_utils import clear_all_cache
 from utils.cache_utils import fetch_and_cache_data
 from utils.cache_utils import cache_fetched
 
-from pages.reports.current import process_current_status_data
+from app_pages.reports.current import process_current_status_data
 
 
 def transactions_page():
