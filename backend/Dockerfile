@@ -25,10 +25,10 @@ ENV PYTHONPATH=/app/budget:$PYTHONPATH
 
 # Collect static files, run migrations and create a superuser
 RUN if [ "$ENVIRONMENT" = "production" ]; then \
-        cd budget && python manage.py collectstatic --noinput; \
-        cd budget && python manage.py makemigrations; \
-        cd budget && python manage.py migrate; \
-        cd budget && python manage.py createdefaultsuperuser; \
+        python budget/manage.py collectstatic --noinput; \
+        python budget/manage.py makemigrations; \
+        python budget/manage.py migrate; \
+        python budget/manage.py createdefaultsuperuser; \
     fi
 
 EXPOSE 8000
