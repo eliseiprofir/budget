@@ -2,3 +2,4 @@
 
 # Production-specific
 gunicorn>=21.2.0  # WSGI server
+whitenoise>=6.5.0   # Static file serving
