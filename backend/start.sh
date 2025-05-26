@@ -2,10 +2,15 @@
 
 # Run migrations
 cd budget
-python manage.py makemigrations
-python manage.py migrate
+echo "Making migrations..."
+python manage.py makemigrations --noinput
+echo "Migrating..."
+python manage.py migrate --noinput
 
-# Create default superuser
+echo "Listing applied migrations:"
+python manage.py showmigrations
+
+echo "Creating default superuser if needed..."
 python manage.py createdefaultsuperuser
 
 # Pornește aplicația
