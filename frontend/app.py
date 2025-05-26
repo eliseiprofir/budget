@@ -8,21 +8,21 @@ from services.categories import CategoriesAPIService
 from services.transactions import TransactionAPIService
 from services.analytics import AnalyticsAPIService
 
-from pages.account.auth_login import login_page
-from pages.account.auth_signup import signup_page
-from pages.account.auth_signout import signout_page
-from pages.account.settings import account_settings_page
+from app_pages.account.auth_login import login_page
+from app_pages.account.auth_signup import signup_page
+from app_pages.account.auth_signout import signout_page
+from app_pages.account.settings import account_settings_page
 
-from pages.data.budget.config import budget_config_page
-from pages.data.transactions.transactions import transactions_page
+from app_pages.data.budget.config import budget_config_page
+from app_pages.data.transactions.transactions import transactions_page
 
-from pages.reports.current import current_analytics
-from pages.reports.monthly import monthly_analytics
-from pages.reports.yearly import yearly_analytics
-from pages.reports.historical import historical_analytics
+from app_pages.reports.current import current_analytics
+from app_pages.reports.monthly import monthly_analytics
+from app_pages.reports.yearly import yearly_analytics
+from app_pages.reports.historical import historical_analytics
 
-from pages.welcome import welcome_page
-from pages.guide import guide_page
+from app_pages.welcome import welcome_page
+from app_pages.guide import guide_page
 
 # Set BASE_URL
 ENVIRONMENT = os.environ.get("ENVIRONMENT", "local")
@@ -33,6 +33,9 @@ st.set_page_config(
     page_icon="💰",
     layout="wide"
 )
+
+# Dezactivează avertismentul pentru st.navigation cu director pages/
+st._config.set_option("runner.fastReruns", False)
 
 # Initialize session state variables and services
 if "api_auth" not in st.session_state:

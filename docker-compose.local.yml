@@ -4,6 +4,7 @@ services:
       args:
         - ENVIRONMENT=local
     environment:
+      - ENVIRONMENT=local
       - DJANGO_SETTINGS_MODULE=config.settings.local
       - DEBUG=1
     ports:
