@@ -12,6 +12,7 @@ RUN mkdir -p requirements
 ARG ENVIRONMENT=production
 ENV ENVIRONMENT=${ENVIRONMENT}
 
+# Install dependencies based on the environment variable
 RUN if [ "$ENVIRONMENT" = "local" ]; then \
         pip install --no-cache-dir -r requirements/local.txt -r requirements/test.txt ; \
     else \
@@ -21,6 +22,14 @@ RUN if [ "$ENVIRONMENT" = "local" ]; then \
 COPY . .
 
 ENV PYTHONPATH=/app/budget:$PYTHONPATH
+
+# Collect static files, run migrations and create a superuser
+RUN if [ "$ENVIRONMENT" = "production" ]; then \
+        cd budget && python manage.py collectstatic --noinput; \
+        cd budget && python manage.py makemigrations; \
+        cd budget && python manage.py migrate; \
+        cd budget && python manage.py createdefaultsuperuser; \
+    fi
 
 EXPOSE 8000
 
