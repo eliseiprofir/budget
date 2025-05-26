@@ -52,17 +52,8 @@ CACHES = {
         "LOCATION": env("REDIS_URL"),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "CONNECTION_POOL_KWARGS": {
-                "retry_on_timeout": True,
-                "retry_on_error": [ConnectionError, TimeoutError],
-                "socket_keepalive": True,
-                "socket_keepalive_options": {},
-                "health_check_interval": 30,
-            },
-            "IGNORE_EXCEPTIONS": True,
         },
         "KEY_PREFIX": "budget_prod",
-        "TIMEOUT": 300,
     }
 }
 
