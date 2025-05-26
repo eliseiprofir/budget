@@ -24,3 +24,13 @@ services:
 
   redis:
     restart: always
+
+  celery:
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings.production
+      - DEBUG=0
+    command: celery -A config.celery_app worker --loglevel=info
+    restart: always
+    depends_on:
+      - redis
+      - db
