@@ -1,4 +1,5 @@
-from celery import shared_task
+# from celery import shared_task
+from django_q.tasks import async_task, schedule
 from django.core.cache import cache
 from django.conf import settings
 from django.utils import timezone
@@ -10,7 +11,7 @@ from analytics.services.yearly import AnalyticsYearlyService
 from analytics.services.historical import AnalyticsHistoricalService
 
 
-@shared_task
+# @shared_task
 def generate_current_report(user_id):
     """Generate current analytics report asynchronously and store in cache."""
     try:
@@ -39,7 +40,7 @@ def generate_current_report(user_id):
         }
 
 
-@shared_task
+# @shared_task
 def generate_monthly_report(user_id, year, month):
     """Generate monthly analytics report asynchronously and store in cache."""
     try:
@@ -69,7 +70,7 @@ def generate_monthly_report(user_id, year, month):
         }
 
 
-@shared_task
+# @shared_task
 def generate_yearly_report(user_id, year):
     """Generate yearly analytics report asynchronously and store in cache."""
     try:
@@ -97,7 +98,7 @@ def generate_yearly_report(user_id, year):
         }
 
 
-@shared_task
+# @shared_task
 def generate_historical_report(user_id):
     """Generate historical analytics report asynchronously and store in cache."""
     try:

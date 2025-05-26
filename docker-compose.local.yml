@@ -30,15 +30,32 @@ services:
     ports:
       - "6379:6379"
   
-  celery:
+  # celery:
+  #   build:
+  #     args:
+  #       - ENVIRONMENT=local
+  #   environment:
+  #     - ENVIRONMENT=local
+  #     - DJANGO_SETTINGS_MODULE=config.settings.local
+  #     - DEBUG=1
+  #   command: celery -A config.celery_app worker --loglevel=info
+  #   depends_on:
+  #     - redis
+  #     - db
+
+  qcluster:
     build:
+      context: ./backend
+      dockerfile: Dockerfile
       args:
         - ENVIRONMENT=local
     environment:
       - ENVIRONMENT=local
       - DJANGO_SETTINGS_MODULE=config.settings.local
       - DEBUG=1
-    command: celery -A config.celery_app worker --loglevel=info
+    command: python budget/manage.py qcluster
     depends_on:
-      - redis
       - db
+      - redis
+    volumes:
+      - ./backend:/app

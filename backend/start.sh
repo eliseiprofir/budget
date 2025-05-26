@@ -4,6 +4,10 @@
 cd budget
 python manage.py makemigrations
 python manage.py migrate
+python manage.py migrate django_q
+
+# Collect static files
+python manage.py collectstatic --noinput
 
 # Create default superuser
 python manage.py createdefaultsuperuser

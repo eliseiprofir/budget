@@ -4,10 +4,12 @@ from django.core.cache import cache
 from django.utils import timezone
 from django.conf import settings
 
-from tasks.analytics import generate_current_report
-from tasks.analytics import generate_monthly_report
-from tasks.analytics import generate_yearly_report
-from tasks.analytics import generate_historical_report
+# from tasks.analytics import generate_current_report
+# from tasks.analytics import generate_monthly_report
+# from tasks.analytics import generate_yearly_report
+# from tasks.analytics import generate_historical_report
+
+from django_q.tasks import async_task
 
 from analytics.services.current import AnalyticsCurrentService
 from analytics.services.monthly import AnalyticsMonthlyService
@@ -46,6 +48,7 @@ def get_or_generate_current_report(user):
 
     if report_data is None:
         # generate_current_report.delay(user.id)
+        async_task("tasks.analytics.generate_current_report", user.id)
 
         service = AnalyticsCurrentService(user)
         report_data = service.get_summary()
@@ -62,6 +65,7 @@ def get_or_generate_monthly_report(user, year, month):
 
     if report_data is None:
         # generate_monthly_report.delay(user.id, year, month)
+        async_task("tasks.analytics.generate_monthly_report", user.id, year, month)
 
         service = AnalyticsMonthlyService(user, year, month)
         report_data = service.get_summary()
@@ -78,6 +82,7 @@ def get_or_generate_yearly_report(user, year):
 
     if report_data is None:
         # generate_yearly_report.delay(user.id, year)
+        async_task("tasks.analytics.generate_yearly_report", user.id, year)
 
         service = AnalyticsYearlyService(user, year)
         report_data = service.get_summary()
@@ -94,6 +99,7 @@ def get_or_generate_historical_report(user):
 
     if report_data is None:
         # generate_historical_report.delay(user.id)
+        async_task("tasks.analytics.generate_historical_report", user.id)
 
         service = AnalyticsHistoricalService(user)
         report_data = service.get_summary()

@@ -41,9 +41,25 @@ SECURE_HSTS_PRELOAD = True
 CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=["https://budget-app.streamlit.app"])
 CORS_ALLOW_CREDENTIALS = True
 
-# Celery
-CELERY_BROKER_URL = env("REDIS_URL")
-CELERY_RESULT_BACKEND = env("REDIS_URL")
+# # Celery
+# CELERY_BROKER_URL = env("REDIS_URL")
+# CELERY_RESULT_BACKEND = env("REDIS_URL")
+
+# Django-Q configuration for production
+Q_CLUSTER = {
+    'name': 'budget_prod',
+    'workers': 1,
+    'recycle': 500,
+    'timeout': 300,
+    'retry': 120,
+    'max_attempts': 3,
+    'compress': True,
+    'save_limit': 250,
+    'orm': 'default',
+    'catch_up': False,
+    'sync': False,  # async mode
+    'poll': 10,  # verify new tasks every 10 seconds
+}
 
 # Cache
 CACHES = {

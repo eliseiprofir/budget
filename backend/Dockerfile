@@ -23,11 +23,6 @@ COPY . .
 
 ENV PYTHONPATH=/app/budget:$PYTHONPATH
 
-# Collect static files
-RUN if [ "$ENVIRONMENT" = "production" ]; then \
-        python budget/manage.py collectstatic --noinput; \
-    fi
-
 # Make script executable
 RUN chmod +x start.sh
 

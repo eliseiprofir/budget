@@ -31,6 +31,7 @@ THIRD_PARTY_APPS = [
     'allauth.socialaccount',
     'corsheaders',
     'django_celery_results',
+    'django_q',
 ]
 
 LOCAL_APPS = [
@@ -109,12 +110,26 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Celery base configuration
-CELERY_BROKER_TRANSPORT = 'redis'
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = TIME_ZONE
+# # Celery base configuration
+# CELERY_BROKER_TRANSPORT = 'redis'
+# CELERY_ACCEPT_CONTENT = ['application/json']
+# CELERY_TASK_SERIALIZER = 'json'
+# CELERY_RESULT_SERIALIZER = 'json'
+# CELERY_TIMEZONE = TIME_ZONE
+
+# Django-Q configuration
+Q_CLUSTER = {
+    'name': 'budget',
+    'workers': 1,  # to limit connections
+    'recycle': 500,  # recycle after 500 tasks
+    'timeout': 300,  # timeout for celery workers
+    'retry': 120,  # retry after 120 seconds
+    'max_attempts': 3,
+    'compress': True,
+    'save_limit': 250,
+    'orm': 'default',
+    'poll': 10,  # verify new tasks every 10 seconds
+}
 
 # Cache base configuration
 CACHE_TTL = 60 * 60  # 1 hour

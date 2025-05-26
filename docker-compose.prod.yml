@@ -25,12 +25,13 @@ services:
   redis:
     restart: always
 
-  celery:
+  qcluster:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     environment:
       - DJANGO_SETTINGS_MODULE=config.settings.production
-      - DEBUG=0
-    command: celery -A config.celery_app worker --loglevel=info
+    command: python budget/manage.py qcluster
     restart: always
     depends_on:
-      - redis
       - db

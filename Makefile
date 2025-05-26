@@ -54,6 +54,10 @@ migrate: ## Apply migrations
 	$(COMPOSE) $(COMPOSE_FILE) run --rm backend python budget/manage.py migrate
 .PHONY: migrate
 
+migrateq: ## Apply Django-Q migrations
+	$(COMPOSE) $(COMPOSE_FILE) run --rm backend python budget/manage.py migrate django_q
+.PHONY: migrateq
+
 migrations: makemigrations migrate ## Create and apply migrations
 .PHONY: migrations
 
@@ -95,3 +99,20 @@ up-prod: ## Start production environment (detached)
 down-prod: ## Stop production environment
 	$(COMPOSE) $(COMPOSE_PROD) down
 .PHONY: down-prod
+
+# Django-Q commands
+qcluster: ## Start Django-Q cluster
+	$(COMPOSE) $(COMPOSE_FILE) run --rm backend python budget/manage.py qcluster
+.PHONY: qcluster
+
+qmonitor: ## Monitor Django-Q cluster
+	$(COMPOSE) $(COMPOSE_FILE) run --rm backend python budget/manage.py qmonitor
+.PHONY: qmonitor
+
+qinfo: ## Show Django-Q info
+	$(COMPOSE) $(COMPOSE_FILE) run --rm backend python budget/manage.py qinfo
+.PHONY: qinfo
+
+qhealth: ## Check Django-Q health
+	$(COMPOSE) $(COMPOSE_FILE) run --rm backend python budget/manage.py qhealth
+.PHONY: qhealth
