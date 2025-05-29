@@ -37,7 +37,7 @@ def categories_config():
                 response = categories_api.add_category(name=new_name, sign=new_sign)
                 if isinstance(response, dict):
                     st.session_state["api_categories"]["edit_cat_name"] = None
-                    st.success("category added!")
+                    st.success("Category added!")
                     update_cache("categories")
                     time.sleep(1)
                     st.rerun()

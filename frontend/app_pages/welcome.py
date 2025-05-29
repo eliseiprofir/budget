@@ -17,14 +17,14 @@ def welcome_page():
         
         #### ✨ What can you do here?
         
-        - 💼 **Multi-location Tracking**: Record transactions across multiple locations
-        - 🏷️ **Custom Categories**: Organize with customizable transaction categories
-        - 💰 **Income Splitting**: Automatically distribute income across multiple financial buckets
-        - 🪣 **Bucket System**: Organize your money into different financial purposes
-        - 📱 **Inter-wallet Transfers**: Move funds between different locations and buckets with neutral transactions
+        - 🏦 **Multi-location Tracking**: Record transactions across multiple locations
+        - 🪙 **Bucket System**: Organize your money into different financial purposes
+        - ✂️ **Income Splitting**: Automatically distribute income across multiple financial buckets
+        - 🔖 **Custom Categories**: Organize with customizable transaction categories
+        - ↔️ **Inter-wallet Transfers**: Move funds between different locations and buckets with neutral transactions
         - 📊 **Comprehensive Analytics**: View monthly, yearly, and historical reports
         - 📈 **Visual Insights**: Make informed decisions with data visualizations
-        - 🔄 **Real-time Balance**: Track your current financial status across all accounts
+        - 📱 **Real-time Balance**: Track your current financial status across all locations and buckets
         """)
         
         st.warning("""
@@ -51,21 +51,22 @@ def welcome_page():
         
         with col_login:
             if st.button("🔑 Login", use_container_width=True):
-                st.session_state.current_page = "login"
+                st.session_state["current_page"] = "login"
                 st.rerun()
         
         with col_signup:
             if st.button("✍️ Sign Up", use_container_width=True, type="primary"):
-                st.session_state.current_page = "signup"
+                st.session_state["current_page"] = "signup"
                 st.rerun()
         
         st.divider()
+        
+        st.markdown("#### 🔗 Useful links")
+        st.markdown("Backend / Django REST Framework: https://api.elisei.pro")
+        st.markdown("Frontend / Streamlit App: https://app.elisei.pro")
+        st.markdown("Project's GitHub Repository: https://github.com/eliseiprofir/budget")
         
         st.markdown("#### 📧 Contact")
         st.markdown("Email: pro.elisei@gmail.com")
         st.markdown("GitHub Profile: https://github.com/eliseiprofir")
         st.markdown("LinkedIn Profile: https://www.linkedin.com/in/eliseiprofir/")
-    
-        st.markdown("#### 🔗 Links")
-        st.markdown("GitHub Repository: https://github.com/eliseiprofir/budget")
-

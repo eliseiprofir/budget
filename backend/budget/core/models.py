@@ -173,7 +173,6 @@ class Bucket(UUIDModel, SoftDeletableModel):
         new_status = self.AllocationStatus.COMPLETE if total == Decimal("100") else self.AllocationStatus.INCOMPLETE
         Bucket.all_objects.filter(user=self.user).update(allocation_status=new_status)
 
-
     class Meta:
         verbose_name = "Bucket"
         verbose_name_plural = "Buckets"
