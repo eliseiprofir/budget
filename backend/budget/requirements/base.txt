@@ -12,6 +12,7 @@ psycopg2-binary>=2.9.9
 
 # Task Queue
 django-q2>=1.5.2
+blessed>=1.20.0
 
 # Cache & Task Queue
 redis>=5.0.1
