@@ -34,9 +34,25 @@ CORS_ALLOWED_ORIGINS = [
 ]
 CORS_ALLOW_CREDENTIALS = True
 
-# Celery
-CELERY_BROKER_URL = 'redis://redis:6379'
-CELERY_RESULT_BACKEND = 'redis://redis:6379'
+# # Celery
+# CELERY_BROKER_URL = 'redis://redis:6379'
+# CELERY_RESULT_BACKEND = 'redis://redis:6379'
+
+Q_CLUSTER = {
+    'name': 'budget_prod',
+    'workers': 2,
+    'recycle': 1000,
+    'timeout': 60,
+    'retry': 150,
+    'max_attempts': 2,
+    'compress': True,
+    'save_limit': 100,
+    'orm': 'default',
+    'catch_up': False,
+    'sync': False,  # async mode
+    'poll': 20,  # verify new tasks every 20 seconds
+    'bulk': 5,  # process up to 5 tasks at once
+}
 
 # Cache
 CACHES = {
