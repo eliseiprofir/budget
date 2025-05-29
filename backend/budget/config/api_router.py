@@ -18,8 +18,8 @@ router = DefaultRouter()  # if settings.DEBUG else SimpleRouter()
 router.register(r"users", UserViewSet, basename="user")
 
 # Core
-router.register(r"buckets", BucketViewSet, basename="bucket")
 router.register(r"locations", LocationViewSet, basename="location")
+router.register(r"buckets", BucketViewSet, basename="bucket")
 
 # Transactions
 router.register(r"categories", CategoryViewSet, basename="category")

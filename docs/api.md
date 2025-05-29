@@ -4,11 +4,11 @@
 
 ### Obtain Token
 ```http
-POST /api/token/
+POST /api/users/
 Content-Type: application/json
 
 {
-    "username": "user@example.com",
+    "email": "user@example.com",
     "password": "your_password"
 }
 ```
@@ -22,6 +22,119 @@ Response:
 ```
 
 ## Core Endpoints
+
+```http
+GET /api/
+```
+
+Response:
+```json
+{
+    "users": "https://domain.com/api/users/",
+    "locations": "https://domain.com/api/locations/",
+    "buckets": "https://domain.com/api/buckets/",
+    "categories": "https://domain.com/api/categories/",
+    "transactions": "https://domain.com/api/transactions/",
+    "analytics-current": "https://domain.com/api/analytics-current/",
+    "analytics-monthly": "https://domain.com/api/analytics-monthly/",
+    "analytics-yearly": "https://domain.com/api/analytics-yearly/",
+    "analytics-historical": "https://domain.com/api/analytics-historical/"
+}
+```
+
+### Locations
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET    | /api/locations/ | List all locations |
+| POST   | /api/locations/ | Create new location |
+| GET    | /api/locations/{id}/ | Get location details |
+| PUT    | /api/locations/{id}/ | Update location |
+| DELETE | /api/locations/{id}/ | Delete location |
+
+POST/PUT body:
+```json
+{
+    "name": "ING",
+    "is_removed": false
+}
+```
+
+GET /api/locations/ body example:
+```json
+{
+    "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+    "name": "ING",
+    "is_removed": false,
+    "user": "http://domain.com/api/users/01477667-aa35-4d40-9730-9190037fd6d8/"
+}
+...
+```
+
+### Buckets
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET    | /api/buckets/ | List all buckets |
+| POST   | /api/buckets/ | Create new bucket |
+| GET    | /api/buckets/{id}/ | Get bucket details |
+| PUT    | /api/buckets/{id}/ | Update bucket |
+| DELETE | /api/buckets/{id}/ | Delete bucket |
+
+POST/PUT body:
+```json
+{
+    "name": "Necessities",
+    "allocation_percentage": "50.00",
+    "is_removed": false
+}
+```
+
+GET /api/buckets/ body example:
+```json
+{
+    "id": "91461c66-d475-4e76-9d6b-b2a409491578",
+    "name": "Necessities",
+    "allocation_percentage": "50",
+    "allocation_status": "INCOMPLETE",
+    "is_removed": false,
+    "user": "http://domain.com/api/users/01477667-aa35-4d40-9730-9190037fd6d8/"
+}
+```
+
+Notes:
+- Categories, Locations, Buckets and Transaction Types support soft delete through `is_removed` field
+- `allocation_status` in Buckets is read-only and automatically updated
+- Names must be unique per user for all entities
+- Total bucket allocation percentage cannot exceed 100%
+
+### Categories
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET    | /api/categories/ | List all categories |
+| POST   | /api/categories/ | Create new category |
+| GET    | /api/categories/{id}/ | Get category details |
+| PUT    | /api/categories/{id}/ | Update category |
+| DELETE | /api/categories/{id}/ | Delete category |
+
+POST/PUT body:
+```json
+{
+    "name": "Food",
+    "sign": "NEGATIVE",
+    "is_removed": false
+}
+```
+
+GET /api/categories/ body example:
+```json
+{
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "name": "Food",
+    "sign": "NEGATIVE",
+    "is_removed": false,
+    "user": "http://domain.com/api/users/01477667-aa35-4d40-9730-9190037fd6d8/"
+}
+...
+```
 
 ### Transactions
 | Method | Endpoint | Description |
@@ -45,99 +158,35 @@ POST/PUT body:
 }
 ```
 
-Example Response:
+GET /api/transactions/ body example:
 ```json
 {
     "id": "a8098c1a-f86e-11da-bd1a-00112444be1e",
     "description": "Grocery Shopping",
-    "amount": "150.00",
-    "category": "http://127.0.0.1:8000/api/categories/550e8400-e29b-41d4-a716-446655440000/",
+    "category": {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "name": "Food",
+        "sign": "NEGATIVE"
+    },
     "date": "2024-01-15T00:00:00Z",
-    "location": "http://127.0.0.1:8000/api/locations/7c9e6679-7425-40de-944b-e07fc1f90ae7/",
-    "bucket": "http://127.0.0.1:8000/api/buckets/91461c66-d475-4e76-9d6b-b2a409491578/",
+    "amount": "150.00",
+    "location": {
+        "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "name": "ING"
+    },
+    "bucket": {
+        "id": "91461c66-d475-4e76-9d6b-b2a409491578",
+        "name": "Necessities"
+    },
     "split_income": false,
-    "user": "http://127.0.0.1:8000/api/users/01477667-aa35-4d40-9730-9190037fd6d8/",
-    "created": "2024-01-15T12:00:00Z",
-    "modified": "2024-01-15T12:00:00Z"
+    "user": "http://domain.com/api/users/01477667-aa35-4d40-9730-9190037fd6d8/"
 }
+...
 ```
 
 Validation Rules:
 - `split_income` can only be true for positive transactions
 - `split_income` requires all buckets to have complete allocation (sum to 100%)
-
-### Categories
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET    | /api/categories/ | List all categories |
-| POST   | /api/categories/ | Create new category |
-| GET    | /api/categories/{id}/ | Get category details |
-| PUT    | /api/categories/{id}/ | Update category |
-| DELETE | /api/categories/{id}/ | Delete category |
-
-Example Response:
-```json
-{
-    "id": "550e8400-e29b-41d4-a716-446655440000",
-    "name": "Monthly Groceries",
-    "transaction_type": {
-        "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-        "name": "Expense",
-        "sign": "NEGATIVE"
-    },
-    "is_removed": false,
-    "created": "2024-01-01T00:00:00Z",
-    "modified": "2024-01-01T00:00:00Z"
-}
-```
-
-### Locations
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET    | /api/locations/ | List all locations |
-| POST   | /api/locations/ | Create new location |
-| GET    | /api/locations/{id}/ | Get location details |
-| PUT    | /api/locations/{id}/ | Update location |
-| DELETE | /api/locations/{id}/ | Delete location |
-
-Example Response:
-```json
-{
-    "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-    "name": "ING Debit Card",
-    "is_removed": false,
-    "created": "2024-01-01T00:00:00Z",
-    "modified": "2024-01-01T00:00:00Z"
-}
-```
-
-### Buckets
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET    | /api/buckets/ | List all buckets |
-| POST   | /api/buckets/ | Create new bucket |
-| GET    | /api/buckets/{id}/ | Get bucket details |
-| PUT    | /api/buckets/{id}/ | Update bucket |
-| DELETE | /api/buckets/{id}/ | Delete bucket |
-
-Example Response:
-```json
-{
-    "id": "91461c66-d475-4e76-9d6b-b2a409491578",
-    "name": "Necessities",
-    "allocation_percentage": "50.00",
-    "allocation_status": "INCOMPLETE",
-    "is_removed": false,
-    "created": "2024-01-01T00:00:00Z",
-    "modified": "2024-01-01T00:00:00Z"
-}
-```
-
-Notes:
-- Categories, Locations, Buckets and Transaction Types support soft delete through `is_removed` field
-- `allocation_status` in Buckets is read-only and automatically updated
-- Names must be unique per user for all entities
-- Total bucket allocation percentage cannot exceed 100%
 
 ## Analytics Endpoints
 
@@ -150,21 +199,22 @@ Response:
 ```json
 {
     "locations": {
-        "Main Bank": "4500.00",
-        "Savings Account": "10000.00",
-        "Cash Wallet": "500.00",
-        "total": "15000.00"
+        "_total": "15000.0",
+        "Main Bank": "4500.0",
+        "Savings Account": "10000.0",
+        "Cash Wallet": "500.0"
     },
     "buckets": {
-        "Emergency Fund": "5000.00",
-        "Investments": "7000.00",
-        "Daily Expenses": "3000.00",
-        "total": "15000.00"
+        "_total": "15000.0",
+        "Emergency Fund": "5000.0",
+        "Investments": "7000.0",
+        "Daily Expenses": "3000.0"
     },
     "balance": {
-        "positive": "20000.00",
-        "negative": "5000.00",
-        "balance": "15000.00"
+        "_total_": "15000.0",
+        "positive": "20000.0",
+        "negative": "5000.0",
+        "neutral": "0.0"
     }
 }
 ```
@@ -183,19 +233,24 @@ Response:
 ```json
 {
     "positive_categories": {
-        "Salary": "5000.00",
-        "Investments": "500.00",
-        "Freelance": "1000.00"
+        "Salary": "5000.0",
+        "Investments": "500.0",
+        "Freelance": "1000.0"
     },
     "negative_categories": {
-        "Groceries": "800.00",
-        "Utilities": "200.00",
-        "Entertainment": "300.00"
+        "Groceries": "800.0",
+        "Utilities": "200.0",
+        "Entertainment": "300.0"
+    },
+    "neutral_categories": {
+        "Internal transfers": "0.0",
+        "Loans": "0.0"
     },
     "balance": {
-        "positive": "6500.00",
-        "negative": "1300.00",
-        "balance": "5200.00"
+        "_total": "5200.0",
+        "positive": "6500.0",
+        "negative": "1300.0",
+        "neutral": "0.0"
     },
     "period": {
         "year": 2024,
@@ -225,31 +280,50 @@ Response:
     "monthly": {
         "1": {
             "positive_categories": {
-                "Salary": "5000.00"
+                "Salary": "1000.0",
+                "Investments": "0.0",
+                "Freelance": "0.0"
             },
             "negative_categories": {
-                "Groceries": "800.00"
+                "Groceries": "200.0",
+                "Utilities": "50.0"
+            },
+            "neutral_categories": {
+                "Internal transfers": "0.0",
+                "Loans": "0.0"
             },
             "balance": {
-                "positive": "5000.00",
-                "negative": "800.00",
-                "balance": "4200.00"
+                "_total": "1750.0",
+                "positive": "2000.0",
+                "negative": "250.0",
+                "neutral": "0.0"
             }
         },
         // ... other months
-        "12": {
-            "positive_categories": {},
-            "negative_categories": {},
-            "balance": {
-                "positive": "0.00",
-                "negative": "0.00",
-                "balance": "0.00"
-            }
+    },
+    "summary": {
+        "positive_categories": {
+            "Salary": "5000.0",
+            "Investments": "500.0",
+            "Freelance": "1000.0"
+        },
+        "negative_categories": {
+            "Groceries": "800.0",
+            "Utilities": "200.0",
+            "Entertainment": "300.0"
+        },
+        "neutral_categories": {
+            "Internal transfers": "0.0",
+            "Loans": "0.0"
+        },
+        "balance": {
+            "_total": "5200.0",
+            "positive": "6500.0",
+            "negative": "1300.0",
+            "neutral": "0.0"
         }
     },
-    "period": {
-        "year": 2024
-    }
+    "period": 2024
 }
 ```
 
@@ -265,23 +339,52 @@ GET /api/analytics-historical/
 Response:
 ```json
 {
-    "years": {
+    "yearly": {
         "2024": {
-            "positive": "75000.00",
-            "negative": "45000.00",
-            "balance": "30000.00"
+            "positive_categories": {
+                "Salary": "5000.0",
+                "Investments": "500.0",
+                "Freelance": "1000.0"
+            },
+            "negative_categories": {
+                "Groceries": "800.0",
+                "Utilities": "200.0",
+                "Entertainment": "300.0"
+            },
+            "neutral_categories": {
+                "Internal transfers": "0.0",
+                "Loans": "0.0"
+            },
+            "balance": {
+                "_total": "5200.0",
+                "positive": "6500.0",
+                "negative": "1300.0",
+                "neutral": "0.0"
+            }
         },
-        "2023": {
-            "positive": "70000.00",
-            "negative": "42000.00",
-            "balance": "28000.00"
-        },
-        ...
+        // ... other years
     },
-    "total": {
-        "positive": "145000.00",
-        "negative": "87000.00",
-        "balance": "58000.00"
+    "summary": {
+        "positive_categories": {
+            "Salary": "10000.0",
+            "Investments": "100.0",
+            "Freelance": "2000.0"
+        },
+        "negative_categories": {
+            "Groceries": "1600.0",
+            "Utilities": "400.0",
+            "Entertainment": "600.0"
+        },
+        "neutral_categories": {
+            "Internal transfers": "0.0",
+            "Loans": "0.0"
+        },
+        "balance": {
+            "_total": "10400.0",
+            "positive": "13000.0",
+            "negative": "2600.0",
+            "neutral": "0.0"
+        }
     }
 }
 ```
@@ -303,11 +406,3 @@ Content-Type: application/json
 - 403: Forbidden
 - 404: Not Found
 - 500: Server Error
-
-## Pagination
-
-List endpoints return paginated results with:
-- count: Total items
-- next: Next page URL
-- previous: Previous page URL
-- results: Current page items

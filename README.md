@@ -1,6 +1,6 @@
 # Budget Management System
 
-A comprehensive full-stack application for managing personal and family finances. Built with Django REST Framework backend and Streamlit frontend, this system offers robust expense tracking, income management, and budget analytics.
+A comprehensive full-stack application for managing personal and family finances. Built with Django REST Framework backend and Streamlit frontend, containerized with Docker for seamless deployment and development.
 
 ## System Architecture
 
@@ -10,9 +10,9 @@ Our system consists of three main components:
 
 ### Backend (Django + DRF)
 - REST API Server
-- PostgreSQL Database
-- Redis Cache & Message Broker
-- Celery Worker for async tasks
+- PostgreSQL Database (Neon for production)
+- Redis Cache (Upstash for production)
+- Django Q for async task processing
 
 ### Frontend (Streamlit)
 - Interactive UI
@@ -22,8 +22,10 @@ Our system consists of three main components:
 ### Infrastructure
 - JWT Authentication flow
 - Cache invalidation system
-- Async task processing
+- Asynchronous task processing with Django Q
 - Data analytics pipeline
+- Docker containerization
+- Railway deployment platform
 
 ## Project Overview
 
@@ -33,9 +35,11 @@ This project demonstrates my expertise in:
 - Designing RESTful APIs
 - Working with databases and caching
 - Writing comprehensive tests
-- Handling asynchronous tasks
+- Handling asynchronous tasks with Django Q
 - Creating interactive data visualizations
-- Managing multiple deployment environments (local, test, production)
+- Docker containerization and orchestration
+- Cloud deployment and external service integration
+- Managing multiple deployment environments (local, production)
 
 ## Key Features
 
@@ -44,42 +48,41 @@ This project demonstrates my expertise in:
   - Secure JWT authentication
   - Complete user account management
 
-- **Transaction Management**
-  - Record income and expenses
-  - Detailed transaction tracking
-  - Precise transaction dating
-
-- **Category Management**
-  - Customizable categories
-  - Transaction types (positive, negative, neutral)
-  - Hierarchical category organization
-
 - **Location-based Money Tracking**
   - Physical and virtual wallets
-  - Balance tracking by location
-  - Inter-wallet transfers
+  - Balance tracking by locations
+  - Location-wise balance tracking
 
 - **Financial Buckets System**
   - Percentage-based income allocation
   - Automatic distribution rules
   - Bucket-wise balance tracking
 
+- **Category Management**
+  - Customizable transaction categorization
+  - Differentiated category types (positive, negative, neutral)
+  - Category-wise balance tracking
+
+- **Transaction Management**
+  - Record positive (income), negative (expenses) and neutral (transfer) transactions
+  - Detailed transaction tracking (amount, description, date, category, location, bucket)
+  - Neutral transactions for transfers between locations and buckets, and temporary transactions like loans
+
 - **Advanced Analytics**
-  - Monthly category analysis
-  - Yearly profit/loss statements
-  - Multi-year trend analysis
   - Real-time balance tracking
-  - Financial bucket distribution
-  - Historical reporting
+  - Current money distribution across locations and buckets
+  - Monthly reports - category analysis and profit/loss reports
+  - Yearly report - category analysis and profit/loss reports broken down by months
+  - Historical report - category analysis and profit/loss reports broken down by years
 
 ## Technical Stack
 
 - **Backend**
   - Django 5.1.4
   - Django REST Framework 3.15.2
-  - PostgreSQL
-  - Redis (caching, Celery)
-  - Celery (async tasks)
+  - PostgreSQL (Neon for production)
+  - Redis (Upstash for production)
+  - Django Q (async task processing)
   - JWT Authentication
 
 - **Frontend**
@@ -87,9 +90,16 @@ This project demonstrates my expertise in:
   - Pandas
   - Interactive Charts
 
+- **Infrastructure**
+  - Docker & Docker Compose
+  - Makefile for development workflow
+  - Railway (production deployment)
+  - Neon PostgreSQL (production database)
+  - Upstash Redis (production cache)
+
 - **Testing & Quality**
   - pytest with pytest-django
-  - Model Bakery for fixtures
+  - Model Bakery for fixtures (SQLite for tests)
   - Coverage reporting
   - Environment-specific configurations
 
@@ -105,120 +115,168 @@ budget/
 │   │   ├── transactions/  # Transaction handling
 │   │   └── config/        # Project configuration
 │   │       └── settings/  # Environment-specific settings
-│   └── requirements/      # Environment-specific dependencies
-└── frontend/
-    └── streamlit/         # UI components
+│   ├── requirements/      # Environment-specific dependencies
+│   └── Dockerfile
+├── frontend/              # Streamlit App / UI components
+│   └── Dockerfile
+├── docker-compose.yml        # Base services
+├── docker-compose.local.yml  # Development overrides
+├── docker-compose.prod.yml   # Production overrides
+└── Makefile                  # Development commands
 ```
 
 ## Environment Setup
 
-The project supports three distinct environments:
+The project supports two main environments:
 
 ### Local Development
-- Uses SQLite or local PostgreSQL
+- Local PostgreSQL (Docker)
+- Local Redis (Docker)
 - Debug mode enabled
 - Console email backend
-- Local Redis instance
 - Development-specific settings
 
-### Testing Environment
-- Uses SQLite database
-- Disabled debug mode
-- In-memory email backend
-- Synchronous task execution
-- Test-specific settings
-
 ### Production Environment
-- PostgreSQL database
+- Neon PostgreSQL database
+- Upstash Redis cache
 - Disabled debug mode
 - SMTP email backend
-- Redis for caching and Celery
+- Railway deployment
 - Enhanced security settings
 
-## Local Development Setup
+**Note**: Testing uses SQLite database via Model Bakery for faster test execution.
+
+## Development Setup
 
 ### Prerequisites
 
-- Python 3.8+
-- PostgreSQL
-- Redis
-- virtualenv
+- Docker
+- Docker Compose
+- Make (optional, for convenience commands)
 
-### Environment Configuration
+### Quick Start
 
-1. Clone the repository:
+1. **Clone the repository:**
 ```bash
 git clone https://github.com/yourusername/budget.git
 cd budget
 ```
 
-2. Set up environment files:
+2. **Set up environment files:**
 ```bash
-cd backend/budget
-cp config/env/.env.example config/env/.env.local
-cp config/env/.env.example config/env/.env.test
-cp config/env/.env.example config/env/.env.production
-# Edit each .env file with appropriate settings
+# Copy example files and configure
+cp .env.example.backend .env.local
+cp .env.example.frontend frontend/.env.local
+# Edit the files with your local settings
 ```
 
-### Backend Setup
-
+3. **Build and start the development environment:**
 ```bash
-# Navigate to backend
-cd backend
+# Using Make (recommended)
+make build
+make up
 
-# Create and activate virtual environment
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-# or
-venv\Scripts\activate  # Windows
-
-# Install dependencies for different environments
-pip install -r requirements/local.txt    # for development
-pip install -r requirements/test.txt     # for testing
-pip install -r requirements/production.txt  # for production
-
-# Apply migrations
-python manage.py migrate
-
-# Create development superuser
-python manage.py createdefaultsuperuser
-
-# Run server (choose environment)
-python manage.py runserver --settings=config.settings.local
-# or
-python manage.py runserver --settings=config.settings.production
+# Or using Docker Compose directly
+docker compose -f docker-compose.yml -f docker-compose.local.yml build
+docker compose -f docker-compose.yml -f docker-compose.local.yml up
 ```
 
-### Frontend Setup
-
+4. **Set up the database:**
 ```bash
-# Open new terminal and navigate to frontend
-cd frontend
+# Run migrations
+make migrate
 
-# Create and activate virtual environment
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-# or
-venv\Scripts\activate  # Windows
+# Create a superuser
+make createdefaultsuperuser
 
-# Install dependencies
-pip install -r requirements.txt
-
-# Run Streamlit
-streamlit run app.py
+# Optional: Seed with sample data
+make seed
 ```
+
+5. **Access the application:**
+   - Backend API: http://localhost:8000/api
+   - Frontend UI: http://localhost:8501
+   - PostgreSQL: localhost:5432
+   - Redis: localhost:6379
+
+## Available Make Commands
+
+### Development
+- `make build` - Build containers for development
+- `make up` - Start development environment
+- `make up-d` - Start development environment in detached mode
+- `make down` - Stop development environment
+- `make down-v` - Stop development environment and remove volumes
+
+### Database Management
+- `make makemigrations` - Create new migrations
+- `make migrate` - Apply migrations
+- `make migrations` - Create and apply migrations
+- `make createsuperuser` - Create a superuser
+- `make createdefaultsuperuser` - Create default superuser
+- `make seed` - Seed database with random data
+- `make clear` - Clear database except for superusers
+
+### Django Q Management
+- `make qcluster` - Start Django-Q cluster
+- `make qmonitor` - Monitor Django-Q cluster
+- `make qinfo` - Show Django-Q info
+- `make qhealth` - Check Django-Q health
+
+### Code Quality
+- `make lint` - Run ruff linter
+- `make lint-fix` - Fix linting issues automatically
+- `make format` - Format code using ruff
+
+### Testing
+- `make test` - Run tests
+
+### Production
+- `make build-prod` - Build containers for production
+- `make up-prod` - Start production environment
+- `make down-prod` - Stop production environment
+
+### Utilities
+- `make logs` - View logs from all containers
+- `make help` - Display all available commands
+
+## Production Deployment
+
+The application is deployed on Railway with the following architecture:
 
 ### Services
+- **Backend Service**: Django API server with Gunicorn
+- **Frontend Service**: Streamlit application
+- **Django Q Cluster**: Async task processing
 
-Start Redis and Celery:
-```bash
-# Start Redis (ensure it's installed)
-redis-server
+### External Services
+- **Database**: Neon PostgreSQL
+- **Cache**: Upstash Redis
 
-# Start Celery worker (new terminal, choose environment)
-cd backend
-celery -A config worker -l info
+### Environment Variables
+
+Configure the following environment variables in your deployment platform:
+
+**Backend (.env.example.backend):**
+```env
+SECRET_KEY=your_secret_key_here
+DEBUG=False
+DJANGO_ALLOWED_HOSTS=your-domain.com
+DJANGO_CSRF_TRUSTED_ORIGINS=https://your-domain.com
+DJANGO_SETTINGS_MODULE=config.settings.production
+DB_HOST=your-neon-host
+DB_NAME=your-db-name
+DB_USER=your-db-user
+DB_PASSWORD=your-db-password
+DB_PORT=5432
+REDIS_URL=your-upstash-redis-url
+CORS_ALLOWED_ORIGINS=https://your-frontend-domain.com
+```
+
+**Frontend (.env.example.frontend):**
+```env
+ENVIRONMENT=production
+BACKEND_URL=https://your-backend-domain.com/api
 ```
 
 ## Testing
@@ -226,49 +284,43 @@ celery -A config worker -l info
 The project includes comprehensive test coverage (>92%) with:
 
 ```bash
-# Run all tests (uses test settings automatically)
-pytest
+# Run all tests
+make test
 
-# Run tests with coverage report
-pytest --cov=. --cov-report=term-missing
-
-# Run specific test file
-pytest path/to/test_file.py
-
-# Run tests with specific markers
-pytest -m "integration"
+# Or with Docker Compose directly
+docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm backend python -m pytest budget/
 ```
 
 Our test suite includes:
 - Unit tests for all models and business logic
 - Integration tests for API endpoints
-- Comprehensive fixture system using model-bakery
+- Comprehensive fixture system using Model Bakery
 - Full coverage of authentication flows
 - Extensive validation testing
+- SQLite database for fast test execution
 
-## Environment-Specific Features
+## Container Architecture
 
-### Local Development
-- Debug toolbar enabled
-- Detailed error pages
-- Local email console output
-- Auto-reload on code changes
-- CORS configured for local frontend
+### Backend Container
+- Python 3.10 slim base image
+- Environment-specific dependency installation
+- Django Q worker support
+- Gunicorn for production serving
 
-### Testing
-- Fast password hasher
-- In-memory caching
-- Synchronous task execution
-- SQLite database for speed
-- Minimal external dependencies
+### Frontend Container
+- Python 3.10 slim base image
+- Streamlit application
+- Environment-aware configuration
 
-### Production
-- Secure SSL/HTTPS settings
-- Production-grade email backend
-- Redis caching
-- PostgreSQL database
-- CORS restrictions
-- Enhanced security headers
+### Database Container
+- PostgreSQL 16
+- Health check configuration
+- Persistent volume storage
+
+### Redis Container
+- Redis 6
+- Persistent volume storage
+- Used for Django Q message queue
 
 ## API Documentation
 
