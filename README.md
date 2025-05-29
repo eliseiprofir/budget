@@ -2,6 +2,16 @@
 
 A comprehensive full-stack application for managing personal and family finances. Built with Django REST Framework backend and Streamlit frontend, containerized with Docker for seamless deployment and development.
 
+### 🔗 Useful links
+- Backend / Django REST Framework: https://api.elisei.pro
+- Frontend / Streamlit App: https://app.elisei.pro
+- Project's GitHub Repository: https://github.com/eliseiprofir/budget
+
+### 📧 Contact
+- Email: pro.elisei@gmail.com
+- GitHub Profile: https://github.com/eliseiprofir
+- LinkedIn Profile: https://www.linkedin.com/in/eliseiprofir/
+
 ## System Architecture
 
 ![System Architecture](docs/architecture.png)
