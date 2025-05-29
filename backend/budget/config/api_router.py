@@ -1,5 +1,4 @@
-from django.conf import settings
-from rest_framework.routers import DefaultRouter, SimpleRouter
+from rest_framework.routers import DefaultRouter
 
 from accounts.views import UserViewSet
 from core.views import BucketViewSet

@@ -1,5 +1,4 @@
 # from celery import shared_task
-from django_q.tasks import async_task, schedule
 from django.core.cache import cache
 from django.conf import settings
 from django.utils import timezone
