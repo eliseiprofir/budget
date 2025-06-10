@@ -51,25 +51,18 @@ def buckets_config():
                 else:
                     st.error(response)
 
-    # Show head of the table
-    col1, col2, col3, col4 = st.columns([COL1, COL2, COL3, COL4])
-    col1.markdown("**Name**")
-    col2.markdown("**Allocation percentage**")
-    col3.markdown("**Edit**")
-    col4.markdown("**Delete**")
-
     # Show existing buckets
     for name, percentage in buckets:
         col1, col2, col3, col4 = st.columns([COL1, COL2, COL3, COL4])
 
         # Edit mode
         if st.session_state["api_buckets"]["edit_buc_name"] == name:
+            colA, colB = st.columns(2)
             buckets_names = [buc for buc in buckets_names if buc != name]
+            new_name = colA.text_input("Edit bucket name", value=name, key=f"edit_buc_{name}")
+            new_percentage = colB.number_input("Allocation percentage", step=1, value=int(percentage))
             
-            new_name = col1.text_input("Edit bucket name", value=name, key=f"edit_buc_{name}")
-            new_percentage = col2.number_input("Allocation percentage", step=1, value=int(percentage))
-            
-            if col3.button("💾 Save", key=f"save_buc_{name}"):
+            if st.button("💾 Save", key=f"save_buc_{name}"):
                 if not new_name:
                     st.error("Psst... you forgot to enter the name.")
                 elif new_name in buckets_names:
@@ -92,14 +85,14 @@ def buckets_config():
 
             update_cache("transactions")
             
-            if col4.button("✖️ Cancel", key=f"cancel_buc_{name}"):
+            if st.button("✖️ Cancel", key=f"cancel_buc_{name}"):
                 st.session_state["api_buckets"]["edit_buc_name"] = None
                 st.rerun()
         
         # Delete mode
         elif st.session_state["api_buckets"]["delete_buc_name"] == name:
-            col1.write(name)
-            col2.write(f"{percentage}%")
+            col1.write(f"Name: **{name}**")
+            col2.write(f"Allocation percentage: **{percentage}%**")
 
             # If only one bucket and transactions exist - don't allow deleting it
             if len(st.session_state["api_buckets"]["cache"]["names"]) == 1 and len(st.session_state["api_transactions"]["cache"]["list"]) > 0:
@@ -111,12 +104,12 @@ def buckets_config():
 
             else:
                 buckets_names = [buc for buc in buckets_names if buc != name]
-                new_bucket = st.selectbox(label="Select another bucket to move the transactions from this one to.", options=buckets_names)
+                new_bucket = st.selectbox(label="❗ Select another bucket to move the transactions from this one to.", options=buckets_names)
                 new_bucket_id = buckets_api.get_bucket_id(new_bucket)
 
-                st.warning(f"Are you sure you want to delete this bucket: {st.session_state['api_buckets']['delete_buc_name']}?")
+                st.warning(f"Are you sure you want to delete this bucket: **{st.session_state['api_buckets']['delete_buc_name']}**?")
                 
-                if col3.button("✔️ Confirm", key="confirm_buc_delete"):
+                if st.button("✔️ Confirm", key="confirm_buc_delete"):
 
                     # Move transactions to new bucket
                     st.info(f"Moving transactions to '{new_bucket}'...")
@@ -140,14 +133,14 @@ def buckets_config():
                     else:
                         st.error(response)
             
-                if col4.button("✖️ Cancel", key="cancel_buc_delete"):
+                if st.button("✖️ Cancel", key="cancel_buc_delete"):
                     st.session_state["api_buckets"]["delete_buc_name"] = None
                     st.rerun()
 
         # Show mode
         else:
-            col1.write(name)
-            col2.write(f"{percentage}%")
+            col1.write(f"Name: **{name}**")
+            col2.write(f"Allocation percentage: **{percentage}%**")
             
             if col3.button("✏️ Edit", key=f"edit_buc_{name}"):
                 st.session_state["api_buckets"]["edit_buc_name"] = name
@@ -156,6 +149,8 @@ def buckets_config():
             if col4.button("🗑️ Delete", key=f"delete_buc_{name}"):
                 st.session_state["api_buckets"]["delete_buc_name"] = name
                 st.rerun()
+        
+        st.markdown("---")
     
     # Warnings for different cases
     if allocation_status == "COMPLETE":

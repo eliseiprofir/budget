@@ -39,12 +39,6 @@ def locations_config():
                 else:
                     st.error(response)         
     
-    # Show head of the table
-    col1, col2, col3 = st.columns([COL1, COL2, COL3])
-    col1.markdown("**Name**")
-    col2.markdown("**Edit**")
-    col3.markdown("**Delete**")
-
     # Show existing locations
     for name in locations:
         col1, col2, col3 = st.columns([COL1, COL2, COL3])
@@ -52,10 +46,9 @@ def locations_config():
         # Edit mode
         if st.session_state["api_locations"]["edit_loc_name"] == name:
             locations = [loc for loc in locations if loc != name]
+            new_name = st.text_input("Edit location name", value=name, key=f"edit_loc_{name}")
             
-            new_name = col1.text_input("Edit location name", value=name, key=f"edit_loc_{name}")
-            
-            if col2.button("💾 Save", key=f"save_loc_{name}"):
+            if st.button("💾 Save", key=f"save_loc_{name}"):
                 if not new_name:
                     st.error("Psst... you forgot to enter the name.")
                 elif new_name in locations:
@@ -75,13 +68,13 @@ def locations_config():
             
             update_cache("transactions")
             
-            if col3.button("✖️ Cancel", key=f"cancel_loc_{name}"):
+            if st.button("✖️ Cancel", key=f"cancel_loc_{name}"):
                 st.session_state["api_locations"]["edit_loc_name"] = None
                 st.rerun()
         
         # Delete mode
         elif st.session_state["api_locations"]["delete_loc_name"] == name:
-            col1.write(name)
+            col1.write(f"Name: **{name}**")
 
             # If only one location and transactions exist - don't allow deleting it
             if len(st.session_state["api_locations"]["cache"]["names"]) == 1 and len(st.session_state["api_transactions"]["cache"]["list"]) > 0:
@@ -93,12 +86,12 @@ def locations_config():
             
             else:
                 locations = [loc for loc in locations if loc != name]
-                new_location = st.selectbox(label="Select another location to move the transactions from this one to.", options=locations)
+                new_location = st.selectbox(label="❗ Select another location to move the transactions from this one to.", options=locations)
                 new_location_id = locations_api.get_location_id(new_location)
 
-                st.warning(f"Are you sure you want to delete this location: {st.session_state['api_locations']['delete_loc_name']}?")
+                st.warning(f"Are you sure you want to delete this location: **{st.session_state['api_locations']['delete_loc_name']}**?")
                 
-                if col2.button("✔️ Confirm", key="confirm_loc_delete"):
+                if st.button("✔️ Confirm", key="confirm_loc_delete"):
                     
                     # Move transactions to new location
                     st.info(f"Moving transactions to '{new_location}'...")
@@ -122,13 +115,13 @@ def locations_config():
                     else:
                         st.error(response)
                 
-                if col3.button("✖️ Cancel", key="cancel_loc_delete"):
+                if st.button("✖️ Cancel", key="cancel_loc_delete"):
                     st.session_state["api_locations"]["delete_loc_name"] = None
                     st.rerun()
 
         # Show mode
         else:
-            col1.write(name)
+            col1.write(f"Name: **{name}**")
             
             if col2.button("✏️ Edit", key=f"edit_loc_{name}"):
                 st.session_state["api_locations"]["edit_loc_name"] = name
@@ -137,6 +130,8 @@ def locations_config():
             if col3.button("🗑️ Delete", key=f"delete_loc_{name}"):
                 st.session_state["api_locations"]["delete_loc_name"] = name
                 st.rerun()
+        
+        st.markdown("---")
 
     # No locations warning
     if len(locations) < 1:
