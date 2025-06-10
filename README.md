@@ -301,7 +301,7 @@ make test
 docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm backend python -m pytest budget/
 ```
 
-Our test suite includes:
+Our test suite (157 tests) includes:
 - Unit tests for all models and business logic
 - Integration tests for API endpoints
 - Comprehensive fixture system using Model Bakery
