@@ -134,15 +134,15 @@ def buckets_config():
                 if st.button("✔️ Confirm", key="confirm_buc_delete"):
 
                     # Move transactions to new bucket
-                    st.info(f"Moving transactions to '**{new_bucket}**'...")
-                    transactions_api = st.session_state["api_transactions"]["service"]
-                    transactions = st.session_state["api_transactions"]["cache"]["list"]
-                    transactions_to_move = [transaction["id"] for transaction in transactions if transaction["bucket"]["name"] == name]
-                    for transaction_id in transactions_to_move:
-                        response = transactions_api.update_transaction_bucket(transaction_id, new_bucket_id)
-                        if not isinstance(response, dict):
-                            st.error(response)
-                    update_cache("transactions")
+                    with st.spinner(f"Moving transactions to '**{new_bucket}**'..."):
+                        transactions_api = st.session_state["api_transactions"]["service"]
+                        transactions = st.session_state["api_transactions"]["cache"]["list"]
+                        transactions_to_move = [transaction["id"] for transaction in transactions if transaction["bucket"]["name"] == name]
+                        for transaction_id in transactions_to_move:
+                            response = transactions_api.update_transaction_bucket(transaction_id, new_bucket_id)
+                            if not isinstance(response, dict):
+                                st.error(response)
+                        update_cache("transactions")
 
                     # Delete bucket
                     response = buckets_api.delete_bucket(st.session_state["api_buckets"]["delete_buc_name"])

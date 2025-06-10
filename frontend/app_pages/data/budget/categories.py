@@ -129,15 +129,15 @@ def categories_config():
                 if st.button("✔️ Confirm", key="confirm_cat_delete"):
                     
                     # Move transactions to new category
-                    st.info(f"Moving transactions to '**{new_category}**'...")
-                    transactions_api = st.session_state["api_transactions"]["service"]
-                    transactions = st.session_state["api_transactions"]["cache"]["list"]
-                    transactions_to_move = [transaction["id"] for transaction in transactions if transaction["category"]["name"] == name]
-                    for transaction_id in transactions_to_move:
-                        response = transactions_api.update_transaction_category(transaction_id, new_category_id)
-                        if not isinstance(response, dict):
-                            st.error(response)
-                    update_cache("transactions")
+                    with st.spinner(f"Moving transactions to '**{new_category}**'..."):
+                        transactions_api = st.session_state["api_transactions"]["service"]
+                        transactions = st.session_state["api_transactions"]["cache"]["list"]
+                        transactions_to_move = [transaction["id"] for transaction in transactions if transaction["category"]["name"] == name]
+                        for transaction_id in transactions_to_move:
+                            response = transactions_api.update_transaction_category(transaction_id, new_category_id)
+                            if not isinstance(response, dict):
+                                st.error(response)
+                        update_cache("transactions")
 
                     # Delete category
                     response = categories_api.delete_category(st.session_state["api_categories"]["delete_cat_name"])
