@@ -89,14 +89,36 @@ def categories_config():
             col1.write(f"Name: **{name}**")
             col2.write(f"Sign: **{sign}**")
             
-            # If only one category and transactions exist - don't allow deleteing it
-            if len(st.session_state["api_categories"]["cache"]["names"]) == 1 and len(st.session_state["api_transactions"]["cache"]["list"]) > 0:
+            # If only one category and no transactions
+            if len(st.session_state["api_categories"]["cache"]["names"]) == 1 and len(st.session_state["api_transactions"]["cache"]["list"]) == 0:
+                st.warning(f"Are you sure you want to delete this category: **{st.session_state['api_categories']['delete_cat_name']}**?")
+                
+                if st.button("✔️ Confirm", key="confirm_cat_delete"):
+                    
+                    # Delete category
+                    response = categories_api.delete_category(st.session_state["api_categories"]["delete_cat_name"])
+                    if isinstance(response, dict):
+                        st.success("Category deleted!")
+                        update_cache("categories")
+                        st.session_state["api_categories"]["delete_cat_name"] = None
+                        time.sleep(1)
+                        st.rerun()
+                    else:
+                        st.error(response)
+                
+                if st.button("✖️ Cancel", key="cancel_cat_delete"):
+                    st.session_state["api_categories"]["delete_cat_name"] = None
+                    st.rerun()
+
+            # If only one category and transactions exist - don't allow deleting it
+            elif len(st.session_state["api_categories"]["cache"]["names"]) == 1 and len(st.session_state["api_transactions"]["cache"]["list"]) > 0:
                 st.warning("You cannot delete the last category because there are still transactions associated with it. You can rename it or delete associated transactions first.")
                 
                 if col4.button("✖️ Cancel", key="cancel_cat_delete"):
                     st.session_state["api_categories"]["delete_cat_name"] = None
                     st.rerun()
             
+            # If more than one category and transactions exist - move transactions to another category before deleting it
             else:
                 categories_names = [cat for cat in categories_names if cat != name]
                 new_category = st.selectbox(label="❗ Select another category to move the transactions from this one to.", options=categories_names)
@@ -107,7 +129,7 @@ def categories_config():
                 if st.button("✔️ Confirm", key="confirm_cat_delete"):
                     
                     # Move transactions to new category
-                    st.info(f"Moving transactions to '{new_category}'...")
+                    st.info(f"Moving transactions to '**{new_category}**'...")
                     transactions_api = st.session_state["api_transactions"]["service"]
                     transactions = st.session_state["api_transactions"]["cache"]["list"]
                     transactions_to_move = [transaction["id"] for transaction in transactions if transaction["category"]["name"] == name]

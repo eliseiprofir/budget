@@ -23,7 +23,5 @@ def budget_config_page():
         fetch_and_cache_data()
 
     locations_config()
-    st.markdown("---")
     buckets_config()
-    st.markdown("---")
     categories_config()
