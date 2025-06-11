@@ -8,7 +8,7 @@ A comprehensive full-stack application for managing personal and family finances
 - Project's GitHub Repository: https://github.com/eliseiprofir/budget
 
 ### 📧 Contact
-- Email: pro.elisei@gmail.com
+- Email: contact@elisei.pro
 - GitHub Profile: https://github.com/eliseiprofir
 - LinkedIn Profile: https://www.linkedin.com/in/eliseiprofir/
 
