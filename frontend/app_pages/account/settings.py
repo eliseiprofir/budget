@@ -39,4 +39,4 @@ def account_settings_page():
                 else:
                     st.error(f"Failed to update profile: {response}")
 
-    st.info("If you want to delete your account, please contact us at pro.elisei@gmail.com. We will remove all of your data within 7 days after receiving your request. Thank you!")
+    st.info("If you want to delete your account, please contact us at contact@elisei.pro. We will remove all of your data within 7 days after receiving your request. Thank you!")
