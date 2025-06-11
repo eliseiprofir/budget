@@ -5,7 +5,7 @@ def guide_page():
     st.title("📖 User Guide")
     
     st.markdown("""
-    Welcome to the Budget Management System User Guide! This document will help you understand how to use the app effectively.
+    Welcome to the Budget Management System User Guide! This guide will help you understand how to use the app effectively.
     """)
 
     st.markdown("""
@@ -121,4 +121,8 @@ def guide_page():
     
     st.success("""
     🤩 That's it! With these guidelines, you should be able to use the app efficiently and manage your finances with ease! Enjoy!
+    """)
+
+    st.write("""
+    If you encounter any errors or bugs, please email us at contact@elisei.pro with as many details as possible — ideally including screenshots. We'll get back to you with a solution as soon as we can. Thank you!
     """)
