@@ -67,6 +67,6 @@ def welcome_page():
         st.markdown("Project's GitHub Repository: https://github.com/eliseiprofir/budget")
         
         st.markdown("#### 📧 Contact")
-        st.markdown("Email: pro.elisei@gmail.com")
+        st.markdown("Email: contact@elisei.pro")
         st.markdown("GitHub Profile: https://github.com/eliseiprofir")
         st.markdown("LinkedIn Profile: https://www.linkedin.com/in/eliseiprofir/")
