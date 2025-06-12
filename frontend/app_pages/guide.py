@@ -9,7 +9,7 @@ def guide_page():
     """)
 
     st.markdown("""
-    #### 🔑 Key Concepts
+    ### 🔑 Key Concepts
     """)
     
     with st.expander("🏦 Locations", expanded=True):
@@ -47,9 +47,11 @@ def guide_page():
         2. Temporary transactions like loans. For example, if you borrow or lend money temporarily, these transactions won't affect your overall balance but show up on your reports.
         
         Categories help with reporting and understanding your spending patterns.
+        
+        Tip for names: Add a prefix to differentiate between positive ("+"), negative ("-") and neutral ("=") categories and find them easier when you add new transactions or filter them. You can also add prefixes to pair them with buckets/purposes (e.g. "-Necessities/Food", "-Necessities/Clothes","-Education/Books").
         """)
     
-    st.markdown("## 📝 Common Tasks")
+    st.markdown("### 📝 Common Tasks")
     
     with st.expander("🟢 How to Record Income", expanded=True):
         st.markdown("""
@@ -104,7 +106,7 @@ def guide_page():
         """)
     
     st.info("""
-    ## 🔍 Tips & Best Practices
+    ### 🔍 Tips & Best Practices
     - **Set up your locations, buckets, and categories** in order to be able to add transactions (see "Budget Configuration" page)
     - **Complete your bucket allocation** with proper allocation percentages before using split income (see "Budget Configuration" page)
     - **Regularly review** your transactions to ensure accuracy
@@ -114,15 +116,17 @@ def guide_page():
     """)
 
     st.warning("""
-    #### ⚠️ Important Warning
+    ### ⚠️ Important Warning
     **All changes made in this system are permanent.** Please be careful when adding, editing, or deleting data. 
     There is no automatic "undo" feature, so double-check your entries before confirming them.
     """)
     
     st.success("""
-    🤩 That's it! With these guidelines, you should be able to use the app efficiently and manage your finances with ease! Enjoy!
+    ### 🎉 That's it!
+    🤩 With these guidelines, you should be able to use the app efficiently and manage your finances with ease! Enjoy!
     """)
 
-    st.write("""
-    If you encounter any errors or bugs, please email us at contact@elisei.pro with as many details as possible — ideally including screenshots. We'll get back to you with a solution as soon as we can. Thank you!
+    st.error("""
+    ### ❗️ Bugs & Errors
+    If you encounter any bugs or errors, please email us at contact@elisei.pro with as many details as possible — ideally including screenshots. We'll get back to you with a solution as soon as we can. Thank you!
     """)
