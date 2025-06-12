@@ -9,7 +9,7 @@ def guide_page():
     """)
 
     st.markdown("""
-    If you're on mobile, use the arrow (>) in the top left corner to open the navigation bar with all pages.
+    📲 If you're on mobile, use the arrow (>) in the top left corner to open the navigation bar with all pages.
     """)
 
     st.markdown("""
