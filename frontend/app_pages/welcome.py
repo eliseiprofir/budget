@@ -61,11 +61,16 @@ def welcome_page():
         
         st.divider()
         
-        st.markdown("#### 🔗 Useful links")
+        st.markdown("#### 🔗 Useful app links")
         st.markdown("Backend / Django REST Framework: https://api.elisei.pro")
         st.markdown("Frontend / Streamlit App: https://app.elisei.pro")
         st.markdown("Project's GitHub Repository: https://github.com/eliseiprofir/budget")
         
+        st.markdown("#### 🧐 Demo acount")
+        st.markdown("- Username: demo@demo.com")
+        st.markdown("- Password: demo")
+        st.markdown("*Note: This account is created to see the application with random data, for demonstration purposes.*")
+
         st.markdown("#### 📧 Contact")
         st.markdown("Email: contact@elisei.pro")
         st.markdown("GitHub Profile: https://github.com/eliseiprofir")

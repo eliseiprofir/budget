@@ -12,5 +12,8 @@ python manage.py collectstatic --noinput
 # Create default superuser
 python manage.py createdefaultsuperuser
 
+# Create demo user
+python manage.py seeddemo
+
 # Start command
 exec gunicorn config.wsgi:application --bind 0.0.0.0:8000

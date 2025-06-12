@@ -77,6 +77,14 @@ clear: ## Clear database except for superusers
 	$(COMPOSE) $(COMPOSE_FILE) run --rm backend python budget/manage.py clear
 .PHONY: clear
 
+seeddemo: ## Seed database with demo data
+	$(COMPOSE) $(COMPOSE_FILE) run --rm backend python budget/manage.py seeddemo
+.PHONY: seeddemo
+
+cleardemo: ## Clear demo data
+	$(COMPOSE) $(COMPOSE_FILE) run --rm backend python budget/manage.py cleardemo
+.PHONY: cleardemo
+
 # Testing
 test: ## Run tests
 	$(COMPOSE) $(COMPOSE_FILE) run --rm backend python -m pytest budget/
