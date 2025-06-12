@@ -9,7 +9,8 @@ def process_current_status_data():
     """Prepare data for charts."""
     
     if not cache_fetched():
-        fetch_and_cache_data()
+        with st.spinner("Loading data..."):
+            fetch_and_cache_data()
     
     # Analytics API and unpacking data
     analytics_api = st.session_state["api_analytics"]["service"]
