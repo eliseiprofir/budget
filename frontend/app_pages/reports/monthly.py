@@ -13,7 +13,7 @@ def monthly_analytics():
     st.title("📅 Monthly report")
     st.write("Here you can view monthly reports of your transactions, broken down by category.")
     
-    if not cache_fetched():
+    with st.spinner("Loading data..."):
         fetch_and_cache_data()
     
     if not st.session_state["api_transactions"]["cache"]["list"]:
