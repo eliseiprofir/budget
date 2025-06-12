@@ -15,8 +15,9 @@ def budget_config_page():
     st.write("Here you can configure your budget application.")
     
     if st.button("🔄 Refresh data"):
-        clear_all_cache()
-        fetch_and_cache_data()
+        with st.spinner("Loading data..."):
+            clear_all_cache()
+            fetch_and_cache_data()
         st.rerun()
 
     if not cache_fetched():

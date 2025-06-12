@@ -20,12 +20,14 @@ def transactions_page():
     st.write("Here you can see, add and edit your transactions.")
     
     if st.button("🔄 Refresh data"):
-        clear_all_cache()
-        fetch_and_cache_data()
+        with st.spinner("Loading data..."):
+            clear_all_cache()
+            fetch_and_cache_data()
         st.rerun()
 
     if not cache_fetched():
-        fetch_and_cache_data()
+        with st.spinner("Loading data..."):
+            fetch_and_cache_data()
 
     # Transactions API and cache
     transactions_api = st.session_state["api_transactions"]["service"]
