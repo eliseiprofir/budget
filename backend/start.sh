@@ -12,7 +12,8 @@ python manage.py collectstatic --noinput
 # Create default superuser
 python manage.py createdefaultsuperuser
 
-# Create demo user
+# (Re)Create demo user
+python manage.py cleardemo
 python manage.py seeddemo
 
 # Start command

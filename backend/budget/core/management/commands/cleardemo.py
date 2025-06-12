@@ -40,43 +40,23 @@ class Command(BaseCommand):
             category_count + transaction_count
         )
 
-        # Show summary of all what will be deleted
-        self.stdout.write(self.style.WARNING(f"""
-You are about to delete the following records from the database:
-- {user.email} user
-- {location_count} locations
-- {bucket_count} buckets
-- {category_count} categories
-- {transaction_count} transactions
-- TOTAL records to be deleted: {total_count}
-"""))
-
-        should_proceed = True
-        if not options.get("no_input", False):
-            confirm = input("Are you sure you want to delete all these records? [y/N]: ")
-            should_proceed = confirm.lower() == "y"
-
-        if not should_proceed:
-            self.stdout.write(self.style.SUCCESS("\nOperation cancelled."))
-            return
-
         # Proceed with deletion
         self.stdout.write("\nDeleting records...")
 
         User.all_objects.filter(email=USER_EMAIL).delete()
-        self.stdout.write(self.style.NOTICE("✓ Users deleted (excluding superusers)"))
+        self.stdout.write(self.style.NOTICE(f"✓ {user.email} user deleted"))
 
         Location.all_objects.filter(user=user).delete()
-        self.stdout.write(self.style.NOTICE("✓ Locations deleted"))
+        self.stdout.write(self.style.NOTICE(f"✓ {location_count} Locations deleted"))
 
         Bucket.all_objects.filter(user=user).delete()
-        self.stdout.write(self.style.NOTICE("✓ Buckets deleted"))
+        self.stdout.write(self.style.NOTICE(f"✓ {bucket_count} Buckets deleted"))
 
         Category.all_objects.filter(user=user).delete()
-        self.stdout.write(self.style.NOTICE("✓ Categories deleted"))
+        self.stdout.write(self.style.NOTICE(f"✓ {category_count} Categories deleted"))
 
         Transaction.objects.filter(user=user).delete()
-        self.stdout.write(self.style.NOTICE("✓ Transactions deleted"))
+        self.stdout.write(self.style.NOTICE(f"✓ {transaction_count} Transactions deleted"))
 
         self.stdout.write(
             self.style.SUCCESS(
