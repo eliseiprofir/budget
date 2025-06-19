@@ -1,8 +1,8 @@
 # Budget Management System
 
-A comprehensive full-stack application for managing personal and family finances. Built with Django REST Framework backend and Streamlit frontend, containerized with Docker for seamless deployment and development.
+A comprehensive full-stack application for managing personal and family finances. The application uses Django and Django REST Framework for the backend, Streamlit for a fast, interactive frontend, and is fully containerized with Docker. It features JWT authentication, asynchronous task processing with Django Q, real-time balance analytics, and is deployed in production using Railway, Neon (PostgreSQL), and Upstash (Redis).
 
-### 🔗 Useful app links
+### 🔗 App links
 - Backend / Django REST Framework: https://api.elisei.pro
 - Frontend / Streamlit App: https://app.elisei.pro
 - Project's GitHub Repository: https://github.com/eliseiprofir/budget
