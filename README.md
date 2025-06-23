@@ -2,6 +2,23 @@
 
 A comprehensive full-stack application for managing personal and family finances. The application uses Django and Django REST Framework for the backend, Streamlit for a fast, interactive frontend, and is fully containerized with Docker. It features JWT authentication, asynchronous task processing with Django Q, real-time balance analytics, and is deployed in production using Railway, Neon (PostgreSQL), and Upstash (Redis).
 
+## ❓Why this kind of project?
+I've always been passionate about financial education and personal finance management. Knowing exactly where my money comes from and where it goes has helped me make smarter financial decisions and use my resources more wisely.
+
+This passion led me to create a fully customizable and user-friendly system for tracking both personal and family finances. I wanted a tool that provides clarity, structure, and insight—something that not only records transactions but helps make sense of them through intuitive organization and clear visualizations.
+
+By building this comprehensive full-stack application, I aimed to turn financial awareness into a daily habit—empowering users (including myself) to manage money with confidence and long-term perspective.
+
+### ✨ Main features
+- 🏦 **Multi-location Tracking**: Record transactions across multiple locations
+- 🪙 **Bucket System**: Organize your money into different financial purposes
+- ✂️ **Income Splitting**: Automatically distribute income across multiple financial buckets
+- 🔖 **Custom Categories**: Organize with customizable transaction categories
+- ↔️ **Inter-wallet Transfers**: Move funds between different locations and buckets with neutral transactions
+- 📊 **Comprehensive Analytics**: View monthly, yearly, and historical reports
+- 📈 **Visual Insights**: Make informed decisions with data visualizations
+- 📱 **Real-time Balance**: Track your current financial status across all locations and buckets
+
 ### 🔗 App links
 - Backend / Django REST Framework: https://api.elisei.pro
 - Frontend / Streamlit App: https://app.elisei.pro
@@ -10,7 +27,7 @@ A comprehensive full-stack application for managing personal and family finances
 ### 🧐 Demo acount
 - Email: demo@demo.com
 - Password: demo
-- Note: This account is created to see the application with random data.
+- Note: This account is created to see and the application with random data.
 
 ### 📧 Contact
 - Email: contact@elisei.pro
@@ -45,7 +62,7 @@ Our system consists of three main components:
 ## Project Overview
 
 This project demonstrates my expertise in:
-- Building complex full-stack applications
+- Building complex backend applications (and frontend with Streamlit)
 - Implementing secure authentication systems
 - Designing RESTful APIs
 - Working with databases and caching
