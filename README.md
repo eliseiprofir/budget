@@ -190,7 +190,7 @@ The project supports two main environments:
 
 1. **Clone the repository:**
 ```bash
-git clone https://github.com/yourusername/budget.git
+git clone https://github.com/eliseiprofir/budget.git
 cd budget
 ```
 
