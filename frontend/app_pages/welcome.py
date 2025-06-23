@@ -64,7 +64,7 @@ def welcome_page():
         st.markdown("#### 🔗 Useful app links")
         st.markdown("Backend / Django REST Framework: https://api.elisei.pro")
         st.markdown("Frontend / Streamlit App: https://app.elisei.pro")
-        st.markdown("Full documentation is available on the project's GitHub repository: https://github.com/eliseiprofir/budget")
+        st.markdown("GitHub Repository & Documentation: https://github.com/eliseiprofir/budget")
         
         st.markdown("#### 🧐 Demo acount")
         st.markdown("- Username: demo@demo.com")
