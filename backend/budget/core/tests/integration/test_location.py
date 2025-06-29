@@ -34,7 +34,7 @@ def test_list_location(
     assert response.status_code == status_code
 
     if status_code == status.HTTP_200_OK:
-        json = response.json()
+        json = response.json()["results"]
         assert len(json) == count
         if count > 0:
             ids = [location["id"] for location in json]
@@ -119,7 +119,7 @@ def test_superuser_sees_all_locations(
     admin_location.save()
 
     response = admin_apiclient.get("/api/locations/")
-    json = response.json()
+    json = response.json()["results"]
 
     assert response.status_code == status.HTTP_200_OK
     assert len(json) == 2

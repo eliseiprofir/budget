@@ -9,8 +9,8 @@ class CategoryQuerySet(QuerySet):
         if not user.is_authenticated:
             return self.none()
         if user.is_superuser:
-            return self.all()
-        return self.filter(user=user)
+            return self.all().select_related("user")
+        return self.filter(user=user).select_related("user")
 
 
 class TransactionQuerySet(QuerySet):
@@ -21,5 +21,5 @@ class TransactionQuerySet(QuerySet):
         if not user.is_authenticated:
             return self.none()
         if user.is_superuser:
-            return self.all()
-        return self.filter(user=user)
+            return self.all().select_related("category", "location", "bucket", "user")
+        return self.filter(user=user).select_related("category", "location", "bucket", "user")

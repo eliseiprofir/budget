@@ -34,7 +34,7 @@ def test_list_category(
     assert response.status_code == status_code
 
     if status_code == status.HTTP_200_OK:
-        json = response.json()
+        json = response.json()["results"]
         assert len(json) == count
         if count > 0:
             ids = [category["id"] for category in json]
@@ -117,7 +117,7 @@ def test_superuser_sees_all_categories(
     admin_category.save()
 
     response = admin_apiclient.get("/api/categories/")
-    json = response.json()
+    json = response.json()["results"]
 
     assert response.status_code == status.HTTP_200_OK
     assert len(json) == 2

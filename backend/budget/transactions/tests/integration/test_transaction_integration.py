@@ -1,5 +1,7 @@
 import pytest
 
+from django.core.cache import cache
+
 from rest_framework import status
 from rest_framework.test import APIClient
 
@@ -25,6 +27,8 @@ def test_list_transaction(
     count: int,
     user: User,
 ):
+    cache.clear()
+    
     client: APIClient = request.getfixturevalue(client)
 
     transaction.user = user
@@ -35,7 +39,7 @@ def test_list_transaction(
     assert response.status_code == status_code
 
     if status_code == status.HTTP_200_OK:
-        json = response.json()
+        json = response.json()["results"]
         assert len(json) == count
         if count > 0:
             ids = [transaction["id"] for transaction in json]
@@ -78,6 +82,8 @@ def test_superuser_sees_all_transactions(
     user: User,
 ):
     """Test that superuser can see all transactions."""
+    cache.clear()
+
     user_transaction = baker.make_recipe(transaction_recipe)
     user_transaction.user = user
     user_transaction.save()
@@ -87,7 +93,7 @@ def test_superuser_sees_all_transactions(
     admin_transaction.save()
 
     response = admin_apiclient.get("/api/transactions/")
-    json = response.json()
+    json = response.json()["results"]
 
     assert response.status_code == status.HTTP_200_OK
     assert len(json) == 2

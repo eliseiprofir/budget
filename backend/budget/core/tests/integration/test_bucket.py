@@ -34,7 +34,7 @@ def test_list_bucket(
     assert response.status_code == status_code
 
     if status_code == status.HTTP_200_OK:
-        json = response.json()
+        json = response.json()["results"]
         assert len(json) == count
         if count > 0:
             ids = [bucket["id"] for bucket in json]
@@ -116,7 +116,7 @@ def test_superuser_sees_all_buckets(
     admin_bucket = baker.make_recipe(bucket_recipe, user=admin_user, allocation_percentage=99)
 
     response = admin_apiclient.get("/api/buckets/")
-    json = response.json()
+    json = response.json()["results"]
 
     assert response.status_code == status.HTTP_200_OK
     assert len(json) == 2

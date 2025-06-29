@@ -56,6 +56,9 @@ class User(UUIDModel, AbstractUser, TimeStampedModel, SoftDeletableModel):
         verbose_name = "User"
         verbose_name_plural = "Users"
         ordering = ("-created",)
+        indexes = [
+            models.Index(fields=["email"], name="user_email_idx"),
+        ]
 
     def clean_email(self) -> None:
         """Ensure that the email is lowercase"""

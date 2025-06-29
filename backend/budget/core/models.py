@@ -61,6 +61,9 @@ class Location(UUIDModel, SoftDeletableModel):
         verbose_name = "Location"
         verbose_name_plural = "Locations"
         ordering = ("name",)
+        indexes = [
+            models.Index(fields=["user", "name"], name="location_user_name_idx"),
+        ]
 
 
 class Bucket(UUIDModel, SoftDeletableModel):
@@ -177,3 +180,6 @@ class Bucket(UUIDModel, SoftDeletableModel):
         verbose_name = "Bucket"
         verbose_name_plural = "Buckets"
         ordering = ("name",)
+        indexes = [
+            models.Index(fields=["user", "name"], name="bucket_user_name_idx"),
+        ]

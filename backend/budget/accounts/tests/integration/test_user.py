@@ -10,7 +10,7 @@ from accounts.models import User
 @pytest.mark.parametrize(
     ("client", "status_code", "count"),
     [
-        ("apiclient", status.HTTP_200_OK, 0),
+        ("apiclient", status.HTTP_401_UNAUTHORIZED, 0),
         ("authenticated_apiclient", status.HTTP_200_OK, 1),
     ],
 )
@@ -31,7 +31,7 @@ def test_list_user(
 
     assert response.status_code == status_code
     if status_code == status.HTTP_200_OK:
-        json = response.json()
+        json = response.json()["results"]
         assert len(json) == count
         if count > 0:
             assert str(json[0]["id"]) == str(user.id)
@@ -102,7 +102,6 @@ def test_create_user(
 def test_user_cannot_access_other_profile(
     authenticated_apiclient: APIClient,
     user_recipe: str,
-    user: User,
 ):
     """Test that a user cannot access another user's profile."""
     other_user = baker.make_recipe(user_recipe)
@@ -122,7 +121,7 @@ def test_superuser_sees_all_users(
     user = baker.make_recipe(user_recipe)
 
     response = admin_apiclient.get("/api/users/")
-    json = response.json()
+    json = response.json()["results"]
 
     assert response.status_code == status.HTTP_200_OK
     assert len(json) >= 2 # admin_user, user

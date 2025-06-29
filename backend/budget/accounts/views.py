@@ -3,6 +3,9 @@ from rest_framework import mixins
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import AllowAny
+from rest_framework.pagination import PageNumberPagination
+
+from django_filters.rest_framework import DjangoFilterBackend
 
 from accounts.models import User
 from accounts.serializers import UserListSerializer
@@ -11,6 +14,12 @@ from accounts.serializers import UserCreateSerializer
 from accounts.serializers import UserUpdateSerializer
 
 from .permissions import IsOwner
+
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 50
+    page_size_query_param = "page_size"
+    max_page_size = 100
 
 
 class UserViewSet(
@@ -25,10 +34,15 @@ class UserViewSet(
     permission_classes = (IsAuthenticated, IsOwner)
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("created",)
+    filter_backends = (DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter)
+    filterset_fields = ("created", "last_login",)
+    ordering_fields = ("full_name", "email",)
+    search_fields = ("full_name", "email")
+    pagination_class = StandardResultsSetPagination
 
     def get_permissions(self):
         """Return permissions depending on action."""
-        if self.action in ["create", "list"]:
+        if self.action == "create":
             permission_classes = [AllowAny]
         else:
             permission_classes = [IsAuthenticated, IsOwner]
