@@ -69,7 +69,7 @@ def current_analytics():
     st.title("💰 Money distribution")
     st.write("Here you can see the current distribution of your available money across different locations and buckets.")
     
-    if not st.session_state["api_transactions"]["cache"]["list"]:
+    if not st.session_state["api_transactions"]["cache"]["has_transactions"]:
         st.warning("No transactions yet. Come back here when you add some transactions.")
         return
     

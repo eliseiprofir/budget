@@ -53,7 +53,7 @@ def yearly_analytics():
     st.title("🗓️ Yearly report")
     st.write("Here you can view yearly reports of your transactions, broken down by category and month.")
     
-    if not st.session_state["api_transactions"]["cache"]["list"]:
+    if not st.session_state["api_transactions"]["cache"]["has_transactions"]:
         st.warning("No transactions yet. Come back here when you add some transactions.")
         return
 

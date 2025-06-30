@@ -77,7 +77,7 @@ def locations_config():
             col1.write(f"Name: **{name}**")
 
             # If only one location and no transactions
-            if len(st.session_state["api_locations"]["cache"]["names"]) == 1 and len(st.session_state["api_transactions"]["cache"]["list"]) == 0:
+            if len(st.session_state["api_locations"]["cache"]["names"]) == 1 and len(st.session_state["api_transactions"]["cache"]["all_transactions"]) == 0:
                 st.warning(f"Are you sure you want to delete this location: **{st.session_state['api_locations']['delete_loc_name']}**?")
                 
                 if st.button("✔️ Confirm", key="confirm_loc_delete"):
@@ -118,7 +118,7 @@ def locations_config():
                     # Move transactions to new location
                     with st.spinner(f"Moving transactions to '**{new_location}**'..."):
                         transactions_api = st.session_state["api_transactions"]["service"]
-                        transactions = st.session_state["api_transactions"]["cache"]["list"]
+                        transactions = st.session_state["api_transactions"]["cache"]["all_transactions"]
                         transactions_to_move = [transaction["id"] for transaction in transactions if transaction["location"]["name"] == name]
                         for transaction_id in transactions_to_move:
                             response = transactions_api.update_transaction_location(transaction_id, new_location_id)

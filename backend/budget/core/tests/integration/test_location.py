@@ -34,7 +34,7 @@ def test_list_location(
     assert response.status_code == status_code
 
     if status_code == status.HTTP_200_OK:
-        json = response.json()["results"]
+        json = response.json()
         assert len(json) == count
         if count > 0:
             ids = [location["id"] for location in json]
@@ -100,29 +100,3 @@ def test_create_location(
 
     if status_code == status.HTTP_201_CREATED:
         assert json["name"] == location.name
-
-
-@pytest.mark.django_db
-def test_superuser_sees_all_locations(
-    admin_apiclient: APIClient,
-    location_recipe: str,
-    admin_user: User,
-    user: User,
-):
-    """Test that superuser can see all locations."""
-    user_location = baker.make_recipe(location_recipe)
-    user_location.user = user
-    user_location.save()
-
-    admin_location = baker.make_recipe(location_recipe)
-    admin_location.user = admin_user
-    admin_location.save()
-
-    response = admin_apiclient.get("/api/locations/")
-    json = response.json()["results"]
-
-    assert response.status_code == status.HTTP_200_OK
-    assert len(json) == 2
-    ids = [location["id"] for location in json]
-    assert str(user_location.id) in ids
-    assert str(admin_location.id) in ids

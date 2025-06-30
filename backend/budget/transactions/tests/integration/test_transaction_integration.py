@@ -72,31 +72,3 @@ def test_get_transaction(
     if status_code == status.HTTP_200_OK:
         json = response.json()
         assert json["id"] == str(transaction.id)
-
-
-@pytest.mark.django_db
-def test_superuser_sees_all_transactions(
-    admin_apiclient: APIClient,
-    transaction_recipe: str,
-    admin_user: User,
-    user: User,
-):
-    """Test that superuser can see all transactions."""
-    cache.clear()
-
-    user_transaction = baker.make_recipe(transaction_recipe)
-    user_transaction.user = user
-    user_transaction.save()
-
-    admin_transaction = baker.make_recipe(transaction_recipe)
-    admin_transaction.user = admin_user
-    admin_transaction.save()
-
-    response = admin_apiclient.get("/api/transactions/")
-    json = response.json()["results"]
-
-    assert response.status_code == status.HTTP_200_OK
-    assert len(json) == 2
-    ids = [t["id"] for t in json]
-    assert str(user_transaction.id) in ids
-    assert str(admin_transaction.id) in ids

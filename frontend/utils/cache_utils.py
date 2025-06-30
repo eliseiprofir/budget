@@ -1,7 +1,7 @@
 import streamlit as st
 
 
-def update_cache(entity_type: str):
+def update_cache(entity_type: str, page: int = 1):
     """Update specific entity data in cache after change."""
 
     if entity_type == "locations":
@@ -19,8 +19,14 @@ def update_cache(entity_type: str):
         st.session_state["api_categories"]["cache"]["signs"] = st.session_state["api_categories"]["service"].get_categories_sings()
     
     elif entity_type == "transactions":
-        st.session_state["api_transactions"]["cache"]["list"] = st.session_state["api_transactions"]["service"].get_transactions()
-    
+        st.session_state["api_transactions"]["cache"]["current_page"] = page
+        st.session_state["api_transactions"]["cache"]["by_page"] = {}
+        st.session_state["api_transactions"]["cache"]["by_page"][page] = st.session_state["api_transactions"]["service"].get_transactions_page(page=page)["results"]
+        st.session_state["api_transactions"]["cache"]["all_transactions"] = st.session_state["api_transactions"]["service"].get_all_transactions()
+        st.session_state["api_transactions"]["cache"]["pages_count"] = st.session_state["api_transactions"]["service"].get_pages_count()
+        st.session_state["api_transactions"]["cache"]["transactions_count"] = st.session_state["api_transactions"]["service"].get_transactions_count()
+        st.session_state["api_transactions"]["cache"]["has_transactions"] = st.session_state["api_transactions"]["cache"]["transactions_count"] > 0
+
     elif entity_type == "analytics":
         st.session_state["api_analytics"]["cache"]["years"] = st.session_state["api_analytics"]["service"].get_years()
 

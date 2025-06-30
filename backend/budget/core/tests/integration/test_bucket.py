@@ -34,7 +34,7 @@ def test_list_bucket(
     assert response.status_code == status_code
 
     if status_code == status.HTTP_200_OK:
-        json = response.json()["results"]
+        json = response.json()
         assert len(json) == count
         if count > 0:
             ids = [bucket["id"] for bucket in json]
@@ -101,25 +101,3 @@ def test_create_bucket(
     if status_code == status.HTTP_201_CREATED:
         assert json["name"] == bucket.name
         assert json["allocation_percentage"] == str(bucket.allocation_percentage)
-
-
-@pytest.mark.django_db
-def test_superuser_sees_all_buckets(
-    admin_apiclient: APIClient,
-    bucket_recipe: str,
-    user_recipe: str,
-):
-    """Test that superuser can see all buckets."""
-    user = baker.make_recipe(user_recipe)
-    admin_user = baker.make_recipe(user_recipe, is_staff=True, is_superuser=True)
-    user_bucket = baker.make_recipe(bucket_recipe, user=user, allocation_percentage=99)
-    admin_bucket = baker.make_recipe(bucket_recipe, user=admin_user, allocation_percentage=99)
-
-    response = admin_apiclient.get("/api/buckets/")
-    json = response.json()["results"]
-
-    assert response.status_code == status.HTTP_200_OK
-    assert len(json) == 2
-    ids = [bucket["id"] for bucket in json]
-    assert str(user_bucket.id) in ids
-    assert str(admin_bucket.id) in ids

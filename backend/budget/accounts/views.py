@@ -16,12 +16,6 @@ from accounts.serializers import UserUpdateSerializer
 from .permissions import IsOwner
 
 
-class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 50
-    page_size_query_param = "page_size"
-    max_page_size = 100
-
-
 class UserViewSet(
     viewsets.GenericViewSet,
     mixins.ListModelMixin,
@@ -38,7 +32,6 @@ class UserViewSet(
     filterset_fields = ("created", "last_login",)
     ordering_fields = ("full_name", "email",)
     search_fields = ("full_name", "email")
-    pagination_class = StandardResultsSetPagination
 
     def get_permissions(self):
         """Return permissions depending on action."""

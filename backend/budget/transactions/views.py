@@ -45,7 +45,6 @@ class CategoryViewSet(
     filterset_fields = ("sign",)
     ordering_fields = ("name", "sign",)
     search_fields = ("name",)
-    pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
         """Retrieve a custom queryset for categories based on the current user."""
@@ -109,12 +108,8 @@ class TransactionViewSet(
     def perform_update(self, serializer):
         serializer.save(user=self.request.user)
 
-    @method_decorator(cache_page(60 * 5))
-    @method_decorator(vary_on_cookie)
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
-        
-    @method_decorator(cache_page(60 * 5))
-    @method_decorator(vary_on_cookie)
+
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)

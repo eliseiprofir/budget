@@ -5,24 +5,51 @@ from .auth import AuthAPIService
 class TransactionAPIService(AuthAPIService):
     """API service for transactions."""
 
-    def _get_cached_transactions(self):
-        """Get or fetch transaction types data."""
-        if not hasattr(self, "_transactions_data") or self._transactions_data is None:
-            try:
-                response = requests.get(
-                    f"{self.base_url}/transactions/",
-                    headers=self.headers,
-                )
-                response.raise_for_status()
-                self._transactions_data = response.json()
-            except requests.exceptions.RequestException as e:
-                return f"Error: {str(e)}. Response: {response.text}"
-        return self._transactions_data
-
-    def get_transactions(self):
-        """Get all transactions data for the current user."""
+    def get_transactions_page(self, page=1, page_size=50):
+        """Get paginated transactions data."""
         self._update()
-        return self._get_cached_transactions()
+        try:
+            response = requests.get(
+                f"{self.base_url}/transactions/",
+                headers=self.headers,
+                params={"page": page, "page_size": page_size},
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            return f"Error: {str(e)}. Response: {response.text}"
+
+    def _get_cached_all_transactions(self):
+        """Get or fetch all transactions data."""
+        if not hasattr(self, "_all_transactions") or self._all_transactions is None:
+            self._update()
+            all_transactions = self.get_transactions_page()
+            page = 2
+
+            while True:
+                data = self.get_transactions_page(page=page)
+                if isinstance(data, str):  # Error
+                    return data
+                all_transactions["results"].extend(data["results"])
+                if data["next"] is None:
+                    break
+                page += 1
+
+            self._all_transactions = all_transactions
+        
+        return self._all_transactions
+
+    def get_all_transactions(self):
+        """Get all transactions by fetching all pages."""
+        return self._get_cached_all_transactions()
+
+    def get_transactions_count(self):
+        """Get total number of transactions."""
+        return self._get_cached_all_transactions()["count"]
+
+    def get_pages_count(self, page_size: int = 50):
+        """Get total number of pages."""
+        return (self._get_cached_all_transactions()["count"] + 49) // page_size
 
     def get_one_transaction(self, transaction_id: str):
         """Get one transaction data."""
@@ -39,8 +66,8 @@ class TransactionAPIService(AuthAPIService):
 
     def _clear_cache(self):
         """Clear the cached transaction types data."""
-        if hasattr(self, "_transactions_data"):
-            self._transactions_data = None
+        if hasattr(self, "_all_transactions"):
+            self._all_transactions = None
 
     def add_transaction(
         self,
