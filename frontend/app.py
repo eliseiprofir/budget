@@ -8,6 +8,8 @@ from services.categories import CategoriesAPIService
 from services.transactions import TransactionAPIService
 from services.analytics import AnalyticsAPIService
 
+from utils.cache_utils import fetch_and_cache_data
+
 from app_pages.account.auth_login import login_page
 from app_pages.account.auth_signup import signup_page
 from app_pages.account.auth_signout import signout_page
@@ -87,7 +89,11 @@ if "api_transactions" not in st.session_state:
         "new_data": None,
         "filter_mode": False,
         "add_form": False,
-        "cache": {},
+        "cache": {
+            "info": {},
+            "by_page": {},
+            "all_transactions": {},
+        },
     }
     st.session_state["api_transactions"]["service"] = TransactionAPIService()
 

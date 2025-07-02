@@ -1,6 +1,31 @@
 import streamlit as st
 
 
+def get_or_fetch_transactions_page(page: int = 1):
+    """Get or fetch transactions page."""
+    if page in st.session_state["api_transactions"]["cache"]["by_page"]:
+        return st.session_state["api_transactions"]["cache"]["by_page"][page]
+    else:
+        update_cache("transactions_by_page", page=page)
+        return st.session_state["api_transactions"]["cache"]["by_page"][page]
+    
+
+def get_or_fetch_all_transactions():
+    """Get or fetch all transactions."""
+    if st.session_state["api_transactions"]["cache"]["by_page"] == {}:
+        update_cache("all_transactions")
+        return st.session_state["api_transactions"]["cache"]["all_transactions"]
+    else:
+        for page in range(1, st.session_state["api_transactions"]["cache"]["info"]["pages_count"] + 1):
+            if page == 1:
+                st.session_state["api_transactions"]["cache"]["all_transactions"] = get_or_fetch_transactions_page(page)
+                continue
+            else:
+                transactions = get_or_fetch_transactions_page(page)
+                st.session_state["api_transactions"]["cache"]["all_transactions"].extend(transactions)
+        return st.session_state["api_transactions"]["cache"]["all_transactions"]
+
+
 def update_cache(entity_type: str, page: int = 1):
     """Update specific entity data in cache after change."""
 
@@ -17,15 +42,18 @@ def update_cache(entity_type: str, page: int = 1):
         st.session_state["api_categories"]["cache"]["list"] = st.session_state["api_categories"]["service"].get_categories_list()
         st.session_state["api_categories"]["cache"]["names"] = st.session_state["api_categories"]["service"].get_categories_names()
         st.session_state["api_categories"]["cache"]["signs"] = st.session_state["api_categories"]["service"].get_categories_sings()
-    
-    elif entity_type == "transactions":
-        st.session_state["api_transactions"]["cache"]["current_page"] = page
-        st.session_state["api_transactions"]["cache"]["by_page"] = {}
+
+    elif entity_type == "transactions_info":
+        st.session_state["api_transactions"]["cache"]["info"]["current_page"] = page
+        st.session_state["api_transactions"]["cache"]["info"]["pages_count"] = st.session_state["api_transactions"]["service"].get_pages_count()
+        st.session_state["api_transactions"]["cache"]["info"]["transactions_count"] = st.session_state["api_transactions"]["service"].get_transactions_count()
+        st.session_state["api_transactions"]["cache"]["info"]["has_transactions"] = st.session_state["api_transactions"]["cache"]["info"]["transactions_count"] > 0
+
+    elif entity_type == "transactions_by_page":
         st.session_state["api_transactions"]["cache"]["by_page"][page] = st.session_state["api_transactions"]["service"].get_transactions_page(page=page)["results"]
+            
+    elif entity_type == "all_transactions":
         st.session_state["api_transactions"]["cache"]["all_transactions"] = st.session_state["api_transactions"]["service"].get_all_transactions()
-        st.session_state["api_transactions"]["cache"]["pages_count"] = st.session_state["api_transactions"]["service"].get_pages_count()
-        st.session_state["api_transactions"]["cache"]["transactions_count"] = st.session_state["api_transactions"]["service"].get_transactions_count()
-        st.session_state["api_transactions"]["cache"]["has_transactions"] = st.session_state["api_transactions"]["cache"]["transactions_count"] > 0
 
     elif entity_type == "analytics":
         st.session_state["api_analytics"]["cache"]["years"] = st.session_state["api_analytics"]["service"].get_years()
@@ -51,7 +79,11 @@ def clear_cache(entity_type: str):
     
     elif entity_type == "transactions":
         st.session_state["api_transactions"]["service"]._clear_cache()
-        st.session_state["api_transactions"]["cache"] = {}
+        st.session_state["api_transactions"]["cache"] = {
+            "info": {},
+            "by_page": {},
+            "all_transactions": {},
+        }
     
     elif entity_type == "analytics":
         st.session_state["api_analytics"]["cache"] = {}
@@ -60,12 +92,15 @@ def clear_cache(entity_type: str):
         raise ValueError(f"Invalid entity type: {entity_type}")
 
 
-def fetch_and_cache_data():
+def fetch_and_cache_data(all_transactions: bool = False):
     """Fetch all data and cache it in session state."""
     update_cache("locations")
     update_cache("buckets")
     update_cache("categories")
-    update_cache("transactions")
+    update_cache("transactions_info")
+    update_cache("transactions_by_page")
+    if all_transactions:
+        update_cache("all_transactions")
     update_cache("analytics")
 
 

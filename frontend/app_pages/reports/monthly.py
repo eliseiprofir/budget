@@ -13,7 +13,7 @@ def monthly_analytics():
     st.title("📅 Monthly report")
     st.write("Here you can view monthly reports of your transactions, broken down by category.")
     
-    if not st.session_state["api_transactions"]["cache"]["has_transactions"]:
+    if not st.session_state["api_transactions"]["cache"]["info"]["has_transactions"]:
         st.warning("No transactions yet. Come back here when you add some transactions.")
         return
 
