@@ -24,8 +24,10 @@ def transactions_page():
     
     if st.button("🔄 Refresh data"):
         with st.spinner("Loading data..."):
-            clear_all_cache()
-            fetch_and_cache_data()
+            update_cache([
+                "transactions_info",
+                "transactions_by_page"
+            ])
         st.rerun()
     
     if not cache_fetched():

@@ -4,9 +4,7 @@ from .locations import locations_config
 from .buckets import buckets_config
 from .categories import categories_config
 
-from utils.cache_utils import fetch_and_cache_data
-from utils.cache_utils import clear_all_cache
-from utils.cache_utils import cache_fetched
+from utils.cache_utils import update_cache
 
 def budget_config_page():
     """Settings page for budget application."""
@@ -16,12 +14,13 @@ def budget_config_page():
     
     if st.button("🔄 Refresh data"):
         with st.spinner("Loading data..."):
-            clear_all_cache()
-            fetch_and_cache_data()
+            update_cache([
+                "locations",
+                "buckets",
+                "categories",
+                "transactions_info"
+            ])
         st.rerun()
-
-    if not cache_fetched():
-        fetch_and_cache_data()
 
     locations_config()
     buckets_config()

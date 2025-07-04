@@ -1,11 +1,16 @@
 import time
 import streamlit as st
+
 from utils.cache_utils import update_cache
+from utils.cache_utils import clear_cache
+
+from utils.cache_utils import get_or_fetch_locations_names
+
+from utils.cache_utils import get_or_fetch_all_transactions
 
 COL1 = 8
 COL2 = 3
 COL3 = 3
-
 
 def locations_config():
     """Settings section for locations."""
@@ -15,8 +20,7 @@ def locations_config():
 
     # Location API and cache
     locations_api = st.session_state["api_locations"]["service"]
-    cache = st.session_state["api_locations"]["cache"]
-    locations = cache["names"]
+    locations = get_or_fetch_locations_names()
 
     # Form for adding a new location
     with st.form("add_location"):
@@ -33,7 +37,7 @@ def locations_config():
                 response = locations_api.add_location(new_location)
                 if isinstance(response, dict):
                     st.success("Location added!")
-                    update_cache("locations")
+                    update_cache(["locations"])
                     time.sleep(1)
                     st.rerun()
                 else:
@@ -59,14 +63,13 @@ def locations_config():
                         locations += [new_name]
                         st.session_state["api_locations"]["edit_loc_name"] = None
                         st.success("Location updated!")
-                        locations_api._clear_cache()
-                        update_cache("locations")
+                        update_cache(["locations"])
                         time.sleep(1)
                         st.rerun()
                     else:
                         st.error(response)
             
-            update_cache("transactions")
+                clear_cache(["transactions"])
             
             if st.button("✖️ Cancel", key=f"cancel_loc_{name}"):
                 st.session_state["api_locations"]["edit_loc_name"] = None
@@ -86,7 +89,7 @@ def locations_config():
                     response = locations_api.delete_location(st.session_state["api_locations"]["delete_loc_name"])
                     if isinstance(response, dict):
                         st.success("Location deleted!")
-                        update_cache("locations")
+                        update_cache(["locations"])
                         st.session_state["api_locations"]["delete_loc_name"] = None
                         time.sleep(1)
                         st.rerun()
@@ -118,19 +121,19 @@ def locations_config():
                     # Move transactions to new location
                     with st.spinner(f"Moving transactions to '**{new_location}**'..."):
                         transactions_api = st.session_state["api_transactions"]["service"]
-                        transactions = st.session_state["api_transactions"]["cache"]["all_transactions"]
+                        transactions = get_or_fetch_all_transactions()
                         transactions_to_move = [transaction["id"] for transaction in transactions if transaction["location"]["name"] == name]
                         for transaction_id in transactions_to_move:
                             response = transactions_api.update_transaction_location(transaction_id, new_location_id)
                             if not isinstance(response, dict):
                                 st.error(response)
-                        update_cache("transactions")
+                        clear_cache(["transactions"])
 
                     # Delete location
                     response = locations_api.delete_location(st.session_state["api_locations"]["delete_loc_name"])
                     if isinstance(response, dict):
                         st.success("Location deleted!")
-                        update_cache("locations")
+                        update_cache(["locations"])
                         st.session_state["api_locations"]["delete_loc_name"] = None
                         time.sleep(1)
                         st.rerun()

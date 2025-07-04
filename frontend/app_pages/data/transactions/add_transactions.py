@@ -1,7 +1,9 @@
 import time
 import streamlit as st
 
-from utils.cache_utils import fetch_and_cache_data
+from utils.cache_utils import get_or_fetch_locations_names
+from utils.cache_utils import get_or_fetch_buckets_names
+from utils.cache_utils import get_or_fetch_categories_names
 
 
 def add_transactions_form():
@@ -14,12 +16,10 @@ def add_transactions_form():
     categories_api = st.session_state["api_categories"]["service"]
     locations_api = st.session_state["api_locations"]["service"]
     buckets_api = st.session_state["api_buckets"]["service"]
-
-    fetch_and_cache_data()
     
-    categories = st.session_state["api_categories"]["cache"]["names"]
-    buckets = st.session_state["api_buckets"]["cache"]["names"]
-    locations = st.session_state["api_locations"]["cache"]["names"]
+    categories = get_or_fetch_categories_names()
+    buckets = get_or_fetch_buckets_names()
+    locations = get_or_fetch_locations_names()
 
     if len(locations) < 1:
         st.warning("🏦 No locations found. 🧐 Please create at least one before adding transactions. You can do this on \"Budget Configuration\" page.")

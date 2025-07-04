@@ -1,6 +1,13 @@
 import time
 import streamlit as st
+
 from utils.cache_utils import update_cache
+from utils.cache_utils import clear_cache
+
+from utils.cache_utils import get_or_fetch_categories_names
+from utils.cache_utils import get_or_fetch_categories_list
+
+from utils.cache_utils import get_or_fetch_all_transactions
 
 OPTIONS = ("POSITIVE", "NEGATIVE", "NEUTRAL")
 
@@ -17,9 +24,8 @@ def categories_config():
     
     # Category API and cache
     categories_api = st.session_state["api_categories"]["service"]
-    cache = st.session_state["api_categories"]["cache"]
-    categories = cache["list"]
-    categories_names = cache["names"]
+    categories = get_or_fetch_categories_list()
+    categories_names = get_or_fetch_categories_names()
 
     # Form for adding a new category
     with st.form("add_category"):
@@ -38,7 +44,7 @@ def categories_config():
                 if isinstance(response, dict):
                     st.session_state["api_categories"]["edit_cat_name"] = None
                     st.success("Category added!")
-                    update_cache("categories")
+                    update_cache(["categories"])
                     time.sleep(1)
                     st.rerun()
                 else:
@@ -72,13 +78,13 @@ def categories_config():
                         categories_names += [new_name]
                         st.session_state["api_categories"]["edit_cat_name"] = None
                         st.success("Category updated!")
-                        update_cache("categories")
+                        update_cache(["categories"])
                         time.sleep(1)
                         st.rerun()
                     else:
                         st.error(response)
 
-            update_cache("transactions")
+                clear_cache(["transactions"])
             
             if st.button("✖️ Cancel", key=f"cancel_cat_{name}"):
                 st.session_state["api_categories"]["edit_cat_name"] = None
@@ -99,7 +105,7 @@ def categories_config():
                     response = categories_api.delete_category(st.session_state["api_categories"]["delete_cat_name"])
                     if isinstance(response, dict):
                         st.success("Category deleted!")
-                        update_cache("categories")
+                        update_cache(["categories"])
                         st.session_state["api_categories"]["delete_cat_name"] = None
                         time.sleep(1)
                         st.rerun()
@@ -131,19 +137,19 @@ def categories_config():
                     # Move transactions to new category
                     with st.spinner(f"Moving transactions to '**{new_category}**'..."):
                         transactions_api = st.session_state["api_transactions"]["service"]
-                        transactions = st.session_state["api_transactions"]["cache"]["list"]
+                        transactions = get_or_fetch_all_transactions()
                         transactions_to_move = [transaction["id"] for transaction in transactions if transaction["category"]["name"] == name]
                         for transaction_id in transactions_to_move:
                             response = transactions_api.update_transaction_category(transaction_id, new_category_id)
                             if not isinstance(response, dict):
                                 st.error(response)
-                        update_cache("transactions")
+                        clear_cache(["transactions"])
 
                     # Delete category
                     response = categories_api.delete_category(st.session_state["api_categories"]["delete_cat_name"])
                     if isinstance(response, dict):
                         st.success("Category deleted!")
-                        update_cache("categories")
+                        update_cache(["categories"])
                         st.session_state["api_categories"]["delete_cat_name"] = None
                         time.sleep(1)
                         st.rerun()

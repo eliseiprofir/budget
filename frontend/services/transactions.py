@@ -40,7 +40,7 @@ class TransactionAPIService(AuthAPIService):
     
     def get_transactions_first_page(self, page=1, page_size=50):
         """Get first page of transactions data."""
-        return self._get_transactions_first_page(page=page, page_size=page_size)
+        return self._get_cached_transactions_first_page(page=page, page_size=page_size)
 
     def _get_cached_all_transactions(self):
         """Get or fetch all transactions data."""

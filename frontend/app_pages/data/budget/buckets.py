@@ -1,6 +1,16 @@
 import time
 import streamlit as st
+
 from utils.cache_utils import update_cache
+from utils.cache_utils import clear_cache
+
+from utils.cache_utils import get_or_fetch_buckets_names
+from utils.cache_utils import get_or_fetch_buckets_list
+from utils.cache_utils import get_or_fetch_buckets_allocation_status
+from utils.cache_utils import get_or_fetch_buckets_total_allocation
+
+from utils.cache_utils import get_or_fetch_all_transactions
+
 
 COL1 = 4
 COL2 = 4
@@ -15,11 +25,10 @@ def buckets_config():
     
     # Bucket API and cache
     buckets_api = st.session_state["api_buckets"]["service"]
-    cache = st.session_state["api_buckets"]["cache"]
-    buckets = cache["list"]
-    buckets_names = cache["names"]
-    allocation_status = cache["allocation_status"]
-    total_allocation = cache["total_allocation"]
+    buckets = get_or_fetch_buckets_list()
+    buckets_names = get_or_fetch_buckets_names()
+    allocation_status = get_or_fetch_buckets_allocation_status()
+    total_allocation = get_or_fetch_buckets_total_allocation()
 
     # Form for adding a new bucket
     with st.form("add_bucket"):
@@ -45,7 +54,7 @@ def buckets_config():
                 if isinstance(response, dict):
                     st.session_state["api_buckets"]["edit_buc_name"] = None
                     st.success("Bucket added!")
-                    update_cache("buckets")
+                    update_cache(["buckets"])
                     time.sleep(1)
                     st.rerun()
                 else:
@@ -77,13 +86,13 @@ def buckets_config():
                         buckets_names += [new_name]
                         st.session_state["api_buckets"]["edit_buc_name"] = None
                         st.success("Bucket updated!")
-                        update_cache("buckets")
+                        update_cache(["buckets"])
                         time.sleep(1)
                         st.rerun()
                     else:
                         st.error(response)
 
-            update_cache("transactions")
+                clear_cache(["transactions"])
             
             if st.button("✖️ Cancel", key=f"cancel_buc_{name}"):
                 st.session_state["api_buckets"]["edit_buc_name"] = None
@@ -104,7 +113,7 @@ def buckets_config():
                     response = buckets_api.delete_bucket(st.session_state["api_buckets"]["delete_buc_name"])
                     if isinstance(response, dict):
                         st.success("Bucket deleted!")
-                        update_cache("buckets")
+                        update_cache(["buckets"])
                         st.session_state["api_buckets"]["delete_buc_name"] = None
                         time.sleep(1)
                         st.rerun()
@@ -136,19 +145,19 @@ def buckets_config():
                     # Move transactions to new bucket
                     with st.spinner(f"Moving transactions to '**{new_bucket}**'..."):
                         transactions_api = st.session_state["api_transactions"]["service"]
-                        transactions = st.session_state["api_transactions"]["cache"]["list"]
+                        transactions = get_or_fetch_all_transactions()
                         transactions_to_move = [transaction["id"] for transaction in transactions if transaction["bucket"]["name"] == name]
                         for transaction_id in transactions_to_move:
                             response = transactions_api.update_transaction_bucket(transaction_id, new_bucket_id)
                             if not isinstance(response, dict):
                                 st.error(response)
-                        update_cache("transactions")
+                        clear_cache(["transactions"])
 
                     # Delete bucket
                     response = buckets_api.delete_bucket(st.session_state["api_buckets"]["delete_buc_name"])
                     if isinstance(response, dict):
                         st.success("Bucket deleted!")
-                        update_cache("buckets")
+                        update_cache(["buckets"])
                         st.session_state["api_buckets"]["delete_buc_name"] = None
                         time.sleep(1)
                         st.rerun()
