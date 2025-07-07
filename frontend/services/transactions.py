@@ -5,75 +5,19 @@ from .auth import AuthAPIService
 class TransactionAPIService(AuthAPIService):
     """API service for transactions."""
 
-    def get_transactions_page(self, page=1, page_size=50):
-        """Get paginated transactions data."""
-        self._update()
-        if page == 1:
-            return self._get_cached_transactions_first_page(page=page, page_size=page_size)
-        else:
-            try:
-                response = requests.get(
-                    f"{self.base_url}/transactions/",
-                    headers=self.headers,
-                    params={"page": page, "page_size": page_size},
-                )
-                response.raise_for_status()
-                return response.json()
-            except requests.exceptions.RequestException as e:
-                return f"Error: {str(e)}. Response: {response.text}"
-    
-    def _get_cached_transactions_first_page(self, page=1, page_size=50):
-        """Get first page of transactions data."""
-        if not hasattr(self, "_first_page_transactions") or self._first_page_transactions is None:
-            self._update()
-            try:
-                response = requests.get(
-                    f"{self.base_url}/transactions/",
-                    headers=self.headers,
-                    params={"page": page, "page_size": page_size},
-                )
-                response.raise_for_status()
-                self._first_page_transactions = response.json()
-            except requests.exceptions.RequestException as e:
-                return f"Error: {str(e)}. Response: {response.text}"
-        return self._first_page_transactions
-    
-    def get_transactions_first_page(self, page=1, page_size=50):
-        """Get first page of transactions data."""
-        return self._get_cached_transactions_first_page(page=page, page_size=page_size)
-
-    def _get_cached_all_transactions(self):
-        """Get or fetch all transactions data."""
-        if not hasattr(self, "_all_transactions") or self._all_transactions is None:
-            self._update()
-            all_transactions = self._get_cached_transactions_first_page()
-            page = 2
-
-            while True:
-                data = self.get_transactions_page(page=page)
-                if isinstance(data, str):  # Error
-                    return data
-                all_transactions["results"].extend(data["results"])
-                if data["next"] is None:
-                    break
-                page += 1
-
-            self._all_transactions = all_transactions["results"]
+    def get_transactions_by_page(self, page=1, page_size=50):
+        """Get a page of transactions data."""
+        try:
+            response = requests.get(
+                f"{self.base_url}/transactions/",
+                headers=self.headers,
+                params={"page": page, "page_size": page_size},
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            return f"Error: {str(e)}. Response: {response.text}"
         
-        return self._all_transactions
-
-    def get_all_transactions(self):
-        """Get all transactions by fetching all pages."""
-        return self._get_cached_all_transactions()
-
-    def get_transactions_count(self):
-        """Get total number of transactions."""
-        return self._get_cached_transactions_first_page()["count"]
-
-    def get_pages_count(self, page_size: int = 50):
-        """Get total number of pages."""
-        return (self._get_cached_transactions_first_page()["count"] + 49) // page_size
-
     def get_one_transaction(self, transaction_id: str):
         """Get one transaction data."""
         self._update()
@@ -87,13 +31,6 @@ class TransactionAPIService(AuthAPIService):
         except requests.exceptions.RequestException as e:
             return f"Error: {str(e)}. Response: {response.text}"
 
-    def _clear_cache(self):
-        """Clear the cached transaction types data."""
-        if hasattr(self, "_all_transactions"):
-            self._all_transactions = None
-        if hasattr(self, "_first_page_transactions"):
-            self._first_page_transactions = None
-
     def add_transaction(
         self,
         description: str,
@@ -105,7 +42,6 @@ class TransactionAPIService(AuthAPIService):
         split_income: bool
     ):
         """Add a new transaction for the current user."""
-        self._clear_cache()
         try:
             response = requests.post(
                 f"{self.base_url}/transactions/",
@@ -139,7 +75,6 @@ class TransactionAPIService(AuthAPIService):
         transaction = self.get_one_transaction(transaction_id)
         if transaction is None:
             return f"Error: transaction '{transaction_id}' not found."
-        self._clear_cache()
         try:
             response = requests.patch(
                 f"{self.base_url}/transactions/{transaction_id}/",
@@ -163,7 +98,6 @@ class TransactionAPIService(AuthAPIService):
         transaction = self.get_one_transaction(transaction_id)
         if transaction is None:
             return f"Error: transaction '{transaction}' not found."
-        self._clear_cache()
         try:
             response = requests.delete(
                 f"{self.base_url}/transactions/{transaction_id}/",
@@ -181,7 +115,6 @@ class TransactionAPIService(AuthAPIService):
         bucket_id = transaction["bucket"]["id"]
         if transaction is None:
             return f"Error: transaction '{transaction_id}' not found."
-        self._clear_cache()
         try:
             response = requests.patch(
                 f"{self.base_url}/transactions/{transaction_id}/",
@@ -207,7 +140,6 @@ class TransactionAPIService(AuthAPIService):
         location_id = transaction["location"]["id"]
         if transaction is None:
             return f"Error: transaction '{transaction_id}' not found."
-        self._clear_cache()
         try:
             response = requests.patch(
                 f"{self.base_url}/transactions/{transaction_id}/",
@@ -233,7 +165,6 @@ class TransactionAPIService(AuthAPIService):
         bucket_id = transaction["bucket"]["id"]
         if transaction is None:
             return f"Error: transaction '{transaction_id}' not found."
-        self._clear_cache()
         try:
             response = requests.patch(
                 f"{self.base_url}/transactions/{transaction_id}/",

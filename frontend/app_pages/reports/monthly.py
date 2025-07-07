@@ -5,7 +5,6 @@ import calendar
 from datetime import datetime
 
 from utils.cache_utils import cache_fetched
-from utils.cache_utils import fetch_and_cache_data
 
 def monthly_analytics():
     """Monthly report section."""

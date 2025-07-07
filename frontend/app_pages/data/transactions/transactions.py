@@ -7,40 +7,38 @@ from .add_transactions import add_transactions_form
 
 from utils.cache_utils import update_cache
 from utils.cache_utils import clear_cache
-from utils.cache_utils import clear_all_cache
-from utils.cache_utils import fetch_and_cache_data
 from utils.cache_utils import cache_fetched
+from utils.cache_utils import get_category_id
 from utils.cache_utils import get_or_fetch_transactions_page
+from utils.cache_utils import get_or_fetch_current_analytics
 from utils.cache_utils import get_or_fetch_all_transactions
 
 from app_pages.reports.current import process_current_status_data
+
+def update_current_page(page: int):
+    st.session_state["api_transactions"]["cache"]["info"]["current_page"] = page
 
 
 def transactions_page():
     """Transactions page."""
     
-    st.header("💸 Transaction Management")
+    st.title("💸 Transaction Management")
     st.write("Here you can see, add and edit your transactions.")
     
     if st.button("🔄 Refresh data"):
         with st.spinner("Loading data..."):
-            update_cache([
-                "transactions_info",
-                "transactions_by_page"
-            ])
+            clear_cache(["transactions", "current_analytics"])
+            update_cache(["transactions", "current_analytics"])
         st.rerun()
     
-    if not cache_fetched():
+    if not cache_fetched(["transactions", "current_analytics"]):
         with st.spinner("Loading data..."):
-            fetch_and_cache_data()
-
-    # Transactions API and cache
+            get_or_fetch_transactions_page()
+            get_or_fetch_current_analytics()
+    
+    # Transactions API service
     transactions_api = st.session_state["api_transactions"]["service"]
-    pages_count = st.session_state["api_transactions"]["cache"]["info"]["pages_count"]
-    transactions_count = st.session_state["api_transactions"]["cache"]["info"]["transactions_count"]
 
-    # Other services
-    categories_api = st.session_state["api_categories"]["service"]
     locations_api = st.session_state["api_locations"]["service"]
     buckets_api = st.session_state["api_buckets"]["service"]
 
@@ -51,20 +49,24 @@ def transactions_page():
     st.subheader("🔢 Transactions table")
 
     # Pagination
-    show_all = st.checkbox("📋 Show all transactions")
+    show_all = st.checkbox(
+        label="📋 Show all transactions",
+        on_change=update_current_page(1),
+    )
 
     if show_all:
         st.session_state["api_transactions"]["cache"]["info"]["current_transactions"] = get_or_fetch_all_transactions()
+        st.info(f"All {len(st.session_state['api_transactions']['cache']['info']['current_transactions'])} transactions")
     elif not show_all:
         current_page = st.number_input(
             label="Page",
             min_value=1,
-            max_value=pages_count,
+            max_value=st.session_state["api_transactions"]["cache"]["info"]["pages_count"],
             value=st.session_state["api_transactions"]["cache"]["info"]["current_page"],
         )
-        st.session_state["api_transactions"]["cache"]["info"]["current_page"] = current_page
         st.session_state["api_transactions"]["cache"]["info"]["current_transactions"] = get_or_fetch_transactions_page(page=current_page)
-        
+        st.info(f"Page {current_page}/{st.session_state['api_transactions']['cache']['info']['pages_count']}")
+
     data = []
     for transaction in st.session_state["api_transactions"]["cache"]["info"]["current_transactions"]:
         data.append({
@@ -167,11 +169,6 @@ def transactions_page():
         )
         col2.write("See only transactions you are interested in.")
 
-        if not show_all:
-            st.info(f"Page {st.session_state['api_transactions']['cache']['info']['current_page']}/{pages_count}")
-        else:
-            st.info(f"All {transactions_count} transactions")
-
         # EDIT / DELETE MODE
         if st.session_state["api_transactions"]["edit_mode"]:
             st.warning("Editing mode on. After changes, don't forget to save (button below the table) and toggle off editing mode. If you want to discard all changes, toggle off editing mode.")
@@ -202,7 +199,7 @@ def transactions_page():
                     elif len(modified_indices) > 0:
                         for index in modified_indices:
                             new_row = new_data.loc[index].to_dict()
-                            new_category_id = categories_api.get_category_id(category_name=new_row["🔖 Category"])
+                            new_category_id = get_category_id(category_name=new_row["🔖 Category"])
                             new_location_id = locations_api.get_location_id(location_name=new_row["🏦 Location"])
                             new_bucket_id = buckets_api.get_bucket_id(bucket_name=new_row["🪙 Bucket"])
                             response = transactions_api.update_transaction(
@@ -219,9 +216,10 @@ def transactions_page():
                                 break
                         st.session_state["api_transactions"]["edit_mode"] = False
                         st.success("Transaction(s) updated!")
-                        clear_cache("transactions")
-                        update_cache("transactions_info")
-                        update_cache("transactions_by_page")
+                        
+                        update_cache(["transactions_info", "transactions_by_page"])
+                        clear_cache(["analytics"])
+                        
                         time.sleep(1)
                         st.rerun()
 
@@ -244,7 +242,7 @@ def transactions_page():
                     if len(st.session_state["api_transactions"]["to_update"]) > 0:
                         for index in st.session_state["api_transactions"]["to_update"]:
                             new_row = st.session_state["api_transactions"]["new_data"].loc[index].to_dict()
-                            new_category_id = categories_api.get_category_id(category_name=new_row["🔖 Category"])
+                            new_category_id = get_category_id(category_name=new_row["🔖 Category"])
                             new_location_id = locations_api.get_location_id(location_name=new_row["🏦 Location"])
                             new_bucket_id = buckets_api.get_bucket_id(bucket_name=new_row["🪙 Bucket"])
                             response = transactions_api.update_transaction(
@@ -268,9 +266,10 @@ def transactions_page():
                     st.session_state["api_transactions"]["to_update"] = None
                     st.session_state["api_transactions"]["new_data"] = None
                     st.session_state["api_transactions"]["edit_mode"] = False
-                    clear_cache("transactions")
-                    update_cache("transactions_info")
-                    update_cache("transactions_by_page")
+                    
+                    update_cache(["transactions_info", "transactions_by_page"])
+                    clear_cache(["analytics"])
+                    
                     time.sleep(1)
                     st.rerun()
                 

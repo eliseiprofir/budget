@@ -1,5 +1,8 @@
 import streamlit as st
 
+from utils.cache_utils import clear_cache
+from utils.cache_utils import get_or_fetch_user_info
+
 def account_settings_page():
     """Settings page for user's account."""
 
@@ -11,7 +14,7 @@ def account_settings_page():
         st.subheader("👤 Edit your account")
         
         api = st.session_state["api_auth"]["service"]
-        user_info = api.get_user_info() or {}
+        user_info = get_or_fetch_user_info()
 
         name = st.text_input("Name *", value=user_info.get("full_name", "")).strip()
         email = st.text_input("Email *", value=user_info.get("email", "")).strip()
@@ -38,5 +41,6 @@ def account_settings_page():
                     st.error("Email already exists. Please use a different email.")
                 else:
                     st.error(f"Failed to update profile: {response}")
+            clear_cache(["user_info"])
 
     st.info("If you want to delete your account, please contact us at contact@elisei.pro. We will remove all of your data within 7 days after receiving your request. Thank you!")

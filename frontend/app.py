@@ -8,8 +8,6 @@ from services.categories import CategoriesAPIService
 from services.transactions import TransactionAPIService
 from services.analytics import AnalyticsAPIService
 
-from utils.cache_utils import fetch_and_cache_data
-
 from app_pages.account.auth_login import login_page
 from app_pages.account.auth_signup import signup_page
 from app_pages.account.auth_signout import signout_page
@@ -47,7 +45,8 @@ if "api_auth" not in st.session_state:
         },
         "token": None,
         "authenticated": False,
-        "user_id": None
+        "user_id": None,
+        "cache": {},
     }
     st.session_state["api_auth"]["service"] = AuthAPIService()
 
@@ -92,7 +91,7 @@ if "api_transactions" not in st.session_state:
         "cache": {
             "info": {},
             "by_page": {},
-            "all_transactions": {},
+            "all_transactions": [],
         },
     }
     st.session_state["api_transactions"]["service"] = TransactionAPIService()
@@ -100,7 +99,12 @@ if "api_transactions" not in st.session_state:
 if "api_analytics" not in st.session_state:
     st.session_state["api_analytics"] = {
         "service": None,
-        "cache": {},
+        "cache": {
+            "current": {},
+            "monthly": {},
+            "yearly": {},
+            "historical": {},
+        },
     }
     st.session_state["api_analytics"]["service"] = AnalyticsAPIService()
 

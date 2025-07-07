@@ -55,6 +55,7 @@ def buckets_config():
                     st.session_state["api_buckets"]["edit_buc_name"] = None
                     st.success("Bucket added!")
                     update_cache(["buckets"])
+                    clear_cache(["analytics"])
                     time.sleep(1)
                     st.rerun()
                 else:
@@ -92,7 +93,7 @@ def buckets_config():
                     else:
                         st.error(response)
 
-                clear_cache(["transactions"])
+                clear_cache(["transactions", "analytics"])
             
             if st.button("✖️ Cancel", key=f"cancel_buc_{name}"):
                 st.session_state["api_buckets"]["edit_buc_name"] = None
@@ -151,7 +152,7 @@ def buckets_config():
                             response = transactions_api.update_transaction_bucket(transaction_id, new_bucket_id)
                             if not isinstance(response, dict):
                                 st.error(response)
-                        clear_cache(["transactions"])
+                        clear_cache(["transactions", "analytics"])
 
                     # Delete bucket
                     response = buckets_api.delete_bucket(st.session_state["api_buckets"]["delete_buc_name"])

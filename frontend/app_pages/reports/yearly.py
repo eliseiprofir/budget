@@ -4,7 +4,6 @@ import pandas as pd
 import calendar
 
 from utils.cache_utils import cache_fetched
-from utils.cache_utils import fetch_and_cache_data
 
 def build_category_table(monthly_data, category_type):
     all_categories = set()

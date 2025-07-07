@@ -1,6 +1,9 @@
 import time
 import streamlit as st
 
+from utils.cache_utils import get_category_id
+from utils.cache_utils import get_category_sign
+
 from utils.cache_utils import get_or_fetch_locations_names
 from utils.cache_utils import get_or_fetch_buckets_names
 from utils.cache_utils import get_or_fetch_categories_names
@@ -13,7 +16,6 @@ def add_transactions_form():
     transactions_api = st.session_state["api_transactions"]["service"]
 
     # Services
-    categories_api = st.session_state["api_categories"]["service"]
     locations_api = st.session_state["api_locations"]["service"]
     buckets_api = st.session_state["api_buckets"]["service"]
     
@@ -40,8 +42,8 @@ def add_transactions_form():
         description = col1.text_input("✍️ Description", key="description")
         
         category = col2.selectbox("🔖 Category", key="category", options=categories)
-        category = categories_api.get_category_id(category_name=category)
-        transaction_type = categories_api.get_category_sign(category_id=category)
+        category = get_category_id(name=category)
+        transaction_type = get_category_sign(name=category)
 
         date = col3.date_input("📆 Date", key="date")
         amount = col3.number_input("🔢 Amount", key="amount")

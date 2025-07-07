@@ -38,6 +38,7 @@ def locations_config():
                 if isinstance(response, dict):
                     st.success("Location added!")
                     update_cache(["locations"])
+                    clear_cache(["analytics"])
                     time.sleep(1)
                     st.rerun()
                 else:
@@ -69,7 +70,7 @@ def locations_config():
                     else:
                         st.error(response)
             
-                clear_cache(["transactions"])
+                clear_cache(["transactions", "analytics"])
             
             if st.button("✖️ Cancel", key=f"cancel_loc_{name}"):
                 st.session_state["api_locations"]["edit_loc_name"] = None
@@ -90,6 +91,7 @@ def locations_config():
                     if isinstance(response, dict):
                         st.success("Location deleted!")
                         update_cache(["locations"])
+                        clear_cache(["analytics"])
                         st.session_state["api_locations"]["delete_loc_name"] = None
                         time.sleep(1)
                         st.rerun()
@@ -127,7 +129,7 @@ def locations_config():
                             response = transactions_api.update_transaction_location(transaction_id, new_location_id)
                             if not isinstance(response, dict):
                                 st.error(response)
-                        clear_cache(["transactions"])
+                        clear_cache(["transactions", "analytics"])
 
                     # Delete location
                     response = locations_api.delete_location(st.session_state["api_locations"]["delete_loc_name"])
