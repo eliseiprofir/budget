@@ -88,6 +88,7 @@ def categories_config():
                         st.error(response)
 
                 clear_cache(["transactions", "analytics"])
+                update_cache(["transactions"])
             
             if st.button("✖️ Cancel", key=f"cancel_cat_{name}"):
                 st.session_state["api_categories"]["edit_cat_name"] = None
@@ -99,7 +100,7 @@ def categories_config():
             col2.write(f"Sign: **{sign}**")
             
             # If only one category and no transactions
-            if len(st.session_state["api_categories"]["cache"]["names"]) == 1 and len(st.session_state["api_transactions"]["cache"]["list"]) == 0:
+            if len(st.session_state["api_categories"]["cache"]["names"]) == 1 and st.session_state["api_transactions"]["cache"]["info"]["transactions_count"] == 0:
                 st.warning(f"Are you sure you want to delete this category: **{st.session_state['api_categories']['delete_cat_name']}**?")
                 
                 if st.button("✔️ Confirm", key="confirm_cat_delete"):
@@ -122,7 +123,7 @@ def categories_config():
                     st.rerun()
 
             # If only one category and transactions exist - don't allow deleting it
-            elif len(st.session_state["api_categories"]["cache"]["names"]) == 1 and len(st.session_state["api_transactions"]["cache"]["list"]) > 0:
+            elif len(st.session_state["api_categories"]["cache"]["names"]) == 1 and st.session_state["api_transactions"]["cache"]["info"]["transactions_count"] > 0:
                 st.warning("You cannot delete the last category because there are still transactions associated with it. You can rename it or delete associated transactions first.")
                 
                 if col4.button("✖️ Cancel", key="cancel_cat_delete"):
@@ -148,7 +149,9 @@ def categories_config():
                             response = transactions_api.update_transaction_category(transaction_id, new_category_id)
                             if not isinstance(response, dict):
                                 st.error(response)
+                        
                         clear_cache(["transactions", "analytics"])
+                        update_cache(["transactions"])
 
                     # Delete category
                     category_id = get_category_id(st.session_state["api_categories"]["delete_cat_name"])

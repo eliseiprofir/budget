@@ -7,6 +7,7 @@ class TransactionAPIService(AuthAPIService):
 
     def get_transactions_by_page(self, page=1, page_size=50):
         """Get a page of transactions data."""
+        self._update()
         try:
             response = requests.get(
                 f"{self.base_url}/transactions/",

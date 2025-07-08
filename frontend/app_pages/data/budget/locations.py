@@ -4,6 +4,7 @@ import streamlit as st
 from utils.cache_utils import update_cache
 from utils.cache_utils import clear_cache
 
+from utils.cache_utils import get_location_id
 from utils.cache_utils import get_or_fetch_locations_names
 
 from utils.cache_utils import get_or_fetch_all_transactions
@@ -59,7 +60,8 @@ def locations_config():
                 elif new_name in locations:
                     st.error("This location already exists")
                 else:
-                    response = locations_api.update_location(old_name=name, new_name=new_name)
+                    location_id = get_location_id(name)
+                    response = locations_api.update_location(id=location_id, new_name=new_name)
                     if isinstance(response, dict):
                         locations += [new_name]
                         st.session_state["api_locations"]["edit_loc_name"] = None
@@ -71,6 +73,7 @@ def locations_config():
                         st.error(response)
             
                 clear_cache(["transactions", "analytics"])
+                update_cache(["transactions"])
             
             if st.button("✖️ Cancel", key=f"cancel_loc_{name}"):
                 st.session_state["api_locations"]["edit_loc_name"] = None
@@ -81,13 +84,14 @@ def locations_config():
             col1.write(f"Name: **{name}**")
 
             # If only one location and no transactions
-            if len(st.session_state["api_locations"]["cache"]["names"]) == 1 and len(st.session_state["api_transactions"]["cache"]["all_transactions"]) == 0:
+            if len(st.session_state["api_locations"]["cache"]["names"]) == 1 and st.session_state["api_transactions"]["cache"]["info"]["transactions_count"] == 0:
                 st.warning(f"Are you sure you want to delete this location: **{st.session_state['api_locations']['delete_loc_name']}**?")
                 
                 if st.button("✔️ Confirm", key="confirm_loc_delete"):
 
                     # Delete location
-                    response = locations_api.delete_location(st.session_state["api_locations"]["delete_loc_name"])
+                    location_id = get_location_id(st.session_state["api_locations"]["delete_loc_name"])
+                    response = locations_api.delete_location(id=location_id)
                     if isinstance(response, dict):
                         st.success("Location deleted!")
                         update_cache(["locations"])
@@ -103,7 +107,7 @@ def locations_config():
                     st.rerun()
 
             # If only one location and transactions exist - don't allow deleting it
-            elif len(st.session_state["api_locations"]["cache"]["names"]) == 1 and len(st.session_state["api_transactions"]["cache"]["list"]) > 0:
+            elif len(st.session_state["api_locations"]["cache"]["names"]) == 1 and st.session_state["api_transactions"]["cache"]["info"]["transactions_count"] > 0:
                 st.warning("You cannot delete the last location because there are still transactions associated with it. You can rename it or delete associated transactions first.")
                 
                 if col3.button("✖️ Cancel", key="cancel_loc_delete"):
@@ -114,7 +118,7 @@ def locations_config():
             else:
                 locations = [loc for loc in locations if loc != name]
                 new_location = st.selectbox(label="❗ Select another location to move the transactions from this one to.", options=locations)
-                new_location_id = locations_api.get_location_id(new_location)
+                new_location_id = get_location_id(new_location)
 
                 st.warning(f"Are you sure you want to delete this location: **{st.session_state['api_locations']['delete_loc_name']}**?")
                 
@@ -129,10 +133,13 @@ def locations_config():
                             response = transactions_api.update_transaction_location(transaction_id, new_location_id)
                             if not isinstance(response, dict):
                                 st.error(response)
+
                         clear_cache(["transactions", "analytics"])
+                        update_cache(["transactions"])
 
                     # Delete location
-                    response = locations_api.delete_location(st.session_state["api_locations"]["delete_loc_name"])
+                    location_id = get_location_id(st.session_state["api_locations"]["delete_loc_name"])
+                    response = locations_api.delete_location(id=location_id)
                     if isinstance(response, dict):
                         st.success("Location deleted!")
                         update_cache(["locations"])

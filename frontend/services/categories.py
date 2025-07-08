@@ -6,24 +6,12 @@ from .auth import AuthAPIService
 class CategoriesAPIService(AuthAPIService):
     """API service for categories."""
 
-    def get_categories(self):
+    def get_categories_data(self):
         """Get categories data."""
-        try:
-            response = requests.get(
-                f"{self.base_url}/categories/",
-                headers=self.headers,
-            )
-            response.raise_for_status()
-            return response.json()
-        except requests.exceptions.RequestException as e:
-            return f"Error: {str(e)}. Response: {response.text}"
-
-    def get_category(self, id: str):
-        """Get details of a category."""
         self._update()
         try:
             response = requests.get(
-                f"{self.base_url}/categories/{id}",
+                f"{self.base_url}/categories/",
                 headers=self.headers,
             )
             response.raise_for_status()

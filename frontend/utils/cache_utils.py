@@ -11,6 +11,14 @@ def get_or_fetch_user_info():
 
 
 # LOCATIONS CACHE UTILS
+def get_or_fetch_locations_data():
+    """Get or fetch locations names."""
+    if st.session_state["api_locations"]["cache"] == {}:
+        update_cache(["locations"])
+        return st.session_state["api_locations"]["cache"]["data"]
+    else:
+        return st.session_state["api_locations"]["cache"]["data"]
+
 def get_or_fetch_locations_names():
     """Get or fetch locations names."""
     if st.session_state["api_locations"]["cache"] == {}:
@@ -19,8 +27,24 @@ def get_or_fetch_locations_names():
     else:
         return st.session_state["api_locations"]["cache"]["names"]
 
+def get_location_id(name: str):
+    """Get category id by name."""
+    locations = get_or_fetch_locations_data()
+    for location in locations:
+        if location["name"] == name:
+            return location["id"]
+    return None
+
 
 # BUCKETS CACHE UTILS
+def get_or_fetch_buckets_data():
+    """Get or fetch buckets data."""
+    if st.session_state["api_buckets"]["cache"] == {}:
+        update_cache(["buckets"])
+        return st.session_state["api_buckets"]["cache"]["data"]
+    else:
+        return st.session_state["api_buckets"]["cache"]["data"]
+
 def get_or_fetch_buckets_names():
     """Get or fetch buckets names."""
     if st.session_state["api_buckets"]["cache"] == {}:
@@ -29,24 +53,13 @@ def get_or_fetch_buckets_names():
     else:
         return st.session_state["api_buckets"]["cache"]["names"]
 
-
-def get_or_fetch_buckets_list():
-    """Get or fetch buckets list."""
+def get_or_fetch_buckets_names_allocations():
+    """Get or fetch buckets names and allocations."""
     if st.session_state["api_buckets"]["cache"] == {}:
         update_cache(["buckets"])
-        return st.session_state["api_buckets"]["cache"]["list"]
+        return st.session_state["api_buckets"]["cache"]["names_allocations"]
     else:
-        return st.session_state["api_buckets"]["cache"]["list"]
-
-
-def get_or_fetch_buckets_allocation_status():
-    """Get or fetch buckets allocation status."""
-    if st.session_state["api_buckets"]["cache"] == {}:
-        update_cache(["buckets"])
-        return st.session_state["api_buckets"]["cache"]["allocation_status"]
-    else:
-        return st.session_state["api_buckets"]["cache"]["allocation_status"]
-
+        return st.session_state["api_buckets"]["cache"]["names_allocations"]
 
 def get_or_fetch_buckets_total_allocation():
     """Get or fetch buckets total_allocation."""
@@ -56,16 +69,31 @@ def get_or_fetch_buckets_total_allocation():
     else:
         return st.session_state["api_buckets"]["cache"]["total_allocation"]
 
+def get_or_fetch_buckets_allocation_status():
+    """Get or fetch buckets allocation status."""
+    if st.session_state["api_buckets"]["cache"] == {}:
+        update_cache(["buckets"])
+        return st.session_state["api_buckets"]["cache"]["allocation_status"]
+    else:
+        return st.session_state["api_buckets"]["cache"]["allocation_status"]
+
+def get_bucket_id(name: str):
+    """Get bucket id by name."""
+    buckets = get_or_fetch_buckets_data()
+    for bucket in buckets:
+        if bucket["name"] == name:
+            return bucket["id"]
+    return None
+
 
 # CATEGORIES CACHE UTILS
 def get_or_fetch_categories_data():
-    """Get or fetch categories list."""
+    """Get or fetch categories data."""
     if st.session_state["api_categories"]["cache"] == {}:
         update_cache(["categories"])
         return st.session_state["api_categories"]["cache"]["data"]
     else:
         return st.session_state["api_categories"]["cache"]["data"]
-
 
 def get_or_fetch_categories_names():
     """Get or fetch categories names."""
@@ -75,7 +103,6 @@ def get_or_fetch_categories_names():
     else:
         return st.session_state["api_categories"]["cache"]["names"]
 
-
 def get_or_fetch_categories_names_signs():
     """Get or fetch categories names and signs."""
     if st.session_state["api_categories"]["cache"] == {}:
@@ -84,6 +111,13 @@ def get_or_fetch_categories_names_signs():
     else:
         return st.session_state["api_categories"]["cache"]["names_signs"]
 
+def get_category_data(id: str):
+    """Get category data by id."""
+    categories = get_or_fetch_categories_data()
+    for category in categories:
+        if category["id"] == id:
+            return category
+    return None
 
 def get_category_id(name: str):
     """Get category id by name."""
@@ -110,14 +144,9 @@ def get_or_fetch_transactions_page(page: int = 1, page_size: int = 50):
         return st.session_state["api_transactions"]["cache"]["by_page"][page]
     else:
         return st.session_state["api_transactions"]["cache"]["by_page"][page]
-    
 
 def get_or_fetch_all_transactions():
-    """Get or fetch all transactions."""
-    if st.session_state["api_transactions"]["cache"]["info"]["transactions_count"] \
-        == len(st.session_state["api_transactions"]["cache"]["all_transactions"]):
-        return st.session_state["api_transactions"]["cache"]["all_transactions"]
-    
+    """Get or fetch all transactions."""    
     st.session_state["api_transactions"]["cache"]["all_transactions"] = []
     
     for page in range(1, st.session_state["api_transactions"]["cache"]["info"]["pages_count"] + 1):
@@ -127,7 +156,6 @@ def get_or_fetch_all_transactions():
     
     return st.session_state["api_transactions"]["cache"]["all_transactions"]
 
-
 def get_or_fetch_current_analytics():
     """Get or fetch analytics current."""
     if st.session_state["api_analytics"]["cache"]["current"] == {}:
@@ -135,7 +163,6 @@ def get_or_fetch_current_analytics():
         return st.session_state["api_analytics"]["cache"]["current"]
     else:
         return st.session_state["api_analytics"]["cache"]["current"]
-
 
 def get_or_fetch_historical_analytics():
     """Get or fetch analytics historical."""
@@ -155,18 +182,20 @@ def update_cache(cache_types: list[str], page: int = 1, page_size: int = 50) -> 
             st.session_state["api_auth"]["cache"]["user_info"] = st.session_state["api_auth"]["service"].get_user_info()
 
         elif cache_type == "locations":
-            clear_cache(["locations"])
-            st.session_state["api_locations"]["cache"]["names"] = st.session_state["api_locations"]["service"].get_locations_names()
+            locations_data = st.session_state["api_locations"]["service"].get_locations_data()
+            st.session_state["api_locations"]["cache"]["data"] = locations_data
+            st.session_state["api_locations"]["cache"]["names"] = [location["name"] for location in locations_data]
         
         elif cache_type == "buckets":
-            clear_cache(["buckets"])
-            st.session_state["api_buckets"]["cache"]["list"] = st.session_state["api_buckets"]["service"].get_buckets_list()
-            st.session_state["api_buckets"]["cache"]["names"] = st.session_state["api_buckets"]["service"].get_buckets_names()
-            st.session_state["api_buckets"]["cache"]["allocation_status"] = st.session_state["api_buckets"]["service"].get_allocation_status()
-            st.session_state["api_buckets"]["cache"]["total_allocation"] = st.session_state["api_buckets"]["service"].get_total_allocation()
+            buckets_data = st.session_state["api_buckets"]["service"].get_buckets_data()
+            st.session_state["api_buckets"]["cache"]["data"] = buckets_data
+            st.session_state["api_buckets"]["cache"]["names"] = [bucket["name"] for bucket in buckets_data]
+            st.session_state["api_buckets"]["cache"]["names_allocations"] = [(bucket["name"], bucket["allocation_percentage"]) for bucket in buckets_data]
+            st.session_state["api_buckets"]["cache"]["total_allocation"] = sum(int(bucket["allocation_percentage"]) for bucket in buckets_data)
+            st.session_state["api_buckets"]["cache"]["allocation_status"] = "COMPLETE" if st.session_state["api_buckets"]["cache"]["total_allocation"] == 100 else "INCOMPLETE"
 
         elif cache_type == "categories":
-            categories_data = st.session_state["api_categories"]["service"].get_categories()
+            categories_data = st.session_state["api_categories"]["service"].get_categories_data()
             st.session_state["api_categories"]["cache"]["data"] = categories_data
             st.session_state["api_categories"]["cache"]["names"] = [category["name"] for category in categories_data]
             st.session_state["api_categories"]["cache"]["signs"] = list({category["sign"] for category in categories_data})
@@ -202,15 +231,12 @@ def clear_cache(cache_types: list[str]) -> None:
             st.session_state["api_auth"]["cache"] = {}
 
         elif cache_type == "locations":
-            st.session_state["api_locations"]["service"]._clear_cache()
             st.session_state["api_locations"]["cache"] = {}
         
         elif cache_type == "buckets":
-            st.session_state["api_buckets"]["service"]._clear_cache()
             st.session_state["api_buckets"]["cache"] = {}
         
         elif cache_type == "categories":
-            st.session_state["api_categories"]["service"]._clear_cache()
             st.session_state["api_categories"]["cache"] = {}
         
         elif cache_type == "transactions":

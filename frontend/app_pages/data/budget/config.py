@@ -7,8 +7,8 @@ from .categories import categories_config
 from utils.cache_utils import update_cache
 from utils.cache_utils import cache_fetched
 
-from utils.cache_utils import get_or_fetch_locations_names
-from utils.cache_utils import get_or_fetch_buckets_list
+from utils.cache_utils import get_or_fetch_locations_data
+from utils.cache_utils import get_or_fetch_buckets_data
 from utils.cache_utils import get_or_fetch_categories_data
 from utils.cache_utils import get_or_fetch_transactions_page
 
@@ -30,8 +30,8 @@ def budget_config_page():
     
     if not cache_fetched(["locations", "buckets", "categories", "transactions"]):
         with st.spinner("Loading data..."):
-            get_or_fetch_locations_names()
-            get_or_fetch_buckets_list()
+            get_or_fetch_locations_data()
+            get_or_fetch_buckets_data()
             get_or_fetch_categories_data()
             get_or_fetch_transactions_page()
 

@@ -21,6 +21,7 @@ class AnalyticsAPIService(AuthAPIService):
 
     def get_monthly_analytics(self, year: int, month: int):
         """Get monthly analytics."""
+        self._update()
         try:
             response = requests.get(
                 f"{self.base_url}/analytics-monthly/{year}-{month}/",
@@ -33,6 +34,7 @@ class AnalyticsAPIService(AuthAPIService):
     
     def get_yearly_analytics(self, year: int):
         """Get yearly analytics."""
+        self._update()
         try:
             response = requests.get(
                 f"{self.base_url}/analytics-yearly/{year}/",
@@ -45,6 +47,7 @@ class AnalyticsAPIService(AuthAPIService):
     
     def get_historical_analytics(self):
         """Get historical analytics."""
+        self._update()
         try:
             response = requests.get(
                 f"{self.base_url}/analytics-historical/",
