@@ -5,8 +5,6 @@ from django.core.cache import cache
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from model_bakery import baker
-
 from accounts.models import User
 from transactions.models import Transaction
 

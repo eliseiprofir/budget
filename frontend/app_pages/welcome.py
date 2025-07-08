@@ -8,7 +8,7 @@ def welcome_page():
         st.title("👋 Welcome to Budget Management System")
         st.subheader("A Full-Stack Financial Solution")
         
-        st.info("👨‍💻 **Portfolio Project by Elisei Profir**")
+        st.info("👨‍💻 **Created by Elisei Profir**")
         
         st.markdown("""
         ## 💰 Your Personal Finance Companion

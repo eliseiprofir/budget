@@ -1,7 +1,6 @@
 import pytest
 
 from rest_framework.test import APIClient
-from accounts.models import User
 from accounts.tests.conftest import user  #noqa: F401
 
 
