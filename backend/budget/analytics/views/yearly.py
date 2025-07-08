@@ -21,31 +21,18 @@ class AnalyticsYearlyViewSet(viewsets.ViewSet):
         serializer = AnalyticsYearlySerializer(data)
         return Response(serializer.data)
 
-    @action(detail=False, methods=['get'], url_path=r'(?P<year>.+)')
-    def custom(self, request, year=None):
-        """Get analytics summary for a specific year (YYYY)."""
-        try:
-            year = int(year)
-
-            # Validate year
-            if year < 1900 or year > 2100:  # Arbitrary reasonable range
-                return Response(
-                    {"error": "Year must be between 1900 and 2100"}, status=400
-                )
-
-            data = get_or_generate_yearly_report(request.user, year=year)
-            serializer = AnalyticsYearlySerializer(data)
-            return Response(serializer.data)
-        except ValueError:
-            return Response({"error": "Invalid year format"}, status=400)
-
     @action(detail=False, methods=["get"])
     def cache_status(self, request):
-        """Check cache status for the current user's yearly report and returns useful information."""
+        """Check cache status for the current user's yearly report."""
         user_id = request.user.id
 
         current_year = timezone.now().year
         year = request.query_params.get("year", current_year)
+
+        try:
+            year = int(year)
+        except ValueError:
+            return Response({"error": "Invalid year format"}, status=400)
 
         cache_key = f"yearly_report_{user_id}_{year}"
         cached_report = cache.get(cache_key)
@@ -78,13 +65,20 @@ class AnalyticsYearlyViewSet(viewsets.ViewSet):
 
         return Response(response_data)
 
-    @action(detail=False, methods=["get"], url_path=r"(?P<year>.+)/cache-status")
-    def year_cache_status(self, request, year):
-        """Check cache status for a specific year from URL path."""
+    @action(detail=False, methods=["get"], url_path=r'cache-status/(?P<year>\d{4})')
+    def cache_status_for_year(self, request, year):
+        """Check cache status for a specific year."""
         user_id = request.user.id
 
         try:
             year = int(year)
+            
+            # Validate year
+            if year < 1900 or year > 2100:  # Arbitrary reasonable range
+                return Response(
+                    {"error": "Year must be between 1900 and 2100"}, status=400
+                )
+                
         except ValueError:
             return Response({"error": "Invalid year format"}, status=400)
 
@@ -120,3 +114,26 @@ class AnalyticsYearlyViewSet(viewsets.ViewSet):
         }
 
         return Response(response_data)
+
+    @action(detail=False, methods=['get'], url_path=r'(?P<year>\d{4})')
+    def custom(self, request, year=None):
+        """Get analytics summary for a specific year (YYYY)."""
+        try:
+            year_int = int(year)
+
+            # Validate year
+            if year_int < 1900 or year_int > 2100:  # Arbitrary reasonable range
+                return Response(
+                    {"error": "Year must be between 1900 and 2100"}, status=400
+                )
+
+            data = get_or_generate_yearly_report(request.user, year=year_int)
+            serializer = AnalyticsYearlySerializer(data)
+            return Response(serializer.data)
+        except ValueError:
+            return Response({"error": "Invalid year format"}, status=400)
+
+    @action(detail=False, methods=['get'], url_path=r'(?P<invalid_format>.+)')
+    def invalid_format(self, request, invalid_format=None):
+        """Handle invalid format requests."""
+        return Response({"error": "Invalid format. Use YYYY format."}, status=400)

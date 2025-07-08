@@ -130,7 +130,18 @@ def test_analytics_monthly_view_invalid_format(user: User):
     client = APIClient()
     client.force_authenticate(user=user)
 
-    url = reverse("api:analytics-yearly-custom", kwargs={"year": "abcd"})
+    url = reverse("api:analytics-yearly-custom", kwargs={"year": "2200"})
     response = client.get(url)
     assert response.status_code == 400
-    assert response.json() == {"error": "Invalid year format"}
+    assert response.json() == {"error": "Year must be between 1900 and 2100"}
+
+    url = reverse("api:analytics-yearly-custom", kwargs={"year": "1800"})
+    response = client.get(url)
+    assert response.status_code == 400
+    assert response.json() == {"error": "Year must be between 1900 and 2100"}
+
+    # We use a direct URL because reverse won't work with parameters that don't match the pattern
+    url = "/api/analytics-yearly/abcd/"
+    response = client.get(url)
+    assert response.status_code == 400
+    assert "Invalid format" in response.json()["error"]

@@ -34,7 +34,7 @@ def test_list_category(
     assert response.status_code == status_code
 
     if status_code == status.HTTP_200_OK:
-        json = response.json()["results"]
+        json = response.json()
         assert len(json) == count
         if count > 0:
             ids = [category["id"] for category in json]
