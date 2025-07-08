@@ -1,4 +1,8 @@
 import streamlit as st
+import datetime
+
+current_year = datetime.datetime.now().year
+current_month = datetime.datetime.now().month
 
 # USER CACHE UTILS
 def get_or_fetch_user_info():
@@ -156,6 +160,8 @@ def get_or_fetch_all_transactions():
     
     return st.session_state["api_transactions"]["cache"]["all_transactions"]
 
+
+# ANALYTICS CACHE UTILS
 def get_or_fetch_current_analytics():
     """Get or fetch analytics current."""
     if st.session_state["api_analytics"]["cache"]["current"] == {}:
@@ -163,6 +169,22 @@ def get_or_fetch_current_analytics():
         return st.session_state["api_analytics"]["cache"]["current"]
     else:
         return st.session_state["api_analytics"]["cache"]["current"]
+
+def get_or_fetch_monthly_analytics(year: int = current_year, month: int = current_month):
+    """Get or fetch analytics monthly."""
+    if f"{year}-{month}" not in st.session_state["api_analytics"]["cache"]["monthly"]:
+        update_cache(["monthly_analytics"], year=year, month=month)
+        return st.session_state["api_analytics"]["cache"]["monthly"][f"{year}-{month}"]
+    else:
+        return st.session_state["api_analytics"]["cache"]["monthly"][f"{year}-{month}"]
+
+def get_or_fetch_yearly_analytics(year: int = current_year):
+    """Get or fetch analytics yearly."""
+    if year not in st.session_state["api_analytics"]["cache"]["yearly"]:
+        update_cache(["yearly_analytics"], year=year)
+        return st.session_state["api_analytics"]["cache"]["yearly"][year]
+    else:
+        return st.session_state["api_analytics"]["cache"]["yearly"][year]
 
 def get_or_fetch_historical_analytics():
     """Get or fetch analytics historical."""
@@ -172,9 +194,17 @@ def get_or_fetch_historical_analytics():
     else:
         return st.session_state["api_analytics"]["cache"]["historical"]
 
+def get_or_fetch_analytics_years():
+    """Get or fetch analytics years."""
+    if st.session_state["api_analytics"]["cache"]["historical"] == {}:
+        update_cache(["historical_analytics"])
+        return st.session_state["api_analytics"]["cache"]["years"]
+    else:
+        return st.session_state["api_analytics"]["cache"]["years"]
+
 
 # UPDATE CACHE MANAGEMENT
-def update_cache(cache_types: list[str], page: int = 1, page_size: int = 50) -> None:
+def update_cache(cache_types: list[str], page: int = 1, page_size: int = 50, year: int = current_year, month: int = current_month) -> None:
     """Update specific entity data in cache after change."""
     for cache_type in cache_types:
         
@@ -209,14 +239,18 @@ def update_cache(cache_types: list[str], page: int = 1, page_size: int = 50) -> 
             st.session_state["api_transactions"]["cache"]["info"]["transactions_count"] = page_data["count"]
             st.session_state["api_transactions"]["cache"]["info"]["has_transactions"] = st.session_state["api_transactions"]["cache"]["info"]["transactions_count"] > 0
 
-        elif cache_type == "analytics_info":
-            st.session_state["api_analytics"]["cache"]["years"] = st.session_state["api_analytics"]["service"].get_years()
-
         elif cache_type == "current_analytics":
             st.session_state["api_analytics"]["cache"]["current"] = st.session_state["api_analytics"]["service"].get_current_analytics()
+        
+        elif cache_type == "monthly_analytics":
+            st.session_state["api_analytics"]["cache"]["monthly"][f"{year}-{month}"] = st.session_state["api_analytics"]["service"].get_monthly_analytics(year=year, month=month)
+
+        elif cache_type == "yearly_analytics":
+            st.session_state["api_analytics"]["cache"]["yearly"][year] = st.session_state["api_analytics"]["service"].get_yearly_analytics(year=year)
 
         elif cache_type == "historical_analytics":
             st.session_state["api_analytics"]["cache"]["historical"] = st.session_state["api_analytics"]["service"].get_historical_analytics()
+            st.session_state["api_analytics"]["cache"]["years"] = st.session_state["api_analytics"]["cache"]["historical"]["yearly"].keys()
 
         else:
             raise ValueError(f"Invalid entity type: {cache_type}")
@@ -253,12 +287,15 @@ def clear_cache(cache_types: list[str]) -> None:
                 "yearly": {},
                 "historical": {},
             }
-
-        elif cache_type == "analytics_info":
-            st.session_state["api_analytics"]["cache"]["years"] = {}
         
         elif cache_type == "current_analytics":
             st.session_state["api_analytics"]["cache"]["current"] = {}
+        
+        elif cache_type == "monthly_analytics":
+            st.session_state["api_analytics"]["cache"]["monthly"] = {}
+
+        elif cache_type == "yearly_analytics":
+            st.session_state["api_analytics"]["cache"]["yearly"] = {}
         
         elif cache_type == "historical_analytics":
             st.session_state["api_analytics"]["cache"]["historical"] = {}
@@ -301,6 +338,12 @@ def cache_fetched(cache_types: list[str]) -> bool:
 
         elif cache_type == "current_analytics":
             is_fetched = is_fetched and st.session_state["api_analytics"]["cache"]["current"] != {}
+        
+        elif cache_type == "monthly_analytics":
+            is_fetched = is_fetched and st.session_state["api_analytics"]["cache"]["monthly"] != {}
+
+        elif cache_type == "yearly_analytics":
+            is_fetched = is_fetched and st.session_state["api_analytics"]["cache"]["yearly"] != {}
         
         elif cache_type == "historical_analytics":
             is_fetched = is_fetched and st.session_state["api_analytics"]["cache"]["historical"] != {}

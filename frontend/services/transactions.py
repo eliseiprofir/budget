@@ -43,6 +43,7 @@ class TransactionAPIService(AuthAPIService):
         split_income: bool
     ):
         """Add a new transaction for the current user."""
+        self._update()
         try:
             response = requests.post(
                 f"{self.base_url}/transactions/",
@@ -73,6 +74,7 @@ class TransactionAPIService(AuthAPIService):
         bucket_id: str,
     ):
         """Update a transaction's name."""
+        self._update()
         transaction = self.get_one_transaction(transaction_id)
         if transaction is None:
             return f"Error: transaction '{transaction_id}' not found."
@@ -96,6 +98,7 @@ class TransactionAPIService(AuthAPIService):
     
     def delete_transaction(self, transaction_id: str):
         """Permanently delete a transaction."""
+        self._update()
         transaction = self.get_one_transaction(transaction_id)
         if transaction is None:
             return f"Error: transaction '{transaction}' not found."
@@ -111,6 +114,7 @@ class TransactionAPIService(AuthAPIService):
 
     def update_transaction_location(self, transaction_id: str, new_location_id: str):
         """Update a transaction's location."""
+        self._update()
         transaction = self.get_one_transaction(transaction_id)
         category_id = transaction["category"]["id"]
         bucket_id = transaction["bucket"]["id"]
@@ -136,6 +140,7 @@ class TransactionAPIService(AuthAPIService):
 
     def update_transaction_bucket(self, transaction_id: str, new_bucket_id: str):
         """Update a transaction's bucket."""
+        self._update()
         transaction = self.get_one_transaction(transaction_id)
         category_id = transaction["category"]["id"]
         location_id = transaction["location"]["id"]
@@ -161,6 +166,7 @@ class TransactionAPIService(AuthAPIService):
     
     def update_transaction_category(self, transaction_id: str, new_category_id: str):
         """Update a transaction's category."""
+        self._update()
         transaction = self.get_one_transaction(transaction_id)
         location_id = transaction["location"]["id"]
         bucket_id = transaction["bucket"]["id"]

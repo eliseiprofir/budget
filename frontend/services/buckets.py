@@ -20,6 +20,7 @@ class BucketsAPIService(AuthAPIService):
     
     def add_bucket(self, bucket_name: str, allocation_percentage: int):
         """Add a new bucket for the current user."""
+        self._update()
         try:
             response = requests.post(
                 f"{self.base_url}/buckets/",
@@ -36,6 +37,7 @@ class BucketsAPIService(AuthAPIService):
 
     def update_bucket(self, id: str, new_name: str, new_percentage: int):
         """Update a bucket's name and percentage."""
+        self._update()
         try:
             response = requests.patch(
                 f"{self.base_url}/buckets/{id}/",
@@ -52,6 +54,7 @@ class BucketsAPIService(AuthAPIService):
     
     def delete_bucket(self, id: str):
         """Soft delete a bucket."""
+        self._update()
         try:
             response = requests.patch(
                 f"{self.base_url}/buckets/{id}/",

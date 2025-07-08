@@ -20,6 +20,7 @@ class LocationsAPIService(AuthAPIService):
 
     def add_location(self, location_name: str):
         """Add a new location for the current user."""
+        self._update()
         try:
             response = requests.post(
                 f"{self.base_url}/locations/",
@@ -33,6 +34,7 @@ class LocationsAPIService(AuthAPIService):
 
     def update_location(self, id: str, new_name: str):
         """Update a location's name."""
+        self._update()
         try:
             response = requests.patch(
                 f"{self.base_url}/locations/{id}/",
@@ -46,6 +48,7 @@ class LocationsAPIService(AuthAPIService):
     
     def delete_location(self, id: str):
         """Soft delete a location."""
+        self._update()
         try:
             response = requests.patch(
                 f"{self.base_url}/locations/{id}/",

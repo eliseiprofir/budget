@@ -1,5 +1,4 @@
 import requests
-import streamlit as st
 from .auth import AuthAPIService
 
 
@@ -21,6 +20,7 @@ class CategoriesAPIService(AuthAPIService):
 
     def add_category(self, name: str, sign: str):
         """Add a new category for the current user."""
+        self._update()
         try:
             response = requests.post(
                 f"{self.base_url}/categories/",
@@ -37,6 +37,7 @@ class CategoriesAPIService(AuthAPIService):
 
     def update_category(self, id: str, new_name: str, new_sign: str):
         """Update a category's name and transaction type."""
+        self._update()
         try:
             response = requests.patch(
                 f"{self.base_url}/categories/{id}/",
@@ -52,6 +53,7 @@ class CategoriesAPIService(AuthAPIService):
     
     def delete_category(self, id: str):
         """Soft delete a category."""
+        self._update()
         try:
             response = requests.patch(
                 f"{self.base_url}/categories/{id}/",

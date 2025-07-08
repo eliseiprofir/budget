@@ -18,7 +18,6 @@ class AnalyticsAPIService(AuthAPIService):
         except requests.exceptions.RequestException as e:
             return f"Error: {str(e)}. Response: {response.text}"
 
-
     def get_monthly_analytics(self, year: int, month: int):
         """Get monthly analytics."""
         self._update()
