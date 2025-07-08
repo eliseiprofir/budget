@@ -98,29 +98,3 @@ def test_create_category(
 
     if status_code == status.HTTP_201_CREATED:
         assert json["name"] == category.name
-
-
-@pytest.mark.django_db
-def test_superuser_sees_all_categories(
-    admin_apiclient: APIClient,
-    category_recipe: str,
-    admin_user: User,
-    user: User,
-):
-    """Test that superuser can see all transaction types."""
-    user_category = baker.make_recipe(category_recipe)
-    user_category.user = user
-    user_category.save()
-
-    admin_category = baker.make_recipe(category_recipe)
-    admin_category.user = admin_user
-    admin_category.save()
-
-    response = admin_apiclient.get("/api/categories/")
-    json = response.json()
-
-    assert response.status_code == status.HTTP_200_OK
-    assert len(json) == 2
-    ids = [category["id"] for category in json]
-    assert str(user_category.id) in ids
-    assert str(admin_category.id) in ids

@@ -1,6 +1,7 @@
 import requests
 import streamlit as st
 
+
 class AuthAPIService:
     """Service class for handling authentication-related API calls."""
     
@@ -104,7 +105,6 @@ class AuthAPIService:
 
     def signup(self, name: str, email: str, password: str):
         """Register a new user"""
-
         try:
             response = requests.post(
                 f"{self.base_url}/users/",

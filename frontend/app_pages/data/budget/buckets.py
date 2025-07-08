@@ -1,6 +1,16 @@
 import time
 import streamlit as st
+
 from utils.cache_utils import update_cache
+from utils.cache_utils import clear_cache
+
+from utils.cache_utils import get_bucket_id
+from utils.cache_utils import get_or_fetch_buckets_names
+from utils.cache_utils import get_or_fetch_buckets_names_allocations
+from utils.cache_utils import get_or_fetch_buckets_allocation_status
+from utils.cache_utils import get_or_fetch_buckets_total_allocation
+
+from utils.cache_utils import get_or_fetch_all_transactions
 
 COL1 = 4
 COL2 = 4
@@ -15,11 +25,10 @@ def buckets_config():
     
     # Bucket API and cache
     buckets_api = st.session_state["api_buckets"]["service"]
-    cache = st.session_state["api_buckets"]["cache"]
-    buckets = cache["list"]
-    buckets_names = cache["names"]
-    allocation_status = cache["allocation_status"]
-    total_allocation = cache["total_allocation"]
+    buckets = get_or_fetch_buckets_names_allocations()
+    buckets_names = get_or_fetch_buckets_names()
+    allocation_status = get_or_fetch_buckets_allocation_status()
+    total_allocation = get_or_fetch_buckets_total_allocation()
 
     # Form for adding a new bucket
     with st.form("add_bucket"):
@@ -41,11 +50,13 @@ def buckets_config():
             elif new_percentage > 100 or (total_allocation + new_percentage > 100):
                 st.error(f"Total allocation cannot exceed 100%. For this bucket you can have up to {100-total_allocation}%.")
             else:
+
                 response = buckets_api.add_bucket(new_bucket, new_percentage)
                 if isinstance(response, dict):
                     st.session_state["api_buckets"]["edit_buc_name"] = None
                     st.success("Bucket added!")
-                    update_cache("buckets")
+                    update_cache(["buckets"])
+                    clear_cache(["analytics"])
                     time.sleep(1)
                     st.rerun()
                 else:
@@ -72,18 +83,20 @@ def buckets_config():
                 elif new_percentage > 100 or (total_allocation - int(percentage) + new_percentage > 100):
                     st.error(f"Total allocation cannot exceed 100%. For this bucket you can have up to {100-total_allocation+int(percentage)}%.")
                 else:
-                    response = buckets_api.update_bucket(old_name=name, new_name=new_name, new_percentage=new_percentage)
+                    bucket_id = get_bucket_id(name)
+                    response = buckets_api.update_bucket(id=bucket_id, new_name=new_name, new_percentage=new_percentage)
                     if isinstance(response, dict):
                         buckets_names += [new_name]
                         st.session_state["api_buckets"]["edit_buc_name"] = None
                         st.success("Bucket updated!")
-                        update_cache("buckets")
+                        update_cache(["buckets"])
                         time.sleep(1)
                         st.rerun()
                     else:
                         st.error(response)
 
-            update_cache("transactions")
+                clear_cache(["transactions", "analytics"])
+                update_cache(["transactions"])
             
             if st.button("✖️ Cancel", key=f"cancel_buc_{name}"):
                 st.session_state["api_buckets"]["edit_buc_name"] = None
@@ -95,16 +108,17 @@ def buckets_config():
             col2.write(f"Allocation percentage: **{percentage}%**")
             
             # If only one bucket and no transactions
-            if len(st.session_state["api_buckets"]["cache"]["names"]) == 1 and len(st.session_state["api_transactions"]["cache"]["list"]) == 0:
+            if len(st.session_state["api_buckets"]["cache"]["names"]) == 1 and st.session_state["api_transactions"]["cache"]["info"]["transactions_count"] == 0:
                 st.warning(f"Are you sure you want to delete this bucket: **{st.session_state['api_buckets']['delete_buc_name']}**?")
                 
                 if st.button("✔️ Confirm", key="confirm_buc_delete"):
                     
                     # Delete bucket
-                    response = buckets_api.delete_bucket(st.session_state["api_buckets"]["delete_buc_name"])
+                    bucket_id = get_bucket_id(st.session_state["api_buckets"]["delete_buc_name"])
+                    response = buckets_api.delete_bucket(id=bucket_id)
                     if isinstance(response, dict):
                         st.success("Bucket deleted!")
-                        update_cache("buckets")
+                        update_cache(["buckets"])
                         st.session_state["api_buckets"]["delete_buc_name"] = None
                         time.sleep(1)
                         st.rerun()
@@ -116,7 +130,7 @@ def buckets_config():
                     st.rerun()
 
             # If only one bucket and transactions exist - don't allow deleting it
-            elif len(st.session_state["api_buckets"]["cache"]["names"]) == 1 and len(st.session_state["api_transactions"]["cache"]["list"]) > 0:
+            elif len(st.session_state["api_buckets"]["cache"]["names"]) == 1 and st.session_state["api_transactions"]["cache"]["info"]["transactions_count"] > 0:
                 st.warning("You cannot delete the last bucket because there are still transactions associated with it. You can rename it or delete associated transactions first.")
                 
                 if col4.button("✖️ Cancel", key="cancel_buc_delete"):
@@ -127,7 +141,7 @@ def buckets_config():
             else:
                 buckets_names = [buc for buc in buckets_names if buc != name]
                 new_bucket = st.selectbox(label="❗ Select another bucket to move the transactions from this one to.", options=buckets_names)
-                new_bucket_id = buckets_api.get_bucket_id(new_bucket)
+                new_bucket_id = get_bucket_id(new_bucket)
 
                 st.warning(f"Are you sure you want to delete this bucket: **{st.session_state['api_buckets']['delete_buc_name']}**?")
                 
@@ -136,19 +150,22 @@ def buckets_config():
                     # Move transactions to new bucket
                     with st.spinner(f"Moving transactions to '**{new_bucket}**'..."):
                         transactions_api = st.session_state["api_transactions"]["service"]
-                        transactions = st.session_state["api_transactions"]["cache"]["list"]
+                        transactions = get_or_fetch_all_transactions()
                         transactions_to_move = [transaction["id"] for transaction in transactions if transaction["bucket"]["name"] == name]
                         for transaction_id in transactions_to_move:
                             response = transactions_api.update_transaction_bucket(transaction_id, new_bucket_id)
                             if not isinstance(response, dict):
                                 st.error(response)
-                        update_cache("transactions")
+                        
+                        clear_cache(["transactions", "analytics"])
+                        update_cache(["transactions"])
 
                     # Delete bucket
-                    response = buckets_api.delete_bucket(st.session_state["api_buckets"]["delete_buc_name"])
+                    bucket_id = get_bucket_id(st.session_state["api_buckets"]["delete_buc_name"])
+                    response = buckets_api.delete_bucket(id=bucket_id)
                     if isinstance(response, dict):
                         st.success("Bucket deleted!")
-                        update_cache("buckets")
+                        update_cache(["buckets"])
                         st.session_state["api_buckets"]["delete_buc_name"] = None
                         time.sleep(1)
                         st.rerun()

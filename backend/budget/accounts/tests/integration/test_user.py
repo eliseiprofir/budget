@@ -10,7 +10,7 @@ from accounts.models import User
 @pytest.mark.parametrize(
     ("client", "status_code", "count"),
     [
-        ("apiclient", status.HTTP_200_OK, 0),
+        ("apiclient", status.HTTP_401_UNAUTHORIZED, 0),
         ("authenticated_apiclient", status.HTTP_200_OK, 1),
     ],
 )
@@ -102,7 +102,6 @@ def test_create_user(
 def test_user_cannot_access_other_profile(
     authenticated_apiclient: APIClient,
     user_recipe: str,
-    user: User,
 ):
     """Test that a user cannot access another user's profile."""
     other_user = baker.make_recipe(user_recipe)
@@ -110,39 +109,6 @@ def test_user_cannot_access_other_profile(
     response = authenticated_apiclient.get(f"/api/users/{other_user.id}/")
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
-
-
-@pytest.mark.django_db
-def test_superuser_sees_all_users(
-    admin_apiclient: APIClient,
-    user_recipe: str,
-    admin_user: User,
-):
-    """Test that superuser can see all users."""
-    user = baker.make_recipe(user_recipe)
-
-    response = admin_apiclient.get("/api/users/")
-    json = response.json()
-
-    assert response.status_code == status.HTTP_200_OK
-    assert len(json) >= 2 # admin_user, user
-    ids = [user["id"] for user in json]
-    assert str(user.id) in ids
-    assert str(admin_user.id) in ids
-
-
-@pytest.mark.django_db
-def test_superuser_can_access_any_profile(
-    admin_apiclient: APIClient,
-    user_recipe: str,
-    user: User,
-):
-    """Test that superuser can access any user profile."""
-    response = admin_apiclient.get(f"/api/users/{user.id}/")
-
-    assert response.status_code == status.HTTP_200_OK
-    json = response.json()
-    assert str(json["id"]) == str(user.id)
 
 
 @pytest.mark.django_db

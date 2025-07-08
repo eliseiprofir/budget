@@ -3,6 +3,9 @@ from rest_framework import mixins
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import AllowAny
+from rest_framework.pagination import PageNumberPagination
+
+from django_filters.rest_framework import DjangoFilterBackend
 
 from accounts.models import User
 from accounts.serializers import UserListSerializer
@@ -25,10 +28,14 @@ class UserViewSet(
     permission_classes = (IsAuthenticated, IsOwner)
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("created",)
+    filter_backends = (DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter)
+    filterset_fields = ("created", "last_login",)
+    ordering_fields = ("full_name", "email",)
+    search_fields = ("full_name", "email")
 
     def get_permissions(self):
         """Return permissions depending on action."""
-        if self.action in ["create", "list"]:
+        if self.action == "create":
             permission_classes = [AllowAny]
         else:
             permission_classes = [IsAuthenticated, IsOwner]

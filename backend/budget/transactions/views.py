@@ -2,6 +2,12 @@ from rest_framework import filters
 from rest_framework import mixins
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
+
+from django_filters.rest_framework import DjangoFilterBackend
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_cookie
 
 from transactions.models import Category
 from transactions.models import Transaction
@@ -12,6 +18,12 @@ from transactions.serializers import TransactionDetailSerializer
 from transactions.serializers import TransactionWriteSerializer
 
 from .permissions import IsOwner
+
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 50
+    page_size_query_param = "page_size"
+    max_page_size = 100
 
 
 class CategoryViewSet(
@@ -29,6 +41,10 @@ class CategoryViewSet(
     permission_classes = (IsAuthenticated, IsOwner)
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("name",)
+    filter_backends = (DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter)
+    filterset_fields = ("sign",)
+    ordering_fields = ("name", "sign",)
+    search_fields = ("name",)
 
     def get_queryset(self):
         """Retrieve a custom queryset for categories based on the current user."""
@@ -64,8 +80,11 @@ class TransactionViewSet(
     """Transaction model view."""
     serializer_class = TransactionListSerializer
     permission_classes = (IsAuthenticated, IsOwner)
-    filter_backends = (filters.OrderingFilter,)
-    ordering_fields = ("name",)
+    filter_backends = (DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter)
+    filterset_fields = ("category", "date", "amount", "location", "bucket",)
+    ordering_fields = ("date", "amount",)
+    search_fields = ("description",)
+    pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
         """Retrieve a custom queryset for transactions based on the current user."""
@@ -88,3 +107,9 @@ class TransactionViewSet(
 
     def perform_update(self, serializer):
         serializer.save(user=self.request.user)
+
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)

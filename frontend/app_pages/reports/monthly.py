@@ -5,7 +5,13 @@ import calendar
 from datetime import datetime
 
 from utils.cache_utils import cache_fetched
-from utils.cache_utils import fetch_and_cache_data
+
+from utils.cache_utils import get_or_fetch_categories_data
+from utils.cache_utils import get_or_fetch_transactions_page
+
+from utils.cache_utils import get_or_fetch_monthly_analytics
+from utils.cache_utils import get_or_fetch_historical_analytics
+
 
 def monthly_analytics():
     """Monthly report section."""
@@ -13,17 +19,17 @@ def monthly_analytics():
     st.title("📅 Monthly report")
     st.write("Here you can view monthly reports of your transactions, broken down by category.")
     
-    if not st.session_state["api_transactions"]["cache"]["list"]:
+    if not cache_fetched(["categories", "transactions", "historical_analytics"]):
+        with st.spinner("Loading data..."):
+            get_or_fetch_categories_data()
+            get_or_fetch_transactions_page()
+            get_or_fetch_historical_analytics()
+
+    if not st.session_state["api_transactions"]["cache"]["info"]["has_transactions"]:
         st.warning("No transactions yet. Come back here when you add some transactions.")
         return
 
-    if not cache_fetched():
-        with st.spinner("Loading data..."):
-            fetch_and_cache_data()
-
-    # Analytics API and unpacking data
-    analytics_api = st.session_state["api_analytics"]["service"]
-    
+    # Getting year and month
     years = st.session_state["api_analytics"]["cache"]["years"]
     month_names = list(calendar.month_name)[1:]
 
@@ -32,7 +38,8 @@ def monthly_analytics():
     month = col2.selectbox("Month:", options=month_names, index=datetime.now().month-1)
     month_index = month_names.index(month) + 1
     
-    data = analytics_api.get_monthly_analytics(year=year, month=month_index)
+    # Getting and preparing data
+    data = get_or_fetch_monthly_analytics(year=year, month=month_index)
 
     positive_categories_df = pd.DataFrame.from_dict(data["positive_categories"], orient="index", columns=["Amount"])
     positive_categories_df.index.name = "Positive Categories"

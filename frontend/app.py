@@ -45,7 +45,8 @@ if "api_auth" not in st.session_state:
         },
         "token": None,
         "authenticated": False,
-        "user_id": None
+        "user_id": None,
+        "cache": {},
     }
     st.session_state["api_auth"]["service"] = AuthAPIService()
 
@@ -87,14 +88,23 @@ if "api_transactions" not in st.session_state:
         "new_data": None,
         "filter_mode": False,
         "add_form": False,
-        "cache": {},
+        "cache": {
+            "info": {},
+            "by_page": {},
+            "all_transactions": [],
+        },
     }
     st.session_state["api_transactions"]["service"] = TransactionAPIService()
 
 if "api_analytics" not in st.session_state:
     st.session_state["api_analytics"] = {
         "service": None,
-        "cache": {},
+        "cache": {
+            "current": {},
+            "monthly": {},
+            "yearly": {},
+            "historical": {},
+        },
     }
     st.session_state["api_analytics"]["service"] = AnalyticsAPIService()
 

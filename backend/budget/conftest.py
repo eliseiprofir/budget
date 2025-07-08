@@ -12,21 +12,12 @@ def apiclient() -> APIClient:
 
 
 @pytest.fixture
-def authenticated_apiclient(user):  # noqa: F811
+def authenticated_apiclient(user) -> APIClient:  # noqa: F811
     """Fixture for creating an authenticated APIClient."""
     client = APIClient()
     client.force_authenticate(user=user)
     yield client
     client.force_authenticate(user=None)
-
-
-@pytest.fixture
-def admin_user(user) -> User:  # noqa: F811
-    """Fixture for creating an admin user."""
-    user.is_superuser = True
-    user.is_staff = True
-    user.save()
-    return user
 
 
 @pytest.fixture
@@ -42,6 +33,12 @@ def admin_apiclient(admin_user) -> APIClient:
 def user_recipe() -> str:
     """Fixture for creating a User recipe"""
     return "accounts.tests.user_recipe"
+
+
+@pytest.fixture
+def admin_user_recipe() -> str:
+    """Fixture for creating an admin User recipe"""
+    return "accounts.tests.admin_user_recipe"
 
 
 @pytest.fixture

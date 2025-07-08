@@ -112,7 +112,33 @@ def test_analytics_monthly_view_invalid_format(user: User):
     client = APIClient()
     client.force_authenticate(user=user)
 
-    url = reverse("api:analytics-monthly-custom", kwargs={"year": "abcd", "month": "ef"})
+    url = reverse("api:analytics-monthly-custom", kwargs={"year": 2200, "month": 1})
     response = client.get(url)
     assert response.status_code == 400
-    assert response.json() == {"error": "Invalid month or year format"}
+    assert response.json() == {"error": "Year must be between 1900 and 2100"}
+
+    url = reverse("api:analytics-monthly-custom", kwargs={"year": 1800, "month": 1})
+    response = client.get(url)
+    assert response.status_code == 400
+    assert response.json() == {"error": "Year must be between 1900 and 2100"}
+
+    url = reverse("api:analytics-monthly-custom", kwargs={"year": 2025, "month": 13})
+    response = client.get(url)
+    assert response.status_code == 400
+    assert response.json() == {"error": "Month must be between 1 and 12"}
+
+    url = reverse("api:analytics-monthly-custom", kwargs={"year": 2025, "month": 0})
+    response = client.get(url)
+    assert response.status_code == 400
+    assert response.json() == {"error": "Month must be between 1 and 12"}
+
+    url = reverse("api:analytics-monthly-custom", kwargs={"year": 2200, "month": 13})
+    response = client.get(url)
+    assert response.status_code == 400
+    assert response.json() == {"error": "Month must be between 1 and 12"}
+
+    # We use a direct URL because reverse won't work with parameters that don't match the pattern
+    url = "/api/analytics-monthly/abcd-ef/"
+    response = client.get(url)
+    assert response.status_code == 400
+    assert "Invalid format" in response.json()["error"]

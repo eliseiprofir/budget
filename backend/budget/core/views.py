@@ -3,6 +3,8 @@ from rest_framework import mixins
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
+from django_filters.rest_framework import DjangoFilterBackend
+
 from core.models import Bucket
 from core.models import Location
 from core.serializers import BucketSerializer
@@ -26,6 +28,10 @@ class LocationViewSet(
     permission_classes = (IsAuthenticated, IsOwner)
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("name",)
+    filter_backends = (DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter)
+    filterset_fields = ()
+    ordering_fields = ("name",)
+    search_fields = ("name",)
 
     def get_queryset(self):
         """Retrieve a custom queryset for locations based on the current user."""
@@ -63,6 +69,10 @@ class BucketViewSet(
     permission_classes = (IsAuthenticated,)
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("name",)
+    filter_backends = (DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter)
+    filterset_fields = ()
+    ordering_fields = ("name", "allocation_percentage",)
+    search_fields = ("name",)
 
     def get_queryset(self):
         """Retrieve a custom queryset for buckets based on the current user."""

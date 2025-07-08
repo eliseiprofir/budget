@@ -85,6 +85,10 @@ class Category(UUIDModel, SoftDeletableModel):
         verbose_name = "Category"
         verbose_name_plural = "Categories"
         ordering = ("name",)
+        indexes = [
+            models.Index(fields=["user", "name"], name="category_user_name_idx"),
+            models.Index(fields=["sign"], name="category_sign_idx"),
+        ]
 
 
 class Transaction(UUIDModel):
@@ -239,3 +243,9 @@ class Transaction(UUIDModel):
         verbose_name = "Transaction"
         verbose_name_plural = "Transactions"
         ordering = ("-date",)
+        indexes = [
+            models.Index(fields=["user", "date"], name="transaction_user_date_idx"),
+            models.Index(fields=["category"], name="transaction_category_idx"),
+            models.Index(fields=["location"], name="transaction_location_idx"),
+            models.Index(fields=["bucket"], name="transaction_bucket_idx"),
+        ]

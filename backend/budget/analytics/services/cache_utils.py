@@ -110,7 +110,7 @@ def get_or_generate_historical_report(user):
     return report_data
 
 
-def invalidate_user_cache(user):
+def invalidate_user_analytics_cache(user):
     safe_cache_delete(f"current_report_{user.id}")
     safe_cache_delete(f"historical_report_{user.id}")
 

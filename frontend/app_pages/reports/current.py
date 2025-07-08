@@ -3,18 +3,16 @@ import streamlit as st
 import pandas as pd
 
 from utils.cache_utils import cache_fetched
-from utils.cache_utils import fetch_and_cache_data
+
+from utils.cache_utils import get_or_fetch_transactions_page
+
+from utils.cache_utils import get_or_fetch_current_analytics
+
 
 def process_current_status_data():
     """Prepare data for charts."""
-    
-    if not cache_fetched():
-        with st.spinner("Loading data..."):
-            fetch_and_cache_data()
-    
-    # Analytics API and unpacking data
-    analytics_api = st.session_state["api_analytics"]["service"]
-    data = analytics_api.get_current_analytics()
+
+    data = get_or_fetch_current_analytics()
 
     locations_data = data["locations"]
     locations_df = pd.DataFrame.from_dict(data["locations"], orient="index", columns=["Amount"])
@@ -69,7 +67,12 @@ def current_analytics():
     st.title("💰 Money distribution")
     st.write("Here you can see the current distribution of your available money across different locations and buckets.")
     
-    if not st.session_state["api_transactions"]["cache"]["list"]:
+    if not cache_fetched(["transactions", "current_analytics"]):
+        with st.spinner("Loading data..."):
+            get_or_fetch_transactions_page()
+            get_or_fetch_current_analytics()
+
+    if not st.session_state["api_transactions"]["cache"]["info"]["has_transactions"]:
         st.warning("No transactions yet. Come back here when you add some transactions.")
         return
     

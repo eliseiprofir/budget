@@ -1,5 +1,7 @@
 import pytest
 
+from django.core.cache import cache
+
 from rest_framework import status
 from rest_framework.test import APIClient
 
@@ -25,6 +27,8 @@ def test_list_transaction(
     count: int,
     user: User,
 ):
+    cache.clear()
+    
     client: APIClient = request.getfixturevalue(client)
 
     transaction.user = user
@@ -35,7 +39,7 @@ def test_list_transaction(
     assert response.status_code == status_code
 
     if status_code == status.HTTP_200_OK:
-        json = response.json()
+        json = response.json()["results"]
         assert len(json) == count
         if count > 0:
             ids = [transaction["id"] for transaction in json]
@@ -68,29 +72,3 @@ def test_get_transaction(
     if status_code == status.HTTP_200_OK:
         json = response.json()
         assert json["id"] == str(transaction.id)
-
-
-@pytest.mark.django_db
-def test_superuser_sees_all_transactions(
-    admin_apiclient: APIClient,
-    transaction_recipe: str,
-    admin_user: User,
-    user: User,
-):
-    """Test that superuser can see all transactions."""
-    user_transaction = baker.make_recipe(transaction_recipe)
-    user_transaction.user = user
-    user_transaction.save()
-
-    admin_transaction = baker.make_recipe(transaction_recipe)
-    admin_transaction.user = admin_user
-    admin_transaction.save()
-
-    response = admin_apiclient.get("/api/transactions/")
-    json = response.json()
-
-    assert response.status_code == status.HTTP_200_OK
-    assert len(json) == 2
-    ids = [t["id"] for t in json]
-    assert str(user_transaction.id) in ids
-    assert str(admin_transaction.id) in ids

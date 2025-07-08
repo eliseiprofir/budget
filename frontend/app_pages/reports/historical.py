@@ -3,7 +3,12 @@ import streamlit as st
 import pandas as pd
 
 from utils.cache_utils import cache_fetched
-from utils.cache_utils import fetch_and_cache_data
+
+from utils.cache_utils import get_or_fetch_categories_data
+from utils.cache_utils import get_or_fetch_transactions_page
+
+from utils.cache_utils import get_or_fetch_historical_analytics
+
 
 def build_category_table(yearly_data, category_type):
     all_categories = set()
@@ -48,17 +53,16 @@ def historical_analytics():
     st.title("📊 Historical report")
     st.write("Here you can view a historical report of your transactions, broken down by category and year.")
 
-    if not st.session_state["api_transactions"]["cache"]["list"]:
+    if not cache_fetched(["categories", "transactions"]):
+        with st.spinner("Loading data..."):
+            get_or_fetch_categories_data()
+            get_or_fetch_transactions_page()
+
+    if not st.session_state["api_transactions"]["cache"]["info"]["has_transactions"]:
         st.warning("No transactions yet. Come back here when you add some transactions.")
         return
-    
-    if not cache_fetched():
-        with st.spinner("Loading data..."):
-            fetch_and_cache_data()
 
-    # Analytics API and preparing data
-    analytics_api = st.session_state["api_analytics"]["service"]
-    data = analytics_api.get_historical_analytics()
+    data = get_or_fetch_historical_analytics()
     
     yearly_data = data["yearly"]
 

@@ -5,21 +5,17 @@ class CategoryQuerySet(QuerySet):
     """Custom queryset for the Category model."""
 
     def filter_by_user(self, user):
-        """Regular user can see his own categories. Superusers can see them all."""
+        """User can see only his categories."""
         if not user.is_authenticated:
             return self.none()
-        if user.is_superuser:
-            return self.all()
-        return self.filter(user=user)
+        return self.filter(user=user).select_related("user")
 
 
 class TransactionQuerySet(QuerySet):
     """Custom queryset for the Transaction model."""
 
     def filter_by_user(self, user):
-        """Regular user can see his own transactions. Superusers can see them all."""
+        """User can see only his transactions."""
         if not user.is_authenticated:
             return self.none()
-        if user.is_superuser:
-            return self.all()
-        return self.filter(user=user)
+        return self.filter(user=user).select_related("category", "location", "bucket", "user")

@@ -4,7 +4,13 @@ import pandas as pd
 import calendar
 
 from utils.cache_utils import cache_fetched
-from utils.cache_utils import fetch_and_cache_data
+
+from utils.cache_utils import get_or_fetch_categories_data
+from utils.cache_utils import get_or_fetch_transactions_page
+
+from utils.cache_utils import get_or_fetch_yearly_analytics
+from utils.cache_utils import get_or_fetch_historical_analytics
+
 
 def build_category_table(monthly_data, category_type):
     all_categories = set()
@@ -53,19 +59,20 @@ def yearly_analytics():
     st.title("🗓️ Yearly report")
     st.write("Here you can view yearly reports of your transactions, broken down by category and month.")
     
-    if not st.session_state["api_transactions"]["cache"]["list"]:
+    if not cache_fetched(["categories", "transactions", "historical_analytics"]):
+        with st.spinner("Loading data..."):
+            get_or_fetch_categories_data()
+            get_or_fetch_transactions_page()
+            get_or_fetch_historical_analytics()
+
+    if not st.session_state["api_transactions"]["cache"]["info"]["has_transactions"]:
         st.warning("No transactions yet. Come back here when you add some transactions.")
         return
-
-    if not cache_fetched():
-        with st.spinner("Loading data..."):
-            fetch_and_cache_data()
-
+    
     # Analytics API and preparing data
-    analytics_api = st.session_state["api_analytics"]["service"]
     years = st.session_state["api_analytics"]["cache"]["years"]
     year = st.selectbox("Year:", options=years, index=len(years)-1)
-    data = analytics_api.get_yearly_analytics(year=year)
+    data = get_or_fetch_yearly_analytics(year=year)
 
     monthly_data = data["monthly"]
 

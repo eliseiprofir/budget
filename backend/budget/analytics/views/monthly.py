@@ -22,25 +22,6 @@ class AnalyticsMonthlyViewSet(viewsets.ViewSet):
         serializer = AnalyticsMonthlySerializer(data)
         return Response(serializer.data)
 
-    @action(detail=False, methods=['get'], url_path=r'(?P<year>.+)-(?P<month>.+)')
-    def custom(self, request, year=None, month=None):
-        """Get analytics summary for a specific month and year (YYYY-MM)."""
-        try:
-            year = int(year)
-            month = int(month)
-
-            # Validate month and year
-            if month < 1 or month > 12:
-                return Response({"error": "Month must be between 1 and 12"}, status=400)
-            if year < 1900 or year > 2100:  # Arbitrary reasonable range
-                return Response({"error": "Year must be between 1900 and 2100"}, status=400)
-
-            data = get_or_generate_monthly_report(request.user, year=year, month=month)
-            serializer = AnalyticsMonthlySerializer(data)
-            return Response(serializer.data)
-        except ValueError:
-            return Response({"error": "Invalid month or year format"}, status=400)
-
     @action(detail=False, methods=["get"])
     def cache_status(self, request):
         """Check cache status for the current user's monthly report and returns useful information."""
@@ -49,10 +30,7 @@ class AnalyticsMonthlyViewSet(viewsets.ViewSet):
         current_month = timezone.now().month
         current_year = timezone.now().year
 
-        month = request.query_params.get("month", current_month)
-        year = request.query_params.get("year", current_year)
-
-        cache_key = f"monthly_report_{user_id}_{year}_{month}"
+        cache_key = f"monthly_report_{user_id}_{current_year}_{current_month}"
         cached_report = cache.get(cache_key)
         is_cached = cached_report is not None
 
@@ -75,8 +53,8 @@ class AnalyticsMonthlyViewSet(viewsets.ViewSet):
         response_data = {
             "is_cached": is_cached,
             "cache_key": cache_key,
-            "month": month,
-            "year": year,
+            "month": current_month,
+            "year": current_year,
             "ttl_seconds": ttl,
             "expires_at": expires_at,
             "generated_at": generated_at,
@@ -84,9 +62,9 @@ class AnalyticsMonthlyViewSet(viewsets.ViewSet):
 
         return Response(response_data)
 
-    @action(detail=False, methods=["get"], url_path=r"(?P<year>.+)-(?P<month>.+)/cache-status",)
-    def month_cache_status(self, request, year, month):
-        """Check cache status for a specific year-month from URL path."""
+    @action(detail=False, methods=["get"], url_path='cache-status/(?P<year>\d{4})-(?P<month>\d{1,2})')
+    def cache_status_for_date(self, request, year=None, month=None):
+        """Check cache status for a specific year-month."""
         user_id = request.user.id
 
         try:
@@ -133,3 +111,27 @@ class AnalyticsMonthlyViewSet(viewsets.ViewSet):
         }
 
         return Response(response_data)
+
+    @action(detail=False, methods=['get'], url_path=r'(?P<year>\d{4})-(?P<month>\d{1,2})')
+    def custom(self, request, year=None, month=None):
+        """Get analytics summary for a specific month and year (YYYY-MM)."""
+        try:
+            year = int(year)
+            month = int(month)
+
+            # Validate month and year
+            if month < 1 or month > 12:
+                return Response({"error": "Month must be between 1 and 12"}, status=400)
+            if year < 1900 or year > 2100:  # Arbitrary reasonable range
+                return Response({"error": "Year must be between 1900 and 2100"}, status=400)
+
+            data = get_or_generate_monthly_report(request.user, year=year, month=month)
+            serializer = AnalyticsMonthlySerializer(data)
+            return Response(serializer.data)
+        except ValueError:
+            return Response({"error": "Invalid month or year format"}, status=400)
+
+    @action(detail=False, methods=['get'], url_path=r'(?P<invalid_format>.+)')
+    def invalid_format(self, request, invalid_format=None):
+        """Handle invalid format requests."""
+        return Response({"error": "Invalid format. Use YYYY-MM format."}, status=400)
