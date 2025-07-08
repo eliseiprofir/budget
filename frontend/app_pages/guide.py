@@ -205,6 +205,109 @@ def guide_page():
         Enter **POSITIVE AMOUNT** on outgoing transaction (when you take it) and **NEGATIVE AMOUNT** on incoming transaction (when you pay them back).
         """)
     
+    st.info("### 📊 Understanding Reports")
+    
+    with st.expander("💰 Money Distribution", expanded=False):
+        st.markdown("""
+        **Money Distribution** shows your current financial status across all locations and buckets.
+        
+        **What you'll see:**
+        - **Locations chart**: Shows how much money you have in each physical or virtual location
+        - **Buckets chart**: Shows how your money is distributed by purpose -- how much money you have available for each purpose
+        
+        **How to use it:**
+        - Check if your actual account balances match what's shown in the locations chart
+        - See if your money distribution aligns with your financial goals
+        - Identify if any bucket is underfunded or overfunded relative to your needs
+        
+        💡 **Tip**: This is your financial snapshot -- use it to make decisions about where to allocate more funds or where you might need to cut back.
+        
+        **Helpful insights:**
+        - Try to keep enough money in your "Emergency" bucket to cover 3-6 months of basic expenses
+        - If you see too much money sitting in your checking account, consider moving some to savings or other buckets
+        - Check this report before making big purchases to see if you really have the money available
+        - Use this report to have honest family conversations about where your money is and where it should be
+        """)
+    
+    with st.expander("📅 Monthly Report", expanded=False):
+        st.markdown("""
+        **Monthly Report** breaks down your transactions by category for a specific month.
+        
+        **What you'll see:**
+        - **Positive categories**: Income sources for the selected month
+        - **Negative categories**: Expenses for the selected month
+        - **Neutral categories**: Transfers and temporary transactions
+        
+        **How to use it:**
+        - Track your monthly income and spending patterns
+        - Identify your biggest expense categories
+        - Compare your spending against your budget
+        - Spot unusual transactions or spending spikes
+        
+        💡 **Tip**: Use the month selector to compare different months and identify trends or seasonal patterns in your finances.
+        
+        **Helpful insights:**
+        - A simple rule of thumb: Try to save at least 10-15% of your monthly income
+        - Look for your "money leaks" -- small, frequent expenses that add up (like daily coffee or subscriptions)
+        - If groceries, eating out, or entertainment seem high, try tracking these more closely for a month
+        - Notice which weeks of the month you spend the most and plan accordingly
+        - Compare your utility bills month-to-month to spot seasonal changes or potential problems
+        - Celebrate months where you spent less than planned and try to understand what worked well
+        """)
+    
+    with st.expander("🗓️ Yearly Report", expanded=False):
+        st.markdown("""
+        **Yearly Report** provides a month-by-month breakdown of your finances for a specific year.
+        
+        **What you'll see:**
+        - **Category breakdown**: Total amounts for each category for the year
+        - **Monthly progression**: How your income, expenses, and balance changed throughout the year
+        - **Category tables**: Detailed breakdown of each category by month
+        
+        **How to use it:**
+        - Identify seasonal patterns in your income or spending
+        - Track your financial progress throughout the year
+        - See which months had unusual financial activity
+        - Plan for recurring annual expenses
+        
+        💡 **Tip**: Look for months with significant financial changes and analyze what caused them to better prepare for similar situations in the future.
+        
+        **Helpful insights:**
+        - Use this report to plan for predictable yearly expenses like holidays, back-to-school, or vacations
+        - Notice which months are typically tight and which have extra money -- this helps with yearly planning
+        - Look at how much you spent in total on "wants" vs "needs" -- is the balance right for your family?
+        - Did you save as much as you hoped this year? If not, what months threw you off track?
+        - Use this report when setting goals for next year -- make them realistic based on your actual patterns
+        - Consider setting a "spending cap" for categories that consistently went over budget
+        """)
+    
+    with st.expander("📊 Historical Report", expanded=False):
+        st.markdown("""
+        **Historical Report** shows your financial trends across multiple years.
+        
+        **What you'll see:**
+        - **Year-by-year comparison**: How your finances have evolved over time
+        - **Category trends**: How spending in different categories has changed over years
+        - **Long-term balance**: Your overall financial growth or decline
+        
+        **How to use it:**
+        - Evaluate your long-term financial progress
+        - Identify multi-year trends in your income and spending
+        - Track how your financial habits have changed over time
+        - Set realistic long-term financial goals based on historical data
+        
+        💡 **Tip**: This report is especially valuable for identifying slow changes in your financial habits that might not be obvious in shorter timeframes.
+        
+        **Helpful insights:**
+        - Are you saving more each year than the year before? Even small increases add up over time
+        - Watch for "expense creep" -- categories that grow a little each year can eventually strain your budget
+        - Has your family's spending changed as your life changed (new baby, new house, etc.)?
+        - Look at how much your total savings have grown over the years -- seeing progress is motivating!
+        - Use this report to have family discussions about long-term goals like education funds or retirement
+        - If your expenses in a category have decreased over time, celebrate that win and learn from it
+        - Notice if your income is growing faster than your expenses -- that's a great sign for financial health
+        """)
+
     st.info("""
     ### 💡 Tips & Best Practices
     - **If this is your first time using the app**, we recommend you to go through the "Initial Setup" section first.
