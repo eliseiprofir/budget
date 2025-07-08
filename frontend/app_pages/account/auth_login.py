@@ -10,7 +10,7 @@ def login_page():
     
     with col2:
         st.title("🔐 Login")
-        st.write("Please login to access the Budget Management System")
+        st.write("Please login to access the Budget Management System Application")
         
         email = st.text_input("Email")
         password = st.text_input("Password", type="password")
