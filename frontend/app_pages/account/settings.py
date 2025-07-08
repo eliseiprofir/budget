@@ -3,6 +3,7 @@ import streamlit as st
 from utils.cache_utils import clear_cache
 from utils.cache_utils import get_or_fetch_user_info
 
+
 def account_settings_page():
     """Settings page for user's account."""
 
@@ -15,7 +16,6 @@ def account_settings_page():
         
         api = st.session_state["api_auth"]["service"]
         user_info = get_or_fetch_user_info()
-
         name = st.text_input("Name *", value=user_info.get("full_name", "")).strip()
         email = st.text_input("Email *", value=user_info.get("email", "")).strip()
 
