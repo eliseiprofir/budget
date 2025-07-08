@@ -39,7 +39,8 @@ def monthly_analytics():
     month_index = month_names.index(month) + 1
     
     # Getting and preparing data
-    data = get_or_fetch_monthly_analytics(year=year, month=month_index)
+    with st.spinner("Loading data..."):
+        data = get_or_fetch_monthly_analytics(year=year, month=month_index)
 
     positive_categories_df = pd.DataFrame.from_dict(data["positive_categories"], orient="index", columns=["Amount"])
     positive_categories_df.index.name = "Positive Categories"

@@ -12,7 +12,8 @@ from utils.cache_utils import get_or_fetch_current_analytics
 def process_current_status_data():
     """Prepare data for charts."""
 
-    data = get_or_fetch_current_analytics()
+    with st.spinner("Loading data..."):
+        data = get_or_fetch_current_analytics()
 
     locations_data = data["locations"]
     locations_df = pd.DataFrame.from_dict(data["locations"], orient="index", columns=["Amount"])

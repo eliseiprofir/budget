@@ -11,6 +11,7 @@ from utils.cache_utils import get_or_fetch_transactions_page
 from utils.cache_utils import get_or_fetch_yearly_analytics
 from utils.cache_utils import get_or_fetch_historical_analytics
 
+import time
 
 def build_category_table(monthly_data, category_type):
     all_categories = set()
@@ -72,7 +73,9 @@ def yearly_analytics():
     # Analytics API and preparing data
     years = st.session_state["api_analytics"]["cache"]["years"]
     year = st.selectbox("Year:", options=years, index=len(years)-1)
-    data = get_or_fetch_yearly_analytics(year=year)
+    
+    with st.spinner("Loading data..."):
+        data = get_or_fetch_yearly_analytics(year=year)
 
     monthly_data = data["monthly"]
 

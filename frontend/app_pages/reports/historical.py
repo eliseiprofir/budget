@@ -61,8 +61,9 @@ def historical_analytics():
     if not st.session_state["api_transactions"]["cache"]["info"]["has_transactions"]:
         st.warning("No transactions yet. Come back here when you add some transactions.")
         return
-
-    data = get_or_fetch_historical_analytics()
+    
+    with st.spinner("Loading data..."):
+        data = get_or_fetch_historical_analytics()
     
     yearly_data = data["yearly"]
 
