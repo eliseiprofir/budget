@@ -69,7 +69,7 @@ def welcome_page():
         st.markdown("#### 🧐 Demo acount")
         st.markdown("- Username: demo@demo.com")
         st.markdown("- Password: demo")
-        st.markdown("*Note: This account is created to see the application with random data, for demonstration purposes.*")
+        st.markdown("- Note: This account is created to demonstrate the application with random data, especially the reporting features. Please do not edit or delete any data. If you want to test the application's functionality, please create your own account. Thank you and enjoy!")
 
         st.markdown("#### 📧 Contact")
         st.markdown("Email: contact@elisei.pro")

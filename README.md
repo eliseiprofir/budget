@@ -27,7 +27,7 @@ By building this comprehensive full-stack application, I aimed to turn financial
 ### 🧐 Demo acount
 - Email: demo@demo.com
 - Password: demo
-- Note: This account is created to see and the application with random data.
+- Note: This account is created to demonstrate the application with random data, especially the reporting features. Please do not edit or delete any data. If you want to test the application's functionality, please create your own account. Thank you and enjoy!
 
 ### 📧 Contact
 - Email: contact@elisei.pro
