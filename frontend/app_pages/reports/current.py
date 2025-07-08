@@ -5,7 +5,9 @@ import pandas as pd
 from utils.cache_utils import cache_fetched
 
 from utils.cache_utils import get_or_fetch_transactions_page
+
 from utils.cache_utils import get_or_fetch_current_analytics
+
 
 def process_current_status_data():
     """Prepare data for charts."""

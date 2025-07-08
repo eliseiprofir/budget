@@ -4,10 +4,13 @@ import pandas as pd
 import calendar
 
 from utils.cache_utils import cache_fetched
+
 from utils.cache_utils import get_or_fetch_categories_data
-from utils.cache_utils import get_or_fetch_yearly_analytics
 from utils.cache_utils import get_or_fetch_transactions_page
+
+from utils.cache_utils import get_or_fetch_yearly_analytics
 from utils.cache_utils import get_or_fetch_historical_analytics
+
 
 def build_category_table(monthly_data, category_type):
     all_categories = set()

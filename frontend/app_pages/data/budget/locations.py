@@ -13,6 +13,7 @@ COL1 = 8
 COL2 = 3
 COL3 = 3
 
+
 def locations_config():
     """Settings section for locations."""
 

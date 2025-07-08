@@ -4,8 +4,8 @@ import streamlit as st
 from utils.cache_utils import get_location_id
 from utils.cache_utils import get_or_fetch_locations_names
 
-from utils.cache_utils import get_or_fetch_buckets_names
 from utils.cache_utils import get_bucket_id
+from utils.cache_utils import get_or_fetch_buckets_names
 from utils.cache_utils import get_or_fetch_buckets_allocation_status
 
 from utils.cache_utils import get_category_data

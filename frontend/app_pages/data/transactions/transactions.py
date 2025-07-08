@@ -8,14 +8,18 @@ from .add_transactions import add_transactions_form
 from utils.cache_utils import update_cache
 from utils.cache_utils import clear_cache
 from utils.cache_utils import cache_fetched
+
 from utils.cache_utils import get_category_id
 from utils.cache_utils import get_location_id
 from utils.cache_utils import get_bucket_id
+
 from utils.cache_utils import get_or_fetch_transactions_page
-from utils.cache_utils import get_or_fetch_current_analytics
 from utils.cache_utils import get_or_fetch_all_transactions
 
+from utils.cache_utils import get_or_fetch_current_analytics
+
 from app_pages.reports.current import process_current_status_data
+
 
 def update_current_page(page: int):
     st.session_state["api_transactions"]["cache"]["info"]["current_page"] = page

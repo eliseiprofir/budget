@@ -1,6 +1,7 @@
 import requests
 import streamlit as st
 
+
 class AuthAPIService:
     """Service class for handling authentication-related API calls."""
     

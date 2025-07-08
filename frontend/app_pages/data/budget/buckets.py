@@ -12,7 +12,6 @@ from utils.cache_utils import get_or_fetch_buckets_total_allocation
 
 from utils.cache_utils import get_or_fetch_all_transactions
 
-
 COL1 = 4
 COL2 = 4
 COL3 = 3

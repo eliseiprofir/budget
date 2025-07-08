@@ -5,10 +5,13 @@ import calendar
 from datetime import datetime
 
 from utils.cache_utils import cache_fetched
+
 from utils.cache_utils import get_or_fetch_categories_data
 from utils.cache_utils import get_or_fetch_transactions_page
+
 from utils.cache_utils import get_or_fetch_monthly_analytics
 from utils.cache_utils import get_or_fetch_historical_analytics
+
 
 def monthly_analytics():
     """Monthly report section."""

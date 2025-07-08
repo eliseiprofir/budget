@@ -12,6 +12,7 @@ from utils.cache_utils import get_or_fetch_buckets_data
 from utils.cache_utils import get_or_fetch_categories_data
 from utils.cache_utils import get_or_fetch_transactions_page
 
+
 def budget_config_page():
     """Settings page for budget application."""
 

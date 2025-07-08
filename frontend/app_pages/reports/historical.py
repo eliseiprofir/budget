@@ -3,11 +3,12 @@ import streamlit as st
 import pandas as pd
 
 from utils.cache_utils import cache_fetched
-from utils.cache_utils import update_cache
 
 from utils.cache_utils import get_or_fetch_categories_data
 from utils.cache_utils import get_or_fetch_transactions_page
+
 from utils.cache_utils import get_or_fetch_historical_analytics
+
 
 def build_category_table(yearly_data, category_type):
     all_categories = set()
