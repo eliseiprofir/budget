@@ -161,27 +161,73 @@ POST/PUT body:
 GET /api/transactions/ body example:
 ```json
 {
-    "id": "a8098c1a-f86e-11da-bd1a-00112444be1e",
-    "description": "Grocery Shopping",
-    "category": {
-        "id": "550e8400-e29b-41d4-a716-446655440000",
-        "name": "Food",
-        "sign": "NEGATIVE"
-    },
-    "date": "2024-01-15T00:00:00Z",
-    "amount": "150.00",
-    "location": {
-        "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-        "name": "ING"
-    },
-    "bucket": {
-        "id": "91461c66-d475-4e76-9d6b-b2a409491578",
-        "name": "Necessities"
-    },
-    "split_income": false,
-    "user": "http://domain.com/api/users/01477667-aa35-4d40-9730-9190037fd6d8/"
+    "count": 125,
+    "next": "https://domain.com/api/transactions/?page=2",
+    "previous": null,
+    "results": [
+        {
+            "id": "a8098c1a-f86e-11da-bd1a-00112444be1e",
+            "description": "Grocery Shopping",
+            "category": {
+                "id": "550e8400-e29b-41d4-a716-446655440000",
+                "name": "Food",
+                "sign": "NEGATIVE"
+            },
+            "date": "2024-01-15T00:00:00Z",
+            "amount": "150.00",
+            "location": {
+                "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                "name": "ING"
+            },
+            "bucket": {
+                "id": "91461c66-d475-4e76-9d6b-b2a409491578",
+                "name": "Necessities"
+            },
+            "split_income": false,
+            "user": "http://domain.com/api/users/01477667-aa35-4d40-9730-9190037fd6d8/"
+        },
+        // ... more transactions
+    ]
 }
-...
+```
+
+#### Pagination
+Transactions are paginated with 50 items per page by default. You can control pagination with these parameters:
+
+- `page`: Page number (starts at 1)
+- `page_size`: Number of items per page (max 100)
+
+Example:
+```http
+GET /api/transactions/?page=2&page_size=20
+```
+
+#### Filtering
+You can filter transactions using these parameters:
+
+- `category`: Filter by category ID
+- `date`: Filter by specific date (YYYY-MM-DD)
+- `amount`: Filter by exact amount
+- `location`: Filter by location ID
+- `bucket`: Filter by bucket ID
+- `search`: Search in description field
+
+Example:
+```http
+GET /api/transactions/?category=550e8400-e29b-41d4-a716-446655440000&search=grocery
+```
+
+#### Ordering
+You can order transactions using the `ordering` parameter:
+
+- `ordering=date`: Order by date (ascending)
+- `ordering=-date`: Order by date (descending)
+- `ordering=amount`: Order by amount (ascending)
+- `ordering=-amount`: Order by amount (descending)
+
+Example:
+```http
+GET /api/transactions/?ordering=-date
 ```
 
 Validation Rules:
@@ -219,7 +265,7 @@ Response:
 }
 ```
 
-### Monthly Analysis
+### Monthly Analytics
 ```http
 GET /api/analytics-monthly/
 ```
@@ -264,7 +310,7 @@ Notes:
 - Year format must be between 1900-2100
 - Invalid formats will return 400 Bad Request
 
-### Yearly Analysis
+### Yearly Analytics
 ```http
 GET /api/analytics-yearly/
 ```
@@ -331,7 +377,7 @@ Notes:
 - Year format must be between 1900-2100
 - Invalid formats will return 400 Bad Request
 
-### Historical Analysis
+### Historical Analytics
 ```http
 GET /api/analytics-historical/
 ```
@@ -389,6 +435,61 @@ Response:
 }
 ```
 
+### Cache Status Endpoints
+Each analytics endpoint has a corresponding cache status endpoint that provides information about the cached data:
+
+```http
+GET /api/analytics-current/cache-status/
+GET /api/analytics-monthly/cache-status/
+GET /api/analytics-yearly/cache-status/
+GET /api/analytics-historical/cache-status/
+```
+
+Response example:
+```json
+{
+    "is_cached": true,
+    "cache_key": "current_report_01477667-aa35-4d40-9730-9190037fd6d8",
+    "ttl_seconds": 3540,
+    "expires_at": "2024-05-15T15:30:45Z",
+    "generated_at": "2024-05-15T14:30:45Z"
+}
+```
+
+For specific time periods, you can check cache status using:
+
+```http
+GET /api/analytics-monthly/cache-status/YYYY-MM
+GET /api/analytics-yearly/cache-status/YYYY
+```
+
+Examples:
+```http
+GET /api/analytics-monthly/cache-status/2024-05
+GET /api/analytics-yearly/cache-status/2024
+```
+
+Response example for a specific period:
+```json
+{
+    "is_cached": true,
+    "cache_key": "monthly_report_01477667-aa35-4d40-9730-9190037fd6d8_2024_5",
+    "month": 5,
+    "year": 2024,
+    "ttl_seconds": 3540,
+    "expires_at": "2024-05-15T15:30:45Z",
+    "generated_at": "2024-05-15T14:30:45Z"
+}
+```
+
+Notes:
+- Analytics data is cached for 1 hour by default
+- When requesting analytics data, if it's not in cache, it will be generated on-demand and cached
+- Additionally, an asynchronous task is triggered to refresh the cache in the background
+- This approach ensures fast response times while keeping data up-to-date
+- Cache keys are user-specific, ensuring data isolation between users
+- Invalid date formats will return a 400 Bad Request response
+
 ## Common Headers
 
 All requests require:
@@ -399,10 +500,12 @@ Content-Type: application/json
 
 ## Response Codes
 
-- 200: Success
-- 201: Created
-- 400: Bad Request
-- 401: Unauthorized
-- 403: Forbidden
-- 404: Not Found
-- 500: Server Error
+- 200: Success - Request was successful
+- 201: Created - Resource was successfully created
+- 400: Bad Request - Invalid request format or validation error
+- 401: Unauthorized - Authentication credentials were not provided or are invalid
+- 403: Forbidden - You don't have permission to access this resource
+- 404: Not Found - The requested resource does not exist
+- 405: Method Not Allowed - The HTTP method is not supported for this endpoint
+- 429: Too Many Requests - Rate limit exceeded
+- 500: Server Error - An error occurred on the server

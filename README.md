@@ -45,11 +45,14 @@ Our system consists of three main components:
 - PostgreSQL Database (Neon for production)
 - Redis Cache (Upstash for production)
 - Django Q for async task processing
+- Multi-level caching system for analytics reports
 
 ### Frontend (Streamlit)
 - Interactive UI
 - Real-time data visualization
 - Direct API communication
+- Client-side caching to minimize API requests
+- Automatic cache invalidation on data changes
 
 ### Infrastructure
 - JWT Authentication flow
@@ -107,6 +110,12 @@ This project demonstrates my expertise in:
   - Yearly report - category analysis and profit/loss reports broken down by months
   - Historical report - category analysis and profit/loss reports broken down by years
 
+- **Performance Optimization**
+  - Backend caching system with Redis
+  - Asynchronous report generation with Django Q
+  - Frontend caching to minimize API requests
+  - Cache invalidation on data changes
+
 ## Technical Stack
 
 - **Backend**
@@ -116,11 +125,13 @@ This project demonstrates my expertise in:
   - Redis (Upstash for production)
   - Django Q (async task processing)
   - JWT Authentication
+  - Redis-based caching system
 
 - **Frontend**
   - Streamlit 1.41.1
   - Pandas
   - Interactive Charts
+  - Client-side caching system to minimize API requests
 
 - **Infrastructure**
   - Docker & Docker Compose
@@ -360,7 +371,21 @@ For detailed API documentation and examples, see [API Documentation](docs/api.md
 
 ## Screenshots
 
-[Include screenshots of key features here]
+Here are some screenshots showcasing the main features of the application:
+
+### User Guide
+![User Guide](docs/screenshots/guide.png)
+
+### Transaction Management
+![Transaction Management](docs/screenshots/transactions-management.png)
+
+### Money Distribution
+![Money Distribution](docs/screenshots/money-distribution.png)
+
+### Yearly Analytics
+![Yearly Analytics](docs/screenshots/yearly-report.png)
+
+*For more screenshots, please check the [docs/screenshots](docs/screenshots/) folder.*
 
 ## Author
 
