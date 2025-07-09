@@ -151,27 +151,27 @@ def guide_page():
         - **Verify everything** in Step 3 before starting daily use
         """)
     
-    st.success("### 📝 Common Tasks")
+    st.success("### 📝 How to add transactions")
     
-    with st.expander("🟢 How to Record Income", expanded=False):
+    with st.expander("🟢 How to record income (positive transactions)", expanded=False):
         st.markdown("""
         0. Make sure you have a positive category created before
-        1. Go to "Transaction Management" page and click on the "Add transaction" button
-        2. Select a **Positive category** (Salary, Gift, etc.)
+        1. Go to "Transaction Management" page
+        2. In the "Add transaction" form select a **Positive category** (Salary, Gift, etc.)
         3. Complete the rest of the fields (description, date, amount, location)
         4. You want to split income into buckets?
-            - If YES: Check "Split income" to distribute across buckets according to allocation percentages. I doesn't matter the bucket selected. 
+            - If YES: Check "Split income" to distribute across buckets according to allocation percentages. It doesn't matter the bucket selected. 
             - If NO: Leave "Split income" unchecked but select a specific bucket. The transaction will go directly to that bucket.
         5. Save the transaction
         
         **Note**: If you want to use "Split income" feature, first make sure your bucket allocation is completed (100%). You can check this in "Budget Configuration" page.
         """)
     
-    with st.expander("🔴 How to Record Expenses", expanded=False):
+    with st.expander("🔴 How to record expenses (negative transactions)", expanded=False):
         st.markdown("""
         0. Make sure you have a negative category created before
-        1. Go to "Transaction Management" page and click on the "Add transaction" button
-        2. Select a **Negative** category (Bills, Food, Car)
+        1. Go to "Transaction Management" page
+        2. In the "Add transaction" form select a **Negative category** (Bills, Food, Car, etc.)
         3. Enter the amount as a positive number (the system will handle the negative sign)
         4. Complete the rest of the fields (description, date, location, bucket)
         5. Save the transaction
@@ -179,7 +179,7 @@ def guide_page():
         **Note**: "Split income" feature is not available for expenses.
         """)
     
-    with st.expander("⚪ How to Make Neutral Transactions", expanded=False):
+    with st.expander("⚪ How to make neutral transactions (transfers, loans, temporary)", expanded=False):
         st.markdown("""
         All neutral transactions require **two separate transactions**, one for the source and one for the destination.
         ### Transfers between Locations/Buckets
@@ -197,7 +197,7 @@ def guide_page():
         4. If you're transferring between buckets, select the same location as the outgoing transaction. If you're transferring between locations, select the same bucket as the outgoing transaction.
         5. Save the transaction
         
-        ### Loans/Temporary Transactions
+        ### Loans / Temporary Transactions
         Create a special neutral category for these kind of transactions.
         ##### If you lend money to someone
         Enter **NEGATIVE AMOUNT** on outgoing transaction (when you give it) and **POSITIVE AMOUNT** on incoming transaction (when you receive them back).
