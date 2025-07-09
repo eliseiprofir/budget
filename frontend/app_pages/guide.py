@@ -83,7 +83,7 @@ def guide_page():
         - **Negative**: -Food, -Bills, -Car, -Health, -Technology, etc.
         - **Neutral**: =Transfer, =Loan, etc.
         
-        💡 Tip for names: Add a prefix ("+" or 🟢), negative ("-" or 🔴) and neutral ("=" or ⚪) to differentiate between categories. It will help you find them easier when you add new transactions or filter them. You can also add prefixes to pair them with buckets/purposes (e.g. "-Necessities/Food", "-Necessities/Clothes","-Education/Books").
+        💡 Tip for names: Add a prefix for positive ("+" or 🟢), negative ("-" or 🔴) and neutral ("=" or ⚪) categories to differentiate them. It will help you find them easier when you add new transactions or filter them. You can also add prefixes to pair them with buckets/purposes (e.g. "-Necessities/Food", "-Necessities/Clothes","-Education/Books").
         """)
     
     with st.expander("Step 2: Add Your Current Money -- Choose Your Scenario"):
