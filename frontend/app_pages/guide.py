@@ -56,7 +56,7 @@ def guide_page():
         
         Categories help with reporting and understanding your spending patterns.
         
-        💡 Tip for names: Add a prefix ("+" or 🟢), negative ("-" or 🔴) and neutral ("=" or ⚪) to differentiate between categories. It will help you find them easier when you add new transactions or filter them. You can also add prefixes to pair them with buckets/purposes (e.g. "-Necessities/Food", "-Necessities/Clothes","-Education/Books").
+        💡 Tip for names: Add a prefix for positive ("+" or 🟢), negative ("-" or 🔴) and neutral ("=" or ⚪) categories to differentiate them. It will help you find them easier when you add new transactions or filter them. You can also add prefixes to pair them with buckets/purposes (e.g. "-Necessities/Food", "-Necessities/Clothes","-Education/Books").
         """)
     
     st.error("### 🚀 Initial Setup")
