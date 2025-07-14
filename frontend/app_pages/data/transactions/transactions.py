@@ -51,6 +51,10 @@ def transactions_page():
     # Displaying all transactions
     st.subheader("🔢 Transactions table")
 
+    if not st.session_state["api_transactions"]["cache"]["info"]["has_transactions"]:
+        st.warning("No transactions yet. Come back here when you add some transactions.")
+        return
+    
     # Pagination
     show_all = st.checkbox(
         label="📋 Show all transactions",
