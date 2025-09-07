@@ -1,6 +1,6 @@
 # Budget Management System
 
-A comprehensive full-stack application for managing personal and family finances. The application uses Django and Django REST Framework for the backend, Streamlit for a fast, interactive frontend, and is fully containerized with Docker. It features JWT authentication, asynchronous task processing with Django Q, real-time balance analytics, and is deployed in production using Railway, Neon (PostgreSQL), and Upstash (Redis).
+A comprehensive full-stack application for managing personal and family finances. The backend is built with Django REST Framework, while the frontend uses Streamlit for a fast, interactive experience. The project is fully containerized with Docker. It features JWT authentication, asynchronous task processing with Django Q, real-time balance analytics, and is deployed in production using Railway, Neon (PostgreSQL), and Upstash (Redis).
 
 ## ❓Why this kind of project?
 I've always been passionate about financial education and personal finance management. Knowing exactly where my money comes from and where it goes has helped me make smarter financial decisions and use my resources more wisely.
