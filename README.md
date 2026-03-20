@@ -1,6 +1,6 @@
 # Budget Management System
 
-A comprehensive full-stack application for managing personal and family finances. The backend is built with Django REST Framework, while the frontend uses Streamlit for a fast, interactive experience. The project is fully containerized with Docker. It features JWT authentication, asynchronous task processing with Django Q, real-time balance analytics, and is deployed in production using Railway, Neon (PostgreSQL), and Upstash (Redis).
+A comprehensive full-stack application for managing personal and family finances. The backend is built with Django REST Framework, while the frontend uses Streamlit for a fast, interactive experience. The project is fully containerized with Docker. It features JWT authentication, asynchronous task processing with Django Q, real-time balance analytics, and is deployed in production using Render, Neon (PostgreSQL), and Upstash (Redis).
 
 ## ❓Why this kind of project?
 I've always been passionate about financial education and personal finance management. Knowing exactly where my money comes from and where it goes has helped me make smarter financial decisions and use my resources more wisely.
@@ -60,7 +60,7 @@ Our system consists of three main components:
 - Asynchronous task processing with Django Q
 - Data analytics pipeline
 - Docker containerization
-- Railway deployment platform
+- Render deployment platform
 
 ## Project Overview
 
@@ -136,7 +136,7 @@ This project demonstrates my expertise in:
 - **Infrastructure**
   - Docker & Docker Compose
   - Makefile for development workflow
-  - Railway (production deployment)
+  - Render (production deployment)
   - Neon PostgreSQL (production database)
   - Upstash Redis (production cache)
 
@@ -184,7 +184,7 @@ The project supports two main environments:
 - Upstash Redis cache
 - Disabled debug mode
 - SMTP email backend
-- Railway deployment
+- Render deployment
 - Enhanced security settings
 
 **Note**: Testing uses SQLite database via Model Bakery for faster test execution.
@@ -285,7 +285,7 @@ make seed
 
 ## Production Deployment
 
-The application is deployed on Railway with the following architecture:
+The application is deployed on Render with the following architecture:
 
 ### Services
 - **Backend Service**: Django API server with Gunicorn
