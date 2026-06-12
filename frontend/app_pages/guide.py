@@ -331,5 +331,5 @@ def guide_page():
 
     st.error("""
     ### ❗️ Bugs & Errors
-    If you encounter any bugs or errors, please email us at contact@elisei.pro with as many details as possible — ideally including screenshots. We'll get back to you with a solution as soon as we can. Thank you!
+    If you encounter any bugs or errors, please email us at pro.elisei@gmail.com with as many details as possible — ideally including screenshots. We'll get back to you with a solution as soon as we can. Thank you!
     """)

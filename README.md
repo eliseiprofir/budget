@@ -20,8 +20,8 @@ By building this comprehensive full-stack application, I aimed to turn financial
 - 📱 **Real-time Balance**: Track your current financial status across all locations and buckets
 
 ### 🔗 App links
-- Backend / Django REST Framework: https://api.elisei.pro
-- Frontend / Streamlit App: https://app.elisei.pro
+- Backend / Django REST Framework: https://bit.ly/4fM1f3m
+- Frontend / Streamlit App: https://bit.ly/4eaNKch
 - Project's GitHub Repository: https://github.com/eliseiprofir/budget
 
 ### 🧐 Demo acount
@@ -30,7 +30,7 @@ By building this comprehensive full-stack application, I aimed to turn financial
 - ❗Note: This account is created to demonstrate the application with random data, especially the reporting features. Please do not edit or delete any data. If you want to test the application's functionality, please create your own account. Thank you and enjoy! ❤️
 
 ### 📧 Contact
-- Email: contact@elisei.pro
+- Email: pro.elisei@gmail.com
 - GitHub Profile: https://github.com/eliseiprofir
 - LinkedIn Profile: https://www.linkedin.com/in/eliseiprofir/
 
