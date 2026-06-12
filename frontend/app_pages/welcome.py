@@ -69,14 +69,14 @@ def welcome_page():
 
         st.markdown("""
         #### 🔗 Useful app links
-        - Backend / Django REST Framework: https://api.elisei.pro
-        - Frontend / Streamlit App: https://app.elisei.pro
+        - Backend / Django REST Framework: https://bit.ly/4fM1f3m
+        - Frontend / Streamlit App: https://bit.ly/4eaNKch
         - GitHub Repository & Documentation: https://github.com/eliseiprofir/budget
         """)
         
         st.markdown("""
         #### 📧 Contact
-        - Email: contact@elisei.pro
+        - Email: pro.elisei@gmail.com
         - GitHub Profile: https://github.com/eliseiprofir
         - LinkedIn Profile: https://www.linkedin.com/in/eliseiprofir/
         """)
